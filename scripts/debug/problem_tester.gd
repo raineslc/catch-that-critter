@@ -230,10 +230,10 @@ func _find_voice() -> String:
 	return voices[0] if not voices.is_empty() else ""
 
 
+## Goes through Speech, which never interrupts the voice (interrupting can freeze the game on Windows).
 func _speak(text: String) -> void:
 	if speak_enabled and _tts_voice != "":
-		DisplayServer.tts_stop()
-		DisplayServer.tts_speak(text, _tts_voice)
+		Speech.say(text)
 
 
 func _build_ui() -> void:

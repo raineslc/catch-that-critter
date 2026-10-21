@@ -8,6 +8,7 @@ extends Node
 
 const PLAYTEST_PATH: String = "res://data/playtest.json"
 const PLAYTEST_FLAG: String = "--playtest"
+const SPEECH_POLL_SECONDS: float = 0.1
 
 var factory: ProblemFactory
 var engine: AdaptiveEngine
@@ -29,12 +30,21 @@ var playtest: Dictionary = {}
 var playtest_log: PlaytestLog
 ## Playtest freeze detector, or null (see FreezeWatch).
 var freeze_watch: FreezeWatch
+var _speech_poll_left: float = 0.0
 
 
 func _ready() -> void:
 	reset()
 	if OS.get_cmdline_user_args().has(PLAYTEST_FLAG):
 		enable_playtest()
+
+
+## Speaks a waiting text-to-speech line once the voice is free (see Speech).
+func _process(delta: float) -> void:
+	_speech_poll_left -= delta
+	if _speech_poll_left <= 0.0:
+		_speech_poll_left = SPEECH_POLL_SECONDS
+		Speech.poll()
 
 
 func reset() -> void:
