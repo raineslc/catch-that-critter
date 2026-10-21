@@ -31,6 +31,9 @@ Shared rules for every AI assistant (Claude, ChatGPT/Codex, Gemini) and for Chri
 - Only CC0 (or compatible) art; record every file in `assets/CREDITS.md` with its original pack path. Stick to the Ninja Adventure pack family for a consistent look.
 - Node origins of characters and nature objects sit at their feet (bottom-center) so y-sorting works.
 
+## Text-to-speech
+- Always go through `Speech.say()`. **Never call `DisplayServer.tts_stop()` or `tts_speak(..., interrupt = true)`** — on Windows (Godot 4.7.2) interrupting speech can freeze or crash the game (Playtest 1). A test enforces this.
+
 ## Kid-facing text
 - Short, calm, encouraging sentences. Never "wrong," "bad," or "fail."
 - Every instruction must also be available as text-to-speech.
