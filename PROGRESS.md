@@ -6,7 +6,7 @@ Every assistant updates this at the end of a session.
 Phase 0, step 2 — Init Godot 4 project, folders, GUT, CI.
 
 ## Done
-- 2026-10-20 — Phase 0, step 1: repo set up with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
+- 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
 
 ## Next
 - Install Godot 4 (latest stable) and pin the exact version in CONVENTIONS.md.

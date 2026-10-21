@@ -154,7 +154,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 ## 7. Build Steps (one at a time; run, commit, check off, confirm before the next)
 
 ### Phase 0 — Setup
-- [ ] Create GitHub repo; add PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
+- [x] Create GitHub repo; add PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
 - [ ] Init Godot 4 project, folders, GUT, CI.
 
 ### Phase 1 — Math Core (no graphics)
