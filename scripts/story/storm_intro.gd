@@ -3,12 +3,12 @@ extends Control
 ## The storm intro (PLAN.md 3.1): a few panels with big captions. A sunny rescue center,
 ## a thunderstorm, fences crashing down, animals running off, then the sidekick explains the mission.
 ## Panels and captions come from data/story/intro.json. Next / click / Space / Enter goes on;
-## Skip jumps to the game. Emits `finished` and (by default) goes to the Meadow.
+## Skip jumps to the game. Emits `finished` and (by default) goes to the Rescue Center.
 
 signal finished
 
 const STORY_PATH: String = "res://data/story/intro.json"
-const NEXT_SCENE: String = "res://scenes/world/meadow.tscn"
+const NEXT_SCENE: String = "res://scenes/world/rescue_center.tscn"
 const SCALE: float = 4.0
 const TILE: int = 16
 const FLOOR_TEXTURE: Texture2D = preload("res://assets/tilesets/floor.png")

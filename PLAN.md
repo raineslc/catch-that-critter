@@ -56,7 +56,7 @@ Not a commercial product: no pricing, store listings, ads, or school licensing.
 - One-sentence lines.
 
 ### 3.4 Map & Habitats (Common Core aligned)
-One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
+Rescue Center hub in the middle with a gate to each habitat; each habitat is its own top-down map (changed from one big scrolling map on 2026-10-21, Chris's choice; see DECISIONS.md). New games start at the Rescue Center.
 
 | Habitat | Skill focus | Grade | Example standards | Animals |
 |---|---|---|---|---|
@@ -175,7 +175,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 
 ### Phase 3 — Story & Rescue Center
 - [x] Storm intro panels with narration. (Captions instead of spoken narration while the voice is off.)
-- [ ] Rescue Center hub with enclosures and fence repair.
+- [x] Rescue Center hub with enclosures and fence repair.
 - [ ] Feeding via spelling, care notes, fact cards with read-aloud.
 - [ ] Stars, animal levels, collection book.
 

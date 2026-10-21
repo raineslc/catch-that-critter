@@ -32,7 +32,7 @@ Standing rules for Claude Code (AGENTS.md and GEMINI.md should say the same thin
 - No network calls, analytics, ads, or external links in the game. All saves stay local.
 
 ## How to run & test
-- Run: open the project in Godot 4.7.2 and press F5 (main scene: `scenes/main.tscn` title → any key → `scenes/world/meadow.tscn`). Move with arrows/WASD or click.
+- Run: open the project in Godot 4.7.2 and press F5 (main scene: `scenes/main.tscn` title → any key → storm intro → `scenes/world/rescue_center.tscn`; the west gate leads to the Meadow). Move with arrows/WASD or click.
 - Tests: `godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit` (exit code 1 on failure).
   - On Chris's Windows PC Godot came from winget and isn't on PATH as `godot`; use `Godot_v4.7.2-stable_win64_console.exe` from `%LOCALAPPDATA%\Microsoft\WinGet\Packages\GodotEngine.GodotEngine_*\`.
   - After a fresh clone, run `godot --headless --import` once first.

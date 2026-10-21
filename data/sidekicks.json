@@ -6,13 +6,44 @@
       "role": "little brother",
       "sprite": "res://assets/sprites/sidekicks/henrito/sprite_sheet.png",
       "faceset": "res://assets/sprites/sidekicks/henrito/faceset.png",
-      "voice": {"rate": 0.9, "pitch": 1.15},
+      "voice": {
+        "rate": 0.9,
+        "pitch": 1.15
+      },
       "lines": {
-        "chase_start": ["Let's catch it together!", "Here we go, you can do it!", "Quick, let's follow it!"],
-        "hint_intro": ["Nice try, let's work it out together.", "You've got this, here's a little help.", "Let's look at it another way."],
-        "caught": ["You did it! Great catching!", "Wow, you caught it!", "Yay, it's safe now!"],
-        "escaped": ["That's okay, it was a fast one!", "No worries, let's try again!", "So close! Want to try again?"],
-        "sprint": ["Whoa, you're so fast!", "Sprint boost!", "Zoom! Great speed!"]
+        "chase_start": [
+          "Let's catch it together!",
+          "Here we go, you can do it!",
+          "Quick, let's follow it!"
+        ],
+        "hint_intro": [
+          "Nice try, let's work it out together.",
+          "You've got this, here's a little help.",
+          "Let's look at it another way."
+        ],
+        "caught": [
+          "You did it! Great catching!",
+          "Wow, you caught it!",
+          "Yay, it's safe now!"
+        ],
+        "escaped": [
+          "That's okay, it was a fast one!",
+          "No worries, let's try again!",
+          "So close! Want to try again?"
+        ],
+        "sprint": [
+          "Whoa, you're so fast!",
+          "Sprint boost!",
+          "Zoom! Great speed!"
+        ],
+        "hub_start": [
+          "The Meadow is through the gate on the left. Let's go find the animals!",
+          "The animals ran into the Meadow. The gate is on the left!"
+        ],
+        "hub_progress": [
+          "We brought {count} animals home! Let's find more.",
+          "Look, {count} animals are safe now. Great job, ranger!"
+        ]
       }
     }
   ]

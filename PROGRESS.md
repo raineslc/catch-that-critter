@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 3, step 2 — Rescue Center hub with enclosures and fence repair. (Playtest 1 can continue in parallel with `playtest-1.3`; review logs when Chris has more sessions.)
+Phase 3, step 3 — Feeding via spelling, care notes, fact cards with read-aloud. (Playtest 1 can continue in parallel with `playtest-1.3`.)
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -57,8 +57,10 @@ Phase 3, step 2 — Rescue Center hub with enclosures and fence repair. (Playtes
 - 2026-10-21 — **Voice off** (Chris: voices sound weird, some lines off). `GameState.read_aloud` defaults to false; text and Henrito's bubble still show. `Speech` kept for later. Playtest copy → `playtest-1.3`. Open question for Chris: which lines sounded "off".
 - 2026-10-21 — Phase 3, step 1: storm intro (`scenes/story/storm_intro.tscn`, `scripts/story/storm_intro.gd`, `data/story/intro.json`). 7 captioned panels: sunny rescue center pen (raccoon, frog, owl, lizard, bear) → night storm (rain, lightning, storm sound) → fences crash (shake) → animals scatter → morning, Henrito walks in and explains the mission and how to play. Next/click/Space/Enter, Skip. Title → intro → Meadow. New art: frog/owl/lizard/bear sprites, element tileset (fences), storm sound, "Calm Village" music. 167 tests passing.
 
+- 2026-10-21 — Phase 3, step 2: Rescue Center hub (`scenes/world/rescue_center.tscn`, `scripts/world/rescue_center.gd` extends HabitatMap; map `data/maps/rescue_center.txt` + info file `.json`; `data/maps/world.json`). Five gates (Meadow open, others "coming soon"), five pens with storm-broken fences fixed one per rescue (animated on return), rescued animals living in their pen, Henrito in the plaza with hub lines. Meadow got an east gate back. `GameState`: rescue records, rescued spots stay rescued, travel/arrival. Intro now leads to the hub. 180 tests passing.
+
 ## Next
-- Phase 3, step 2: Rescue Center hub — a top-down area (probably a new map, `data/maps/rescue_center.txt`, with the Meadow connected) with enclosures that fill as animals come home, fence sections repaired per capture; rescued animals shown in their enclosure. Needs a decision: separate map vs. center of the Meadow (PLAN says one big map with the center in the middle).
+- Phase 3, step 3: care at the Rescue Center — feed by spelling the food name with letter tiles (K: picture match / first letter), short care notes with a choice, fact cards (3–4 kid-level facts) per animal. Text only while the voice is off.
 - Chris: listen to the four chase sounds and say if any should change; try Race mode with the 7-year-old and tell me if 45 seconds feels right.
 
 ## Open issues

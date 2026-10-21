@@ -1,0 +1,19 @@
+{
+  "id": "rescue_center",
+  "name": "Rescue Center",
+  "habitat": "",
+  "gates": {
+    "1": {"to": "meadow", "arrive": "1", "label": "Meadow"},
+    "2": {"to": "forest", "label": "Forest", "locked": true},
+    "5": {"to": "mountains", "label": "Mountains", "locked": true},
+    "3": {"to": "swamp", "label": "Swamp", "locked": true},
+    "4": {"to": "desert", "label": "Desert", "locked": true}
+  },
+  "pens": [
+    {"habitat": "meadow", "label": "Meadow", "cell": [2, 6], "pieces": 3, "depth": 5},
+    {"habitat": "forest", "label": "Forest", "cell": [14, 4], "pieces": 3, "depth": 5},
+    {"habitat": "mountains", "label": "Mountains", "cell": [29, 4], "pieces": 3, "depth": 5},
+    {"habitat": "swamp", "label": "Swamp", "cell": [24, 17], "pieces": 3, "depth": 5},
+    {"habitat": "desert", "label": "Desert", "cell": [5, 17], "pieces": 3, "depth": 5}
+  ]
+}

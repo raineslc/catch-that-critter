@@ -5,7 +5,7 @@ extends RefCounted
 
 const SIDEKICKS_PATH: String = "res://data/sidekicks.json"
 ## Events a sidekick has lines for.
-const EVENTS: Array[String] = ["chase_start", "hint_intro", "caught", "escaped", "sprint"]
+const EVENTS: Array[String] = ["chase_start", "hint_intro", "caught", "escaped", "sprint", "hub_start", "hub_progress"]
 
 var data: Dictionary = {}
 var _rng: RandomNumberGenerator

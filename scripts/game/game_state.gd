@@ -10,6 +10,7 @@ const PLAYTEST_PATH: String = "res://data/playtest.json"
 const PLAYTEST_FLAG: String = "--playtest"
 const SPEECH_POLL_SECONDS: float = 0.1
 const READ_ALOUD_DEFAULT: bool = false
+const WORLD_PATH: String = "res://data/maps/world.json"
 
 var factory: ProblemFactory
 var engine: AdaptiveEngine
@@ -17,6 +18,15 @@ var catalog: AnimalCatalog
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 ## Animal ids rescued this session, in order.
 var rescued: Array[String] = []
+## Every rescue: {"animal", "habitat", "map", "cell": [x, y]} (cell is where it was caught from).
+var rescues: Array[Dictionary] = []
+## habitat -> how many of its pen's fence repairs the player has already seen fixed.
+var pen_repairs_shown: Dictionary = {}
+## Set by travel_to(): the area being entered and the gate to appear at.
+var arrival_map: String = ""
+var arrival_gate: String = ""
+## data/maps/world.json: which areas exist and their scenes.
+var world: Dictionary = {}
 ## Read questions and Henrito's lines aloud with text-to-speech. Off since 2026-10-21:
 ## Chris found the Windows voices sounded weird and some lines off (see DECISIONS.md).
 var read_aloud: bool = READ_ALOUD_DEFAULT
@@ -59,6 +69,11 @@ func reset() -> void:
 	engine = AdaptiveEngine.new(AdaptiveEngine.level_counts_from(factory))
 	catalog = AnimalCatalog.new()
 	rescued.clear()
+	rescues.clear()
+	pen_repairs_shown.clear()
+	arrival_map = ""
+	arrival_gate = ""
+	world = load_world()
 	rng.randomize()
 	mode = ChaseState.EXPLORE
 	explore_locked = false
@@ -142,8 +157,65 @@ func toggle_mode() -> void:
 		log_event("mode", {"mode": mode})
 
 
-func record_rescue(animal_id: String) -> void:
+## Remembers a rescue. `habitat`/`map_id`/`cell` say where it came from (so it stays rescued
+## when you come back, and its habitat's pen gets a fence repair).
+func record_rescue(animal_id: String, habitat: String = "", map_id: String = "", cell: Vector2i = Vector2i(-1, -1)) -> void:
 	rescued.append(animal_id)
+	rescues.append({"animal": animal_id, "habitat": habitat, "map": map_id, "cell": [cell.x, cell.y]})
+
+
+func rescued_count(habitat: String = "") -> int:
+	if habitat == "":
+		return rescues.size()
+	return rescues.filter(func(r: Dictionary) -> bool: return r["habitat"] == habitat).size()
+
+
+## Animal ids rescued from a habitat, oldest first.
+func rescued_from(habitat: String) -> Array[String]:
+	var ids: Array[String] = []
+	for r: Dictionary in rescues:
+		if r["habitat"] == habitat:
+			ids.append(str(r["animal"]))
+	return ids
+
+
+## Was the critter that starts at this spot already rescued?
+func is_spot_rescued(map_id: String, cell: Vector2i) -> bool:
+	for r: Dictionary in rescues:
+		if r["map"] == map_id and int(r["cell"][0]) == cell.x and int(r["cell"][1]) == cell.y:
+			return true
+	return false
+
+
+static func load_world(path: String = WORLD_PATH) -> Dictionary:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	return parsed if parsed is Dictionary else {}
+
+
+## The scene file for an area id, or "" if that area isn't built yet.
+func scene_for(map_id: String) -> String:
+	return str(world.get("maps", {}).get(map_id, {}).get("scene", ""))
+
+
+## Get ready to enter `map_id` through `gate`. Returns the scene to change to ("" = not built yet).
+func travel_to(map_id: String, gate: String) -> String:
+	var scene: String = scene_for(map_id)
+	if scene == "":
+		return ""
+	arrival_map = map_id
+	arrival_gate = gate
+	log_event("travel", {"to": map_id, "gate": gate})
+	return scene
+
+
+## If we just traveled into `map_id`, returns the gate to appear at (and forgets it); else "".
+func take_arrival(map_id: String) -> String:
+	if arrival_map != map_id:
+		return ""
+	var gate: String = arrival_gate
+	arrival_map = ""
+	arrival_gate = ""
+	return gate
 
 
 ## Writes a summary to the playtest log when the window closes.
