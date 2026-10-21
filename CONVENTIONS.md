@@ -3,7 +3,9 @@
 Shared rules for every AI assistant (Claude, ChatGPT/Codex, Gemini) and for Chris.
 
 ## Engine & language
-- Godot 4 (2D). **Pinned version:** set in Phase 0 step 2 — every assistant uses exactly this version.
+- Godot 4 (2D). **Pinned version: Godot 4.7.2 stable** (standard build, not .NET/mono) — every assistant and CI uses exactly this version.
+- Test framework: **GUT 9.7.1** (the GUT line for Godot 4.7), vendored in `addons/gut/`.
+- Renderer: Compatibility (works on web and older PCs). Viewport 1280×720, stretch mode `canvas_items`, nearest-neighbor texture filter for pixel art.
 - GDScript only, statically typed: `var count: int = 0`, `func add(a: int, b: int) -> int:`.
 - Tabs for indentation (Godot default).
 

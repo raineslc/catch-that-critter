@@ -1,6 +1,5 @@
-# Godot 4
+# Godot 4 (commit *.import and *.uid files; .godot/ is a rebuildable cache)
 .godot/
-*.import
 export_credentials.cfg
 *.translation
 
