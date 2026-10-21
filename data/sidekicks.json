@@ -43,6 +43,27 @@
         "hub_progress": [
           "We brought {count} animals home! Let's find more.",
           "Look, {count} animals are safe now. Great job, ranger!"
+        ],
+        "care_start": [
+          "The {animal} is hungry. Let's make its lunch!",
+          "Snack time for the {animal}!"
+        ],
+        "feed_hint_first": [
+          "It starts with the letter {letter}."
+        ],
+        "feed_hint_next": [
+          "Next comes the letter {letter}."
+        ],
+        "feed_hint_picture": [
+          "Look at each picture. Which one is {word}?"
+        ],
+        "care_note_retry": [
+          "Hmm, let's think again.",
+          "Let's try the other one."
+        ],
+        "care_done": [
+          "The {animal} feels so much better!",
+          "You take great care of the animals!"
         ]
       }
     }

@@ -22,6 +22,11 @@ var rescued: Array[String] = []
 var rescues: Array[Dictionary] = []
 ## habitat -> how many of its pen's fence repairs the player has already seen fixed.
 var pen_repairs_shown: Dictionary = {}
+## Reading/spelling grade for care tasks: "K", "1", "2", "3" (per profile in Phase 5).
+var grade: String = CareCatalog.DEFAULT_GRADE
+## animal id -> finished care visits (each one adds a fact to its card).
+var care_visits: Dictionary = {}
+var care_catalog: CareCatalog
 ## Set by travel_to(): the area being entered and the gate to appear at.
 var arrival_map: String = ""
 var arrival_gate: String = ""
@@ -71,6 +76,9 @@ func reset() -> void:
 	rescued.clear()
 	rescues.clear()
 	pen_repairs_shown.clear()
+	grade = CareCatalog.DEFAULT_GRADE
+	care_visits.clear()
+	care_catalog = CareCatalog.new()
 	arrival_map = ""
 	arrival_gate = ""
 	world = load_world()
@@ -177,6 +185,16 @@ func rescued_from(habitat: String) -> Array[String]:
 		if r["habitat"] == habitat:
 			ids.append(str(r["animal"]))
 	return ids
+
+
+func care_visits_for(animal_id: String) -> int:
+	return int(care_visits.get(animal_id, 0))
+
+
+## A care visit was finished (fed, care note done, fact card seen).
+func record_care(animal_id: String) -> void:
+	care_visits[animal_id] = care_visits_for(animal_id) + 1
+	log_event("care", {"animal": animal_id, "visits": care_visits[animal_id]})
 
 
 ## Was the critter that starts at this spot already rescued?

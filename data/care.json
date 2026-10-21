@@ -1,0 +1,53 @@
+{
+  "feeding": {
+    "grades": {
+      "K": {"modes": ["picture_match", "first_letter"], "choices": 3},
+      "1": {"modes": ["spell"], "extra_letters": 0},
+      "2": {"modes": ["spell"], "extra_letters": 1},
+      "3": {"modes": ["spell"], "extra_letters": 2}
+    },
+    "hint_after_misses": 2
+  },
+  "foods": {
+    "fish": {"word": "fish", "picture": "res://assets/ui/food/fish.png"},
+    "nuts": {"word": "nuts", "picture": "res://assets/ui/food/nuts.png"},
+    "shrimp": {"word": "shrimp", "picture": "res://assets/ui/food/shrimp.png"}
+  },
+  "animals": {
+    "raccoon": {
+      "foods": ["fish", "nuts"],
+      "care_notes": [
+        {
+          "text": "The raccoon got muddy in the storm.",
+          "question": "What will help?",
+          "good": "A warm bath",
+          "others": ["A big hat"]
+        },
+        {
+          "text": "The raccoon is thirsty after its long run.",
+          "question": "What does it need?",
+          "good": "Fresh water",
+          "others": ["A toy car"]
+        },
+        {
+          "text": "The raccoon loves to climb.",
+          "question": "What can we put in its pen?",
+          "good": "A log to climb",
+          "others": ["A pillow"]
+        },
+        {
+          "text": "The raccoon sleeps in the day.",
+          "question": "What should we do at nap time?",
+          "good": "Be very quiet",
+          "others": ["Sing a loud song"]
+        }
+      ],
+      "facts": [
+        "Raccoons have black fur around their eyes. It looks like a mask!",
+        "Raccoons use their front paws like little hands.",
+        "Raccoons sleep in the day and look for food at night.",
+        "A baby raccoon is called a kit."
+      ]
+    }
+  }
+}
