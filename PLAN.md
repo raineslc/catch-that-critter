@@ -161,7 +161,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 ### Phase 1 — Math Core (no graphics)
 - [x] Problem generators for the five skill areas with Common Core tags + tests.
 - [x] Adaptive difficulty engine + tests.
-- [ ] Simple debug screen to answer generated problems.
+- [x] Simple debug screen to answer generated problems.
 
 ### Phase 2 — Map & Chase Prototype
 - [ ] Meadow tilemap with free 2D tiles; ranger walking + camera.
