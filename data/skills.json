@@ -1,0 +1,78 @@
+{
+  "skills": [
+    {
+      "id": "counting",
+      "name": "Counting",
+      "habitat": "meadow",
+      "grades": "K",
+      "generator": "counting",
+      "levels": [
+        {"description": "Count up to 5 critters", "type": "count_objects", "standards": ["K.CC.4"], "hint": "dots", "choices": 3, "params": {"min": 1, "max": 5}},
+        {"description": "Count up to 10 critters", "type": "count_objects", "standards": ["K.CC.4", "K.CC.5"], "hint": "dots", "choices": 3, "params": {"min": 1, "max": 10}},
+        {"description": "What number comes next, up to 20", "type": "next_number", "standards": ["K.CC.2"], "hint": "number_line", "choices": 3, "params": {"min": 1, "max": 20}},
+        {"description": "Which number is more, up to 10", "type": "compare_more", "standards": ["K.CC.7"], "hint": "number_line", "choices": 2, "params": {"min": 1, "max": 10}},
+        {"description": "Count up to 20 critters", "type": "count_objects", "standards": ["K.CC.5"], "hint": "dots", "choices": 4, "params": {"min": 11, "max": 20}}
+      ]
+    },
+    {
+      "id": "add_subtract",
+      "name": "Adding and Subtracting",
+      "habitat": "forest",
+      "grades": "1-2",
+      "generator": "add_subtract",
+      "levels": [
+        {"description": "Add within 10", "type": "add", "standards": ["1.OA.6"], "hint": "dots", "choices": 3, "params": {"min": 2, "max": 10, "min_part": 1, "spread": 2}},
+        {"description": "Subtract within 10", "type": "subtract", "standards": ["1.OA.6"], "hint": "dots", "choices": 3, "params": {"min": 2, "max": 10, "min_part": 1, "spread": 2}},
+        {"description": "Add and subtract within 20", "type": "mixed", "standards": ["1.OA.6", "2.OA.2"], "hint": "number_line", "choices": 4, "params": {"min": 6, "max": 20, "min_part": 1, "spread": 3}},
+        {"description": "Find the missing number within 20", "type": "missing_addend", "standards": ["1.OA.8"], "hint": "number_line", "choices": 4, "params": {"min": 6, "max": 20, "min_part": 1, "spread": 3}},
+        {"description": "Add within 100", "type": "add", "standards": ["2.NBT.5"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}},
+        {"description": "Subtract within 100", "type": "subtract", "standards": ["2.NBT.5"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}}
+      ]
+    },
+    {
+      "id": "place_value",
+      "name": "Place Value",
+      "habitat": "swamp",
+      "grades": "1-2",
+      "generator": "place_value",
+      "levels": [
+        {"description": "Tens and ones", "type": "tens_ones", "standards": ["1.NBT.2"], "hint": "base_ten_blocks", "choices": 3, "params": {"min": 10, "max": 99}},
+        {"description": "Compare two-digit numbers", "type": "compare", "standards": ["1.NBT.3"], "hint": "base_ten_blocks", "choices": 3, "params": {"min": 10, "max": 99, "spread": 5, "equal_chance": 0.15}},
+        {"description": "Skip count by 5s and 10s", "type": "skip_count", "standards": ["2.NBT.2"], "hint": "number_line", "choices": 4, "params": {"steps": [5, 10], "max": 100, "shown": 3}},
+        {"description": "What a digit is worth, up to 999", "type": "digit_value", "standards": ["2.NBT.1"], "hint": "base_ten_blocks", "choices": 4, "params": {}},
+        {"description": "Compare three-digit numbers", "type": "compare", "standards": ["2.NBT.4"], "hint": "base_ten_blocks", "choices": 3, "params": {"min": 100, "max": 999, "spread": 20, "equal_chance": 0.15}},
+        {"description": "Skip count by 5s, 10s, and 100s, up to 1000", "type": "skip_count", "standards": ["2.NBT.2"], "hint": "number_line", "choices": 4, "params": {"steps": [5, 10, 100], "max": 1000, "shown": 3}}
+      ]
+    },
+    {
+      "id": "time_money",
+      "name": "Time and Money",
+      "habitat": "desert",
+      "grades": "1-3",
+      "generator": "time_money",
+      "levels": [
+        {"description": "Tell time to the hour", "type": "clock", "standards": ["1.MD.3"], "hint": "clock", "choices": 3, "params": {"minute_step": 60}},
+        {"description": "Tell time to the half hour", "type": "clock", "standards": ["1.MD.3"], "hint": "clock", "choices": 3, "params": {"minute_step": 30}},
+        {"description": "Count pennies, nickels, and dimes", "type": "coins", "standards": ["2.MD.8"], "hint": "coins", "choices": 4, "params": {"types": ["penny", "nickel", "dime"], "min_coins": 2, "max_coins": 5, "max_total": 50}},
+        {"description": "Tell time to five minutes", "type": "clock", "standards": ["2.MD.7"], "hint": "clock", "choices": 4, "params": {"minute_step": 5}},
+        {"description": "Count coins with quarters", "type": "coins", "standards": ["2.MD.8"], "hint": "coins", "choices": 4, "params": {"types": ["penny", "nickel", "dime", "quarter"], "min_coins": 2, "max_coins": 6, "max_total": 99}},
+        {"description": "Tell time to the minute", "type": "clock", "standards": ["3.MD.1"], "hint": "clock", "choices": 4, "params": {"minute_step": 1}}
+      ]
+    },
+    {
+      "id": "multiply_divide",
+      "name": "Multiplying and Dividing",
+      "habitat": "mountains",
+      "grades": "3",
+      "generator": "multiply_divide",
+      "levels": [
+        {"description": "Equal groups of 2, 5, and 10", "type": "equal_groups", "standards": ["3.OA.1"], "hint": "groups", "choices": 3, "params": {"sizes": [2, 5, 10], "min_groups": 1, "max_groups": 5}},
+        {"description": "Multiply up to 5 x 5", "type": "multiply", "standards": ["3.OA.7"], "hint": "groups", "choices": 4, "params": {"min_factor": 1, "max_factor": 5}},
+        {"description": "Multiply up to 10 x 10", "type": "multiply", "standards": ["3.OA.7"], "hint": "groups", "choices": 4, "params": {"min_factor": 0, "max_factor": 10}},
+        {"description": "Divide by 2 to 5", "type": "divide", "standards": ["3.OA.2", "3.OA.7"], "hint": "groups", "choices": 4, "params": {"min_divisor": 2, "max_divisor": 5, "min_quotient": 1, "max_quotient": 10}},
+        {"description": "Find the missing factor", "type": "missing_factor", "standards": ["3.OA.4"], "hint": "groups", "choices": 4, "params": {"min_factor": 1, "max_factor": 10}},
+        {"description": "Divide within 100", "type": "divide", "standards": ["3.OA.7"], "hint": "groups", "choices": 4, "params": {"min_divisor": 2, "max_divisor": 10, "min_quotient": 1, "max_quotient": 10}}
+      ]
+    }
+  ]
+}

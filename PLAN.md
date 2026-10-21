@@ -158,7 +158,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 - [x] Init Godot 4 project, folders, GUT, CI.
 
 ### Phase 1 — Math Core (no graphics)
-- [ ] Problem generators for the five skill areas with Common Core tags + tests.
+- [x] Problem generators for the five skill areas with Common Core tags + tests.
 - [ ] Adaptive difficulty engine + tests.
 - [ ] Simple debug screen to answer generated problems.
 
