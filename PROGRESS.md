@@ -3,15 +3,20 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 1, step 1 — Problem generators for the five skill areas with Common Core tags + tests.
+Phase 1, step 2 — Adaptive difficulty engine + tests.
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
-- 2026-10-20 — Phase 0, step 2: Godot 4.7.2 project (`project.godot`, placeholder title screen `scenes/main.tscn`), folder skeleton, GUT 9.7.1 in `addons/gut/`, smoke tests (3 passing), GitHub Actions workflow running GUT on pushes to main and PRs.
+- 2026-10-20 — Phase 0, step 2: Godot 4.7.2 project (`project.godot`, placeholder title screen `scenes/main.tscn`), folder skeleton, GUT 9.7.1 in `addons/gut/`, smoke tests, GitHub Actions workflow running GUT on pushes to main and PRs.
+- 2026-10-20 — Phase 1, step 1: math problem generators.
+  - `scripts/problems/`: `MathProblem` (prompt, spoken TTS text, answer, choices, standards, hint, data), `ChoiceBuilder` (seeded, believable wrong choices), one generator per habitat (`CountingGenerator`, `AddSubtractGenerator`, `PlaceValueGenerator`, `TimeMoneyGenerator`, `MultiplyDivideGenerator`), and `ProblemFactory`.
+  - `data/skills.json`: 5 skills, 29 levels total, each with a description, problem type, Common Core codes, hint type, number of answer buttons, and tuning params.
+  - 36 tests passing (every level sampled 300×: answer among choices, no duplicates/negatives, right button count, valid standard codes, no unkind words).
 
 ## Next
-- Phase 1, step 1: pure-GDScript problem generators in `scripts/problems/` (counting, add/subtract, place value, time/money, multiplication), each tagged with Common Core codes, seeded RNG, GUT tests.
+- Phase 1, step 2: adaptive difficulty engine in `scripts/adaptive/` (rolling last 10 per skill; ≥ 80% correct and fast → level up; < 50% → level down + more hints; mastery = 3 sessions above 80%), with tests.
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.
 - Export presets (Web, Windows, macOS) not set up yet; they need Godot export templates (~1.3 GB) — do this in Phase 7 or when first needed.
+- Preschool problem set is Phase 8 (not in skills.json yet).
