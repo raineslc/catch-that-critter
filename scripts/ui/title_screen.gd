@@ -1,8 +1,7 @@
 extends Control
-## Placeholder title screen: any key, click, or tap starts the game in the Meadow.
-## (The storm intro replaces this in Phase 3.)
+## Title screen: any key, click, or tap starts the storm intro (which then goes to the Meadow).
 
-const START_SCENE: String = "res://scenes/world/meadow.tscn"
+const START_SCENE: String = "res://scenes/story/storm_intro.tscn"
 
 
 func _unhandled_input(event: InputEvent) -> void:
