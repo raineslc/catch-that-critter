@@ -25,6 +25,12 @@ Shared rules for every AI assistant (Claude, ChatGPT/Codex, Gemini) and for Chri
 - JSON, 2-space indent, `snake_case` keys.
 - Every problem type in `skills.json` has a `standards` array of Common Core codes (e.g. `["2.OA.2"]`).
 
+## Maps & art
+- Habitat maps: `data/maps/<habitat>.txt`, one character per 16px tile, every row the same width, map edges blocked, exactly one spawn `S`. Character meanings in `data/maps/legend.json`.
+- Ponds must be convex (no inside corners). Paths can be 1 tile wide or rectangles.
+- Only CC0 (or compatible) art; record every file in `assets/CREDITS.md` with its original pack path. Stick to the Ninja Adventure pack family for a consistent look.
+- Node origins of characters and nature objects sit at their feet (bottom-center) so y-sorting works.
+
 ## Kid-facing text
 - Short, calm, encouraging sentences. Never "wrong," "bad," or "fail."
 - Every instruction must also be available as text-to-speech.
