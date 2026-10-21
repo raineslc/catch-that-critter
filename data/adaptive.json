@@ -1,0 +1,17 @@
+{
+  "window_size": 10,
+  "min_answers_to_level_up": 10,
+  "min_answers_to_level_down": 6,
+  "level_up_accuracy": 0.8,
+  "level_down_accuracy": 0.5,
+  "fast_seconds": {
+    "default": 8.0,
+    "time_money": 12.0,
+    "multiply_divide": 10.0
+  },
+  "mastery_accuracy": 0.8,
+  "mastery_sessions": 3,
+  "min_answers_per_mastery_session": 5,
+  "misses_before_hint": 2,
+  "misses_before_hint_with_extra_help": 1
+}
