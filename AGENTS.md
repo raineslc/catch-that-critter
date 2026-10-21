@@ -2,6 +2,7 @@
 
 Same standing rules as `CLAUDE.md`. Short version:
 
+0. Start with `docs/HANDOFF.md` (where things stand, how Chris works).
 1. Read first, every session: `PLAN.md`, `CONVENTIONS.md`, `PROGRESS.md`, `DECISIONS.md`.
 2. Run the tests before changing anything:
    `godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit`

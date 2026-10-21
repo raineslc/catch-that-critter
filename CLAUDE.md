@@ -3,6 +3,7 @@
 Standing rules for Claude Code (AGENTS.md and GEMINI.md should say the same thing).
 
 ## Read first, every session
+0. `docs/HANDOFF.md` — short summary of where things stand and how Chris works.
 1. `PLAN.md` — master plan. **Approved by Chris on 2026-10-20.**
 2. `CONVENTIONS.md`, `PROGRESS.md`, `DECISIONS.md`.
 3. Run the tests before changing anything.
