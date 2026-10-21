@@ -9,6 +9,7 @@ extends Node
 const PLAYTEST_PATH: String = "res://data/playtest.json"
 const PLAYTEST_FLAG: String = "--playtest"
 const SPEECH_POLL_SECONDS: float = 0.1
+const READ_ALOUD_DEFAULT: bool = false
 
 var factory: ProblemFactory
 var engine: AdaptiveEngine
@@ -16,8 +17,9 @@ var catalog: AnimalCatalog
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 ## Animal ids rescued this session, in order.
 var rescued: Array[String] = []
-## Read each chase question aloud with text-to-speech.
-var read_aloud: bool = true
+## Read questions and Henrito's lines aloud with text-to-speech. Off since 2026-10-21:
+## Chris found the Windows voices sounded weird and some lines off (see DECISIONS.md).
+var read_aloud: bool = READ_ALOUD_DEFAULT
 ## "explore" (no timer) or "race" (timed chases). See ChaseState.
 var mode: String = ChaseState.EXPLORE
 ## Parent setting: keep the game in Explore mode (Phase 5 parent area sets this).
@@ -61,6 +63,7 @@ func reset() -> void:
 	mode = ChaseState.EXPLORE
 	explore_locked = false
 	sidekick_id = "henrito"
+	read_aloud = READ_ALOUD_DEFAULT
 
 
 ## Turns on playtest mode. `log_dir` "" = the default user://playtest folder.

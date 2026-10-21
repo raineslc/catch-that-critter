@@ -1,6 +1,6 @@
 {
   "description": "Playtest 1 settings. Only used when the game is started with the --playtest flag (the desktop shortcut). Chris's request: adding and subtracting only, every number 12 or less.",
-  "version": "playtest-1.2",
+  "version": "playtest-1.3",
   "respawn_seconds": 25.0,
   "log": true,
   "freeze_after_ms": 5000,
