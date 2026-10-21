@@ -1,6 +1,6 @@
 # PROGRESS.md — Catch That Critter
 
-Every assistant updates this at the end of a session.
+Every assistant updates this at the end of a session. Quick overview for a new session: `docs/HANDOFF.md`.
 
 ## Current step
 Phase 3, step 3 — Feeding via spelling, care notes, fact cards with read-aloud. (Playtest 1 can continue in parallel with `playtest-1.3`.)
