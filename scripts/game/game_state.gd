@@ -27,6 +27,8 @@ var sidekick_id: String = "henrito"
 var playtest: Dictionary = {}
 ## Playtest answer log, or null.
 var playtest_log: PlaytestLog
+## Playtest freeze detector, or null (see FreezeWatch).
+var freeze_watch: FreezeWatch
 
 
 func _ready() -> void:
@@ -36,6 +38,7 @@ func _ready() -> void:
 
 
 func reset() -> void:
+	_stop_freeze_watch()
 	if playtest_log != null:
 		playtest_log.close()
 	playtest_log = null
@@ -59,8 +62,13 @@ func enable_playtest(config: Dictionary = {}, log_dir: String = "") -> void:
 	if bool(playtest.get("log", false)):
 		playtest_log = PlaytestLog.new()
 		if playtest_log.open(log_dir if log_dir != "" else PlaytestLog.DIR):
-			log_event("session_start", {"skill": playtest_skill(), "date": Time.get_datetime_string_from_system()})
+			log_event("session_start", {"skill": playtest_skill(), "date": Time.get_datetime_string_from_system(),
+				"version": str(playtest.get("version", "")), "tts": Speech.is_available()})
 			print("Playtest log: ", playtest_log.global_path())
+			freeze_watch = FreezeWatch.new()
+			freeze_watch.name = "FreezeWatch"
+			add_child(freeze_watch)
+			freeze_watch.start(playtest_log, int(playtest.get("freeze_after_ms", FreezeWatch.DEFAULT_STALL_MS)))
 		else:
 			playtest_log = null
 
@@ -94,6 +102,20 @@ func respawn_seconds() -> float:
 func log_event(event: String, data: Dictionary = {}) -> void:
 	if playtest_log != null:
 		playtest_log.write(event, data)
+	breadcrumb(event)
+
+
+## A note for the freeze detector about what the game is doing right now (no-op when off).
+func breadcrumb(step: String) -> void:
+	if freeze_watch != null:
+		freeze_watch.mark(step)
+
+
+func _stop_freeze_watch() -> void:
+	if freeze_watch != null:
+		freeze_watch.stop()
+		freeze_watch.queue_free()
+		freeze_watch = null
 
 
 ## The mode chases actually use (Explore whenever a parent has locked it).
@@ -120,6 +142,7 @@ func _notification(what: int) -> void:
 func end_playtest_log() -> void:
 	if playtest_log == null:
 		return
+	_stop_freeze_watch()
 	var skill: String = playtest_skill()
 	log_event("session_end", {"rescued": rescued.size(), "stats": engine.stats(skill) if skill != "" else {}})
 	playtest_log.close()

@@ -23,6 +23,12 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Freeze during Playtest 1: investigation
+- **What happened:** first playtest session (14:32) hard-froze (everything stopped; force-quit from Task Manager) right after the first answer of chase 3, at t=47.1s — exactly 25.0s after the first raccoon was caught, i.e. the moment it came back. No Windows hang/crash report; Godot's own log wasn't written for the shortcut launch.
+- **Tried:** a robot player (12 chases, real window, TTS on, comebacks every 4s landing mid-chase) did not freeze.
+- **Added (playtest-only):** `FreezeWatch` — breadcrumbs at each step (problem made, buttons ready, TTS stop/speak/queued, sounds, net toss, raccoon comes back) and a background-thread watchdog that writes a `freeze` event with the last 12 steps to the playtest log after 5s without a frame (`recovered` if it wakes up); `respawn` events in the log; `tools/playtest_launch.cmd` saves Godot's verbose log per session with a timestamp; summary script reports freezes. Released as `playtest-1.1`.
+- Suspects until proven: Windows TTS (`tts_stop`/`tts_speak`) on the main thread; something in the comeback path during a chase.
+
 ## 2026-10-21 — Playtest 1 before Phase 3
 Chris asked for a playtest before starting Phase 3. Setup (all playtest-only, switched on by the `--playtest` launch flag so the normal game is unchanged):
 - **Math:** every chase uses `playtest_add_sub_12` from `data/playtest.json` — adding and subtracting with every number (problem and buttons) 12 or less, 7 levels from "add within 6" to "missing number within 12" (Chris: "start with only numbers up to and including 12").

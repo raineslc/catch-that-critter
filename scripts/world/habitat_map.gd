@@ -128,12 +128,16 @@ func _schedule_respawn(id: String, feet: Vector2, seconds: float) -> void:
 		if ranger.global_position.distance_to(feet) < RESPAWN_CLEARANCE:
 			_schedule_respawn(id, feet, RESPAWN_RETRY_SECONDS)
 			return
-		add_critter(id, feet))
+		GameState.breadcrumb("map: %s comes back (chase on: %s)" % [id, chase_target != null])
+		var back: Critter = add_critter(id, feet)
+		GameState.log_event("respawn", {"animal": id, "during_chase": chase_target != null,
+			"spot": [int(feet.x), int(feet.y)], "ok": back != null}))
 
 
 func _on_critter_startled(critter: Critter) -> void:
 	if chase_target != null:
 		return
+	GameState.breadcrumb("map: startled %s" % critter.name)
 	chase_target = critter
 	# Freeze the world (ranger and critters) while the chase is on.
 	objects.process_mode = Node.PROCESS_MODE_DISABLED

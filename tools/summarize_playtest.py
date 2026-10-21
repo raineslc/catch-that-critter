@@ -47,6 +47,22 @@ def summarize(events: list[dict]) -> str:
     modes = sorted({e["mode"] for e in answers})
     if modes:
         out.append("Modes used: " + ", ".join(modes))
+    start = next((e for e in events if e["event"] == "session_start"), {})
+    if start.get("version"):
+        out.append(f"Version: {start['version']} (voice available: {start.get('tts')})")
+    if not any(e["event"] == "session_end" for e in events):
+        out.append("NOTE: no session_end - the game did not close normally (crash, freeze, or force-quit).")
+    respawns = [e for e in events if e["event"] == "respawn"]
+    if respawns:
+        during = sum(1 for e in respawns if e.get("during_chase"))
+        out.append(f"Raccoons came back {len(respawns)} times ({during} during a chase).")
+    for e in events:
+        if e["event"] == "freeze":
+            out.append("")
+            out.append(f"FREEZE at {e['t'] / 60:.1f} min (stuck {e['stuck_ms'] / 1000:.1f}s). Last steps before it:")
+            out.extend(f"    {step}" for step in e.get("last_steps", []))
+        elif e["event"] == "recovered":
+            out.append(f"  ...recovered after {e['stuck_ms'] / 1000:.1f}s")
 
     out.append("")
     out.append("By level (first tries):")

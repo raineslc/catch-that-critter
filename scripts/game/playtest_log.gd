@@ -9,6 +9,8 @@ const DIR: String = "user://playtest"
 var path: String = ""
 var _file: FileAccess
 var _start_msec: int = 0
+## The freeze watchdog writes from its own thread, so writes take turns.
+var _mutex: Mutex = Mutex.new()
 
 
 ## Opens a new log file named after the current date and time. Returns false if it can't.
@@ -30,18 +32,21 @@ func is_open() -> bool:
 
 ## One event: {"t": seconds since start, "event": type, ...data}. Flushed right away so a crash loses nothing.
 func write(event: String, data: Dictionary = {}) -> void:
-	if _file == null:
-		return
-	var entry: Dictionary = {"t": snappedf((Time.get_ticks_msec() - _start_msec) / 1000.0, 0.1), "event": event}
-	entry.merge(data)
-	_file.store_line(JSON.stringify(entry))
-	_file.flush()
+	_mutex.lock()
+	if _file != null:
+		var entry: Dictionary = {"t": snappedf((Time.get_ticks_msec() - _start_msec) / 1000.0, 0.1), "event": event}
+		entry.merge(data)
+		_file.store_line(JSON.stringify(entry))
+		_file.flush()
+	_mutex.unlock()
 
 
 func close() -> void:
+	_mutex.lock()
 	if _file != null:
 		_file.close()
 		_file = null
+	_mutex.unlock()
 
 
 ## Absolute path on this computer (for telling Chris where the file is).

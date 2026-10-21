@@ -29,10 +29,15 @@ static func voice() -> String:
 static func say(text: String, rate: float = RATE, pitch: float = PITCH) -> void:
 	if not is_available() or text == "":
 		return
+	GameState.breadcrumb("tts: stop")
 	DisplayServer.tts_stop()
+	GameState.breadcrumb("tts: speak '%s'" % text.left(40))
 	DisplayServer.tts_speak(text, voice(), 50, pitch, rate)
+	GameState.breadcrumb("tts: queued")
 
 
 static func stop() -> void:
 	if is_available():
+		GameState.breadcrumb("tts: stop")
 		DisplayServer.tts_stop()
+		GameState.breadcrumb("tts: stopped")

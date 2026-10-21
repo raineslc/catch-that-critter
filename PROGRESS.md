@@ -52,6 +52,7 @@ Playtest 1 — waiting for Chris to run it with the 7-year-old (checklist: `docs
 - **Phase 2 (map & chase prototype) complete.**
 - 2026-10-21 — Playtest 1 setup: `--playtest` mode (`data/playtest.json`: add/subtract to 12, raccoons respawn after 25s, answer log), `PlaytestLog`, `tools/summarize_playtest.py`, 6 raccoons in the Meadow, game icon, desktop shortcut → frozen worktree `C:\Users\raine\CatchACritter-playtest` at tag `playtest-1`, checklist `docs/playtest_1.md`. 146 tests passing.
   - To review: `python tools/summarize_playtest.py` (newest log) + Chris's notes.
+- 2026-10-21 — Playtest 1 froze mid-chase (see DECISIONS.md "Freeze during Playtest 1"). Added `FreezeWatch` breadcrumbs + watchdog, `respawn` log events, `tools/playtest_launch.cmd` (per-session Godot verbose log), freeze reporting in the summary script → `playtest-1.1`. Not yet reproduced; a realistic robot player (walks, clicks, 25s comebacks, 30 chases) is the next check. First data point: 7/7 right at ~1.9s on level 1 → start the 7-year-old higher.
 
 ## Next
 - Phase 3, step 1: storm intro (a few illustrated panels with TTS narration: thunderstorm, fences fall, animals scatter; Henrito explains the mission). Needs a little art: pack backgrounds/FX or simple drawn panels.
