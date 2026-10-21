@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 2, step 3 — Chase screen: answer buttons, speed-up, net capture.
+Phase 2, step 4 — Explore and Race modes; Henrito hints after 2 misses (TTS).
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -35,8 +35,17 @@ Phase 2, step 3 — Chase screen: answer buttons, speed-up, net capture.
   - `HabitatMap` emits `chase_requested(critter)` and shows a "Chase the Raccoon!" banner (placeholder until the chase screen).
   - 99 tests passing.
 
+- 2026-10-21 — Phase 2, step 3: the chase.
+  - `scripts/chase/`: `ChaseState` (rules: 3 right = catch, gap closes/grows; tuning in `data/chase.json`), `ChaseScreen` (scrolling path with ranger + critter at 4×, catch meter, question, `ProblemPicture`, big buttons, kind feedback, sounds, net toss → heart → "You caught the Raccoon!" with portrait), `ChaseNet`.
+  - `GameState` autoload (`scripts/game/game_state.gd`): factory, adaptive engine, animal catalog, rescued list, read-aloud flag.
+  - `Speech` (`scripts/tts/speech.gd`): TTS wrapper (slower rate, silent when headless); reads each question aloud.
+  - Meadow: startle → world freezes → "Chase the Raccoon!" → chase opens after 0.8s → catch removes the raccoon and records the rescue → world resumes.
+  - Fixed: a startled critter kept moving after the world froze (physics error).
+  - 117 tests passing.
+
 ## Next
-- Phase 2, step 3: chase screen. On `chase_requested`: camera follows the critter running along a path, ranger follows automatically; a problem (ProblemFactory at the AdaptiveEngine level for the habitat's skill) with 3–4 big buttons; correct → ranger speeds up; 3 correct → net toss → capture; wrong → critter pulls ahead + gentle sound. Pictures for counting/clock/coin problems needed here.
+- Phase 2, step 4: Explore vs Race modes (Race: timer per chase, critter escapes when time runs out, fast answers give a sprint boost; parent can lock Explore). Henrito: portrait + speech bubble, calm TTS hints after 2 misses (1 with extra help) using the hint type (dots, number line, clock, coins, groups), shown as pictures.
+- Chris: listen to the four chase sounds and say if any should change.
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.

@@ -9,6 +9,7 @@ var meadow: HabitatMap
 
 func before_each() -> void:
 	meadow = SCENE.instantiate()
+	meadow.auto_open_chase = false
 	add_child_autofree(meadow)
 	await wait_physics_frames(2)
 

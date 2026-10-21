@@ -90,6 +90,9 @@ func _physics_process(delta: float) -> void:
 	cooldown_left = maxf(cooldown_left - delta, 0.0)
 	if can_startle() and ranger != null and global_position.distance_to(ranger.global_position) <= float(animal["startle_radius"]):
 		_startle()
+		# A chase may have just frozen the world (and taken us out of physics): stop here.
+		if not can_process():
+			return
 	match state:
 		State.IDLE:
 			time_left -= delta

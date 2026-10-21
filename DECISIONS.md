@@ -23,6 +23,14 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Chase is its own screen
+PLAN 3.6 says the camera follows the animal along a path with the ranger following automatically. Built as a full-screen chase view: a scrolling path at 4× zoom (critter ahead, ranger behind, gap shrinks/grows with answers) above a big question panel. The world freezes underneath and resumes after. Simpler and clearer for a 7-year-old than steering through the real map, and it leaves room for the problem, picture, and big buttons.
+- Every try moves the chase (right closes the gap, a miss lets the critter pull ahead); only the first try goes to the difficulty engine.
+- Explore mode has no way to lose: misses never end the chase. (Race mode's timer comes in the next step.)
+- Pictures (critters to count, analog clock, US coins labeled by name not value, equal groups) are drawn in code. The pack has no net, so it's drawn too.
+- Sounds picked by file name without listening (coin "ding", soft blip, whoosh, success jingle) — Chris to listen and swap if needed (`assets/audio/sfx/`).
+- `GameState` autoload holds the session's problem factory, difficulty engine, animal catalog, and rescued list until profiles/saves arrive (Phase 5). New players start every skill at level 1 for now.
+
 ## 2026-10-21 — Missing species: pack animals now, fill gaps later
 Chris chose to build with the pack's animals first (raccoon in the Meadow now) and find or make fox, rabbit, deer, turtle, tortoise, mountain goat, snow leopard, and eagle before they're needed (fox/rabbit/deer before the MVP is done). The confirmed animal list in PLAN.md is unchanged.
 

@@ -25,11 +25,12 @@ const PHYSICS_LAYER: int = 0
 const SMALL_BLOCKER: Vector2 = Vector2(12, 8)
 const TREE_BLOCKER: Vector2 = Vector2(16, 10)
 const WALL_THICKNESS: float = 16.0
-const BANNER_SECONDS: float = 1.5
 const BANNER_FONT_SIZE: int = 48
 
-## A critter got startled: the chase should start. (Phase 2 step 3 opens the chase screen.)
+## A critter got startled: a chase is about to start.
 signal chase_requested(critter: Critter)
+## A chase ended (caught or not).
+signal chase_ended(critter_id: String, caught: bool)
 
 @export_file("*.txt") var map_path: String = "res://data/maps/meadow.txt"
 ## Same seed = same grass/flower variety every time the map loads.
@@ -43,7 +44,10 @@ var catalog: AnimalCatalog
 var critters: Array[Critter] = []
 ## The critter being chased, or null.
 var chase_target: Critter
+var chase_screen: ChaseScreen
 var banner: Label
+## Turn off in tests: the chase screen then opens only when open_chase() is called.
+var auto_open_chase: bool = true
 
 
 func _ready() -> void:
@@ -102,11 +106,46 @@ func _spawn_critters(rng: RandomNumberGenerator) -> void:
 
 
 func _on_critter_startled(critter: Critter) -> void:
+	if chase_target != null:
+		return
 	chase_target = critter
+	# Freeze the world (ranger and critters) while the chase is on.
+	objects.process_mode = Node.PROCESS_MODE_DISABLED
 	banner.text = "Chase the %s!" % critter.animal.get("name", "critter")
 	banner.visible = true
-	get_tree().create_timer(BANNER_SECONDS).timeout.connect(func() -> void: banner.visible = false)
 	chase_requested.emit(critter)
+	if auto_open_chase:
+		get_tree().create_timer(float(ChaseState.load_config().get("start_delay", 0.8))).timeout.connect(open_chase)
+
+
+## Shows the chase screen for the current chase target.
+func open_chase() -> void:
+	if chase_target == null or chase_screen != null:
+		return
+	banner.visible = false
+	chase_screen = ChaseScreen.new()
+	chase_screen.auto_advance = auto_open_chase
+	add_child(chase_screen)
+	chase_screen.finished.connect(_on_chase_finished)
+	chase_screen.start(chase_target.animal, str(chase_target.animal["skill"]))
+
+
+func _on_chase_finished(caught: bool) -> void:
+	var critter: Critter = chase_target
+	var id: String = str(critter.animal["id"])
+	chase_screen.queue_free()
+	chase_screen = null
+	chase_target = null
+	if caught:
+		GameState.record_rescue(id)
+		critters.erase(critter)
+		critter.queue_free()
+	else:
+		critter.emote.visible = false
+		critter.state = Critter.State.IDLE
+		critter.cooldown_left = float(critter.animal["cooldown_seconds"])
+	objects.process_mode = Node.PROCESS_MODE_INHERIT
+	chase_ended.emit(id, caught)
 
 
 func _make_banner() -> void:
