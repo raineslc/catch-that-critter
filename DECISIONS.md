@@ -17,6 +17,15 @@ The GitHub repo is the single source of truth so Claude, ChatGPT, and Gemini can
 ## 2026-10-20 — Pinned Godot 4.7.2 and GUT 9.7.1
 Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release made for Godot 4.7. Compatibility renderer so the same project runs well on the web.
 
+## 2026-10-21 — Art pack: Ninja Adventure (CC0)
+- Chris picked **Ninja Adventure** by Pixel-Boy & AAA (CC0, 16×16 top-down) over Kenney: one consistent style with character portraits (good for Henrito's hint bubble), tiles, UI, sounds, music. Files we use are listed in `assets/CREDITS.md`.
+- Animals in the pack that match the plan: raccoon, bear, owl, frog, alligator (Reptile2), lizard, snake. **Missing:** fox, rabbit, deer, turtle, tortoise, mountain goat, snow leopard, eagle — decide in Phase 2 step 2 (swap species, find matching CC0 sprites, or recolor).
+- The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
+- Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
+
+## 2026-10-21 — Maps are text files
+Habitat layouts live in `data/maps/*.txt` (one character per 16px tile; meanings in `data/maps/legend.json`) so they can be edited without Godot. Ponds must be convex (no inside corners); a test enforces it.
+
 ## 2026-10-21 — Adaptive engine details (clarifies PLAN.md 3.11)
 - Mastery credit flows down: a good session (≥ 80%, ≥ 5 answers) at level N counts toward levels 1..N. Without this, the level-up rule (8 of last 10, fast) moves a strong player on before any level could collect 3 good sessions.
 - A poor session at level N resets the streak for N and harder levels; easier levels keep their streak.

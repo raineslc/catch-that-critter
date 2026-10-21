@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 2, step 1 — Meadow tilemap with free 2D tiles; ranger walking + camera.
+Phase 2, step 2 — Wandering animal that starts a chase when approached.
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -22,8 +22,15 @@ Phase 2, step 1 — Meadow tilemap with free 2D tiles; ranger walking + camera.
   - TTS check on Chris's Windows PC: Godot found 3 English voices (Microsoft David, Zira, Mark). Web TTS still untested.
 - **Phase 1 (math core) complete.**
 
+- 2026-10-21 — Phase 2, step 1: Meadow you can walk around.
+  - Art: Ninja Adventure pack (CC0) — see DECISIONS.md and `assets/CREDITS.md`. Original zip is in Chris's Downloads; only used files are in `assets/`.
+  - `data/maps/meadow.txt` + `legend.json`; `MapData` reads them; `EdgeTiles` picks path/pond edge pieces; `HabitatMap` (`scenes/world/meadow.tscn`) builds ground TileMapLayer (water blocks), y-sorted trees/bushes/rocks/flowers, edge walls, spawns the ranger.
+  - `Ranger` (`scenes/world/ranger.tscn`): arrows/WASD (actions added in code), click-to-move (gives up when blocked), 4-direction walk/idle animations, Camera2D ×3 zoom clamped to the map.
+  - Title screen → any key → Meadow.
+  - 88 tests passing (physics tests: walking, pond blocks, click-to-move, stuck give-up).
+
 ## Next
-- Phase 2, step 1: pick ONE free 2D asset pack family (Kenney or similar, CC0) for tiles + animals + ranger; Meadow tilemap; ranger walks with arrows/WASD/click; Camera2D follows. Ask Chris before downloading assets.
+- Phase 2, step 2: one wandering Meadow critter (raccoon is in the pack) that startles and starts a chase when the ranger gets close. Decide with Chris what to do about missing species (fox, rabbit, deer, ...).
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.

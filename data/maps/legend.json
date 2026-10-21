@@ -1,0 +1,24 @@
+{
+  "tile_size": 16,
+  "ground": {
+    ".": "grass",
+    ",": "grass",
+    "f": "grass",
+    "b": "grass",
+    "r": "grass",
+    "T": "grass",
+    "P": "grass",
+    "S": "grass",
+    "p": "path",
+    "w": "water"
+  },
+  "objects": {
+    ",": {"name": "tuft", "atlas": [3, 10], "size": [1, 1], "blocks": false},
+    "f": {"name": "flower", "atlas": [[0, 11], [1, 11], [3, 11], [6, 11]], "size": [1, 1], "blocks": false},
+    "b": {"name": "bush", "atlas": [[0, 10], [1, 10], [2, 10]], "size": [1, 1], "blocks": true},
+    "r": {"name": "rock", "atlas": [4, 13], "size": [1, 1], "blocks": true},
+    "T": {"name": "tree", "atlas": [0, 0], "size": [2, 2], "blocks": true},
+    "P": {"name": "pine", "atlas": [2, 0], "size": [2, 2], "blocks": true}
+  },
+  "spawn": "S"
+}
