@@ -59,8 +59,12 @@ Phase 3, step 3 — Feeding via spelling, care notes, fact cards with read-aloud
 
 - 2026-10-21 — Phase 3, step 2: Rescue Center hub (`scenes/world/rescue_center.tscn`, `scripts/world/rescue_center.gd` extends HabitatMap; map `data/maps/rescue_center.txt` + info file `.json`; `data/maps/world.json`). Five gates (Meadow open, others "coming soon"), five pens with storm-broken fences fixed one per rescue (animated on return), rescued animals living in their pen, Henrito in the plaza with hub lines. Meadow got an east gate back. `GameState`: rescue records, rescued spots stay rescued, travel/arrival. Intro now leads to the hub. 180 tests passing.
 
+- 2026-10-21 — Fixed a flaky test: `test_freeze_watch` waited for physics frames, which run in a catch-up burst after the deliberate stall before FreezeWatch's `_process` could log "recovered"; it now waits for process frames.
+- 2026-10-21 — Phase 3, step 3: care at the Rescue Center. Walk up to a pen with animals → "Care for the Raccoon" → `CareScreen` (`scripts/care/`): feed by spelling the food's name with letter tiles (K: first letter or picture match), a short care note with a choice, then the fact card (one new fact per visit). Logic in `CareCatalog` (`data/care.json`), `SpellingTask`, `CareChoice`, `CareVisit`; `GameState.grade` ("2") and `care_visits`. Henrito hints after 2 misses. Food art: fish, shrimp, honey. Details in DECISIONS.md. 213 tests passing.
+
 ## Next
-- Phase 3, step 3: care at the Rescue Center — feed by spelling the food name with letter tiles (K: picture match / first letter), short care notes with a choice, fact cards (3–4 kid-level facts) per animal. Text only while the voice is off.
+- Phase 3, step 4: stars (from chases and care), animal levels 1–5 through care, collection book.
+- Chris: try a care visit; are fish/shrimp OK as raccoon spelling words (shrimp is harder), and are the care notes/facts at the right reading level?
 - Chris: listen to the four chase sounds and say if any should change; try Race mode with the 7-year-old and tell me if 45 seconds feels right.
 
 ## Open issues

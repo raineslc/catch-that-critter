@@ -7,8 +7,18 @@ extends HabitatMap
 ##   since the last visit stand back up while you watch.
 ## - Rescued animals live in their habitat's pen and wander around inside it.
 ## - The sidekick stands in the plaza and says something helpful when you walk up.
+## - Walk up to a pen with animals in it and a "Care for the ..." button appears (Space/Enter
+##   works too): it opens the CareScreen (feed, care note, fact card) while the world waits.
 
 const MAX_RESIDENTS_PER_PEN: int = 8
+## How close (pixels) to a pen's fence the ranger must be to care for its animals.
+const CARE_DISTANCE: float = 24.0
+const CARE_BUTTON_SIZE: Vector2 = Vector2(420, 84)
+const CARE_BUTTON_FONT_SIZE: int = 34
+const CARE_BUTTON_TEXT: String = "Care for the %s"
+const CARED_TEXT: String = "The %s is happy and full!"
+const HAPPY_EMOTE: Texture2D = preload("res://assets/ui/emotes/happy.png")
+const HAPPY_EMOTE_SECONDS: float = 2.5
 ## How close (pixels) the ranger must be for the sidekick to talk.
 const TALK_DISTANCE: float = 30.0
 ## Knocked-over fence look: tilt (alternating) and how far it slumps down.
@@ -31,6 +41,10 @@ var talk_bubble: PanelContainer
 var talk_label: Label
 ## How many fence sections stood back up on this visit (for the banner and tests).
 var newly_repaired: int = 0
+var care_button: Button
+var care_screen: CareScreen
+## The animal id the care button is offering, or "".
+var care_target: String = ""
 
 
 func build() -> void:
@@ -39,6 +53,7 @@ func build() -> void:
 	_build_pens()
 	_place_sidekick()
 	_build_talk_bubble()
+	_build_care_button()
 	_show_repairs()
 
 
@@ -65,7 +80,10 @@ static func is_fixed(fence: StaticBody2D) -> bool:
 
 
 func _process(_delta: float) -> void:
-	if sidekick_sprite == null or ranger == null:
+	if ranger == null or care_screen != null:
+		return
+	_update_care_button()
+	if sidekick_sprite == null:
 		return
 	var near: bool = ranger.global_position.distance_to(sidekick_sprite.global_position) <= TALK_DISTANCE
 	if near and not talk_bubble.visible:
@@ -73,6 +91,100 @@ func _process(_delta: float) -> void:
 		talk_bubble.visible = true
 	elif not near and talk_bubble.visible:
 		talk_bubble.visible = false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if care_target != "" and care_screen == null and event.is_action_pressed("ui_accept"):
+		get_viewport().set_input_as_handled()
+		open_care(care_target)
+
+
+## The pen's area in pixels (fences included).
+static func pen_rect(pen: Dictionary) -> Rect2:
+	var cell: Vector2i = Vector2i(int(pen["cell"][0]), int(pen["cell"][1]))
+	return Rect2(Vector2(cell.x * TILE, cell.y * TILE), Vector2(int(pen["pieces"]) * 3 * TILE, int(pen["depth"]) * TILE))
+
+
+## The animal to care for at a spot: the first resident (with care data) of a pen within
+## CARE_DISTANCE, or "".
+func care_animal_near(point: Vector2) -> String:
+	for pen: Dictionary in pens:
+		if not pen_rect(pen).grow(CARE_DISTANCE).has_point(point):
+			continue
+		for resident: Critter in pen["residents"]:
+			var id: String = str(resident.animal.get("id", ""))
+			if GameState.care_catalog.has_animal(id):
+				return id
+	return ""
+
+
+func _update_care_button() -> void:
+	var id: String = care_animal_near(ranger.global_position)
+	if id == care_target:
+		return
+	care_target = id
+	care_button.visible = id != ""
+	if id != "":
+		care_button.text = CARE_BUTTON_TEXT % catalog.get_animal(id).get("name", id)
+
+
+## Opens the care screen for `animal_id` (one of the residents). The world waits meanwhile.
+func open_care(animal_id: String) -> void:
+	if care_screen != null or not catalog.has_animal(animal_id):
+		return
+	objects.process_mode = Node.PROCESS_MODE_DISABLED
+	care_button.visible = false
+	talk_bubble.visible = false
+	mode_button.visible = false
+	var visit: CareVisit = CareVisit.make(GameState.care_catalog, animal_id, GameState.grade,
+		GameState.care_visits_for(animal_id), GameState.rng)
+	care_screen = CareScreen.new()
+	add_child(care_screen)
+	care_screen.finished.connect(_on_care_finished.bind(animal_id))
+	care_screen.start(catalog.get_animal(animal_id), visit)
+
+
+func _on_care_finished(completed: bool, animal_id: String) -> void:
+	care_screen.queue_free()
+	care_screen = null
+	care_target = ""
+	objects.process_mode = Node.PROCESS_MODE_INHERIT
+	refresh_mode_button()
+	if not completed:
+		return
+	GameState.record_care(animal_id)
+	show_banner(CARED_TEXT % catalog.get_animal(animal_id).get("name", animal_id))
+	for pen: Dictionary in pens:
+		for resident: Critter in pen["residents"]:
+			if resident.animal.get("id", "") == animal_id:
+				_show_happy(resident)
+
+
+## A happy face over a resident for a moment.
+func _show_happy(resident: Critter) -> void:
+	resident.emote.texture = HAPPY_EMOTE
+	resident.emote.visible = true
+	# A tween owned by the resident, so it goes away with it (a scene-tree timer could outlive it).
+	var tween: Tween = resident.create_tween()
+	tween.tween_interval(HAPPY_EMOTE_SECONDS)
+	tween.tween_callback(resident.emote.hide)
+
+
+func _build_care_button() -> void:
+	care_button = Button.new()
+	care_button.name = "CareButton"
+	care_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	care_button.offset_left = -CARE_BUTTON_SIZE.x / 2.0
+	care_button.offset_right = CARE_BUTTON_SIZE.x / 2.0
+	care_button.offset_top = -CARE_BUTTON_SIZE.y - 30
+	care_button.offset_bottom = -30
+	care_button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
+	care_button.focus_mode = Control.FOCUS_NONE
+	care_button.visible = false
+	care_button.pressed.connect(func() -> void:
+		if care_target != "":
+			open_care(care_target), CONNECT_DEFERRED)
+	get_node("Hud").add_child(care_button)
 
 
 ## What the sidekick says when you walk up: where to go at first, then how it's going.

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyo4uk5ij1681"
-path="res://.godot/imported/nuts.png-d2045e4c22c8acc684b20d9049af3c4b.ctex"
+uid="uid://b5ditseckqhav"
+path="res://.godot/imported/honey.png-94ff41fcaaa74c4070a5233ef6b947aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/food/nuts.png"
-dest_files=["res://.godot/imported/nuts.png-d2045e4c22c8acc684b20d9049af3c4b.ctex"]
+source_file="res://assets/ui/food/honey.png"
+dest_files=["res://.godot/imported/honey.png-94ff41fcaaa74c4070a5233ef6b947aa.ctex"]
 
 [params]
 

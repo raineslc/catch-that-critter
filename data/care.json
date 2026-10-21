@@ -10,12 +10,12 @@
   },
   "foods": {
     "fish": {"word": "fish", "picture": "res://assets/ui/food/fish.png"},
-    "nuts": {"word": "nuts", "picture": "res://assets/ui/food/nuts.png"},
+    "honey": {"word": "honey", "picture": "res://assets/ui/food/honey.png"},
     "shrimp": {"word": "shrimp", "picture": "res://assets/ui/food/shrimp.png"}
   },
   "animals": {
     "raccoon": {
-      "foods": ["fish", "nuts"],
+      "foods": ["fish", "shrimp"],
       "care_notes": [
         {
           "text": "The raccoon got muddy in the storm.",

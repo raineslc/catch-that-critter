@@ -140,6 +140,58 @@ func test_arriving_from_the_meadow_puts_you_at_the_west_gate() -> void:
 	assert_eq(GameState.arrival_map, "", "arrival is used up")
 
 
+## Puts the ranger just below a pen's bottom fence.
+func _stand_by_pen(habitat_id: String) -> void:
+	var rect: Rect2 = RescueCenter.pen_rect(hub.pen_for(habitat_id))
+	hub.ranger.global_position = Vector2(rect.get_center().x, rect.end.y + 10)
+	await wait_frames(2)
+
+
+func test_no_care_button_by_an_empty_pen() -> void:
+	await _open_hub()
+	await _stand_by_pen("meadow")
+	assert_false(hub.care_button.visible)
+
+
+func test_care_button_by_a_pen_with_animals() -> void:
+	_rescue(1)
+	await _open_hub()
+	assert_false(hub.care_button.visible, "not while far away")
+	await _stand_by_pen("meadow")
+	assert_true(hub.care_button.visible)
+	assert_eq(hub.care_button.text, "Care for the Raccoon")
+	await _stand_by_pen("forest")
+	assert_false(hub.care_button.visible, "the forest pen is empty")
+
+
+func test_finishing_care_counts_a_visit_and_makes_the_animal_happy() -> void:
+	_rescue(2)
+	await _open_hub()
+	await _stand_by_pen("meadow")
+	hub.open_care(hub.care_target)
+	assert_not_null(hub.care_screen)
+	assert_eq(hub.objects.process_mode, Node.PROCESS_MODE_DISABLED, "the world waits")
+	assert_false(hub.care_button.visible)
+	hub.care_screen.finish(true)
+	assert_null(hub.care_screen)
+	assert_eq(hub.objects.process_mode, Node.PROCESS_MODE_INHERIT)
+	assert_eq(GameState.care_visits_for("raccoon"), 1)
+	assert_string_contains(hub.banner.text, "happy")
+	for resident: Critter in hub.pen_for("meadow")["residents"]:
+		assert_true(resident.emote.visible)
+
+
+func test_leaving_care_early_does_not_count() -> void:
+	_rescue(1)
+	await _open_hub()
+	await _stand_by_pen("meadow")
+	hub.open_care(hub.care_target)
+	hub.care_screen.finish(false)
+	assert_eq(GameState.care_visits_for("raccoon"), 0)
+	await wait_frames(2)
+	assert_true(hub.care_button.visible, "you can try again right away")
+
+
 func test_meadow_has_a_gate_back_and_remembers_rescues() -> void:
 	GameState.travel_to("meadow", "1")
 	var meadow: HabitatMap = MEADOW.instantiate()

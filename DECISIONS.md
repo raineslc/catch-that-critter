@@ -23,6 +23,17 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Caring for animals (details for PLAN.md 3.9)
+- Walk up to a pen with animals in it → "Care for the Raccoon" button (or Space/Enter) → care screen; the world waits underneath, like a chase.
+- One visit = **feed → care note → fact card**. Care is per species (all the raccoons share one card). The kid presses Next when ready (no timers); "Later" leaves without counting the visit.
+- **Feeding by grade** (`data/care.json`): 1st–3rd spell the whole word with letter tiles (0 / 1 / 2 extra decoy letters); K gets either "first letter" (3 tiles, rest of the word shown) or "match the word to a picture" (3 pictures). The 7-year-old is set to grade 2 (`GameState.grade`) until profiles in Phase 5. Spelling isn't adaptive yet.
+- Tiles fill the blanks left to right; another letter wiggles and stays (gentle "Try again"). After 2 misses on one letter Henrito says "Next comes the letter h." and that tile glows. Never shows the whole word.
+- Care notes: one short sentence + a question, one sensible choice and one silly one. The silly choice is greyed out with "Let's try the other one." Notes take turns visit by visit.
+- **Fact cards: one new fact per visit** (marked "New!") until all 3–4 are known — a reason to come back, and only one new sentence to read each time.
+- The "Read to me" button on the fact card only appears when the voice is on (it's off since Chris's call); text only for now.
+- **Raccoon food = fish and shrimp** (not nuts): the pack's nut pictures look like a cookie/ball, and the picture has to be clear for spelling to work. Raccoons do eat both. Honey is the third picture for the K picture match (and the bear later). Chris to say if he'd rather have easier words (shrimp is 6 letters with "shr").
+- Care can be repeated right away for now; stars and animal levels (next step) will decide any limits.
+
 ## 2026-10-21 — Rescue Center hub with gates; new games start there (Chris)
 - Changes PLAN 3.4's "one scrolling map": the Rescue Center is its own area in the middle with a gate per habitat (west Meadow, north Forest and Mountains, east Swamp, south Desert); each habitat is its own small text map. Gates to habitats that aren't built yet are fenced off with a "(coming soon)" sign. Keeps maps small and easy to edit.
 - After the storm intro, new games start at the Rescue Center; Henrito stands in the plaza and points to the Meadow gate, later cheers how many animals are home.
