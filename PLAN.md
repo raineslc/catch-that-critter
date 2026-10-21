@@ -111,7 +111,8 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 ### 3.11 Adaptive Difficulty
 - Per-skill accuracy and response time.
 - Rolling last 10 problems: ≥ 80% correct and fast → step up; < 50% → step down, more hints.
-- Mastery = 3 consecutive sessions above 80% at a level.
+- Mastery = 3 consecutive sessions above 80% at a level. A good session at a harder level also counts for the easier levels in that skill (otherwise fast learners level up before ever "mastering" anything); a poor session resets that level and harder ones. Sessions with fewer than 5 answers at a level don't count either way.
+- Only the first try at each problem counts; "fast" is the average time of correct answers (per-skill limits in `data/adaptive.json`, e.g. clocks get longer).
 
 ### 3.12 Parent Area
 - Parent lock (e.g., "What is 7 × 8?" or hold-to-unlock).
@@ -159,7 +160,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 
 ### Phase 1 — Math Core (no graphics)
 - [x] Problem generators for the five skill areas with Common Core tags + tests.
-- [ ] Adaptive difficulty engine + tests.
+- [x] Adaptive difficulty engine + tests.
 - [ ] Simple debug screen to answer generated problems.
 
 ### Phase 2 — Map & Chase Prototype
