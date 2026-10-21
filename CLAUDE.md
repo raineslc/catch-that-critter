@@ -36,6 +36,7 @@ Standing rules for Claude Code (AGENTS.md and GEMINI.md should say the same thin
 - Tests: `godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit` (exit code 1 on failure).
   - On Chris's Windows PC Godot came from winget and isn't on PATH as `godot`; use `Godot_v4.7.2-stable_win64_console.exe` from `%LOCALAPPDATA%\Microsoft\WinGet\Packages\GodotEngine.GodotEngine_*\`.
   - After a fresh clone, run `godot --headless --import` once first.
+- Playtest mode: add `-- --playtest` after the Godot args (settings in `data/playtest.json`). Logs go to `%APPDATA%\Godot\app_userdata\Catch That Critter\playtest\`; summarize with `python tools/summarize_playtest.py [log.jsonl]`. The desktop shortcut runs the frozen `playtest-1` worktree at `C:\Users\raine\CatchACritter-playtest` — don't develop there.
 - Debug math screen (grown-ups only): open `scenes/debug/problem_tester.tscn` in Godot and press F6, or run `godot --path . res://scenes/debug/problem_tester.tscn`.
 - `GameState` is an autoload: scripts that use it don't compile under `godot -s some_script.gd` (bare script mode). For throwaway screenshot helpers, run them as a scene from a git-ignored `.tmp_shots/` folder instead.
 - CI: `.github/workflows/tests.yml` runs the same command on every push to `main` and every pull request.

@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 3, step 1 — Storm intro panels with narration.
+Playtest 1 — waiting for Chris to run it with the 7-year-old (checklist: `docs/playtest_1.md`). Phase 3 starts after we review the results.
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -50,6 +50,8 @@ Phase 3, step 1 — Storm intro panels with narration.
   - `ProblemPicture` drawing refactored into shared static helpers (clock, coins, groups).
   - 139 tests passing.
 - **Phase 2 (map & chase prototype) complete.**
+- 2026-10-21 — Playtest 1 setup: `--playtest` mode (`data/playtest.json`: add/subtract to 12, raccoons respawn after 25s, answer log), `PlaytestLog`, `tools/summarize_playtest.py`, 6 raccoons in the Meadow, game icon, desktop shortcut → frozen worktree `C:\Users\raine\CatchACritter-playtest` at tag `playtest-1`, checklist `docs/playtest_1.md`. 146 tests passing.
+  - To review: `python tools/summarize_playtest.py` (newest log) + Chris's notes.
 
 ## Next
 - Phase 3, step 1: storm intro (a few illustrated panels with TTS narration: thunderstorm, fences fall, animals scatter; Henrito explains the mission). Needs a little art: pack backgrounds/FX or simple drawn panels.

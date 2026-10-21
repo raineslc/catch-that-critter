@@ -23,6 +23,8 @@ var ranger: Node2D
 var time_left: float = 0.0
 var cooldown_left: float = 0.0
 var target: Vector2 = Vector2.ZERO
+## Where it first appeared (critters that come back reappear here).
+var spawn_point: Vector2 = Vector2.ZERO
 
 var brain: WanderBrain
 var sprite: AnimatedSprite2D
@@ -36,6 +38,7 @@ var _stuck_frames: int = 0
 func setup(animal_data: Dictionary, home: Vector2, is_open: Callable, rng: RandomNumberGenerator) -> void:
 	animal = animal_data
 	position = home
+	spawn_point = home
 	_is_open = is_open
 	_rng = rng
 	brain = WanderBrain.new(home, float(animal["wander_radius_tiles"]) * 16.0, rng)

@@ -27,6 +27,11 @@ static func load_skills(path: String) -> Dictionary:
 	return by_id
 
 
+## Adds (or replaces) a skill at runtime, in the same format as data/skills.json (used by playtests).
+func add_skill(skill: Dictionary) -> void:
+	_skills[str(skill["id"])] = skill
+
+
 func skill_ids() -> Array[String]:
 	var ids: Array[String] = []
 	for id: Variant in _skills.keys():
