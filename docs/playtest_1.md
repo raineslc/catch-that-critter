@@ -1,6 +1,6 @@
 # Playtest 1 — Chase prototype (Meadow)
 
-**Who:** older son (7). **How long:** 10–15 minutes. **Version:** git tag `playtest-1`.
+**Who:** older son (7). **How long:** 10–15 minutes. **Version:** git tag `playtest-1.1` (adds a freeze detector; `playtest-1` froze once mid-chase on 2026-10-21).
 
 ## Before you start
 - Double-click **"Catch That Critter (playtest)"** on the desktop. It opens full-window; close it with the window's X (or Alt+F4).
@@ -8,6 +8,12 @@
 - What's in this version: the Meadow with 6 raccoons (caught ones come back after ~25 seconds). Every chase asks **adding and subtracting with numbers up to 12**. It starts easy (add within 6) and gets harder as he gets answers right quickly.
 - Explore mode (no timer) is on at the start. The button in the top-right corner switches to **Race mode** (45-second timer).
 - Try not to help unless he's really stuck — Henrito should do the helping.
+
+## If the game freezes
+Version `playtest-1.1` has a freeze detector. If everything stops moving:
+1. **Wait about 10 seconds** before closing it — the detector writes down what the game was doing.
+2. Then close it (Task Manager is fine).
+3. Note roughly what was on screen and whether the voice was talking, and tell Claude.
 
 ## Suggested run
 1. Let him figure out how to walk (arrows, WASD, or clicking) without explaining. ~1 min.

@@ -125,7 +125,9 @@ func start(chase_animal: Dictionary, chase_skill: String, chase_mode: String = "
 func next_problem() -> void:
 	if chase == null or chase.is_over():
 		return
+	GameState.breadcrumb("chase: next problem (level %d)" % GameState.engine.level(skill_id))
 	problem = GameState.factory.generate(skill_id, GameState.engine.level(skill_id), GameState.rng)
+	GameState.breadcrumb("chase: made '%s'" % problem.prompt)
 	_first_try_recorded = false
 	misses_this_problem = 0
 	hint_shown = false
@@ -144,6 +146,7 @@ func next_problem() -> void:
 		buttons.append(button)
 	_set_buttons(buttons)
 	accepting = true
+	GameState.breadcrumb("chase: buttons ready")
 	if GameState.read_aloud:
 		Speech.say(problem.spoken)
 
@@ -152,6 +155,7 @@ func next_problem() -> void:
 func answer(choice: String, seconds: float = -1.0) -> void:
 	if not accepting:
 		return
+	GameState.breadcrumb("chase: pressed '%s'" % choice)
 	var correct: bool = problem.is_correct(choice)
 	var elapsed: float = seconds if seconds >= 0.0 else (Time.get_ticks_msec() - _shown_at_msec) / 1000.0
 	var first_try: bool = not _first_try_recorded
@@ -244,6 +248,7 @@ func finish() -> void:
 
 
 func _begin_catch() -> void:
+	GameState.breadcrumb("chase: net toss")
 	_catching = true
 	var caught_text: String = CAUGHT_TEXT % animal.get("name", "critter")
 	_clear_question(caught_text)
@@ -260,6 +265,7 @@ func _begin_catch() -> void:
 
 
 func _on_net_landed() -> void:
+	GameState.breadcrumb("chase: net landed")
 	critter_sprite.stop()
 	ranger_sprite.play("idle_right")
 	critter_emote.visible = true
@@ -364,6 +370,7 @@ func _set_buttons(buttons: Array) -> void:
 
 
 func _play(stream: AudioStream) -> void:
+	GameState.breadcrumb("sound: %s" % stream.resource_path.get_file())
 	_sfx.stream = stream
 	_sfx.play()
 
