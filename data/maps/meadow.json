@@ -1,0 +1,8 @@
+{
+  "id": "meadow",
+  "name": "Meadow",
+  "habitat": "meadow",
+  "gates": {
+    "1": {"to": "rescue_center", "arrive": "1", "label": "Rescue Center"}
+  }
+}

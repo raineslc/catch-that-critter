@@ -26,6 +26,7 @@ Shared rules for every AI assistant (Claude, ChatGPT/Codex, Gemini) and for Chri
 - Every problem type in `skills.json` has a `standards` array of Common Core codes (e.g. `["2.OA.2"]`).
 
 ## Maps & art
+- Each area also has an info file `data/maps/<name>.json` (id, name, habitat, gates, and for the hub its pens) and an entry in `data/maps/world.json`. Gates are digits on the map edge; every open gate must arrive at a real gate in the target map, and gates to areas not in world.json must be marked locked (tests check this).
 - Habitat maps: `data/maps/<habitat>.txt`, one character per 16px tile, every row the same width, map edges blocked, exactly one spawn `S`. Character meanings in `data/maps/legend.json`.
 - Ponds must be convex (no inside corners). Paths can be 1 tile wide or rectangles.
 - Only CC0 (or compatible) art; record every file in `assets/CREDITS.md` with its original pack path. Stick to the Ninja Adventure pack family for a consistent look.

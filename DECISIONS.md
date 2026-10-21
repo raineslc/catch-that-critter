@@ -23,6 +23,12 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Rescue Center hub with gates; new games start there (Chris)
+- Changes PLAN 3.4's "one scrolling map": the Rescue Center is its own area in the middle with a gate per habitat (west Meadow, north Forest and Mountains, east Swamp, south Desert); each habitat is its own small text map. Gates to habitats that aren't built yet are fenced off with a "(coming soon)" sign. Keeps maps small and easy to edit.
+- After the storm intro, new games start at the Rescue Center; Henrito stands in the plaza and points to the Meadow gate, later cheers how many animals are home.
+- One pen per habitat, 6 fence sections each (3 rail pieces × top/bottom), all knocked over by the storm. Each rescue from a habitat fixes one section of its pen; fixes since your last visit stand up while you watch with a banner ("You fixed 2 fences! Meadow pen: 2 of 6"). Rescued animals live and wander in their pen (up to 8 shown).
+- Rescued map spots are remembered (`GameState.rescues`), so a caught raccoon doesn't reappear when you go back to the Meadow (playtest mode still brings them back). Everything resets when the game closes until saves arrive in Phase 5.
+
 ## 2026-10-21 — Voice off for now (changes a confirmed decision, with Chris's approval)
 Chris: "some of the voice lines are off and they all sound weird. Let's leave the voice out of it for now." `GameState.read_aloud` now defaults to off: questions, Henrito's cheers and hints are shown as text only (his speech bubble stays). The `Speech` wrapper (never-interrupt fix included) stays in the code, unused, so audio can return later — better voices or recorded lines. Must be revisited before the preschool level (Phase 8), which can't work without audio. Open: which lines sounded "off" (wording vs. pronunciation).
 

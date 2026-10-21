@@ -16,6 +16,11 @@ var objects: Dictionary = {}
 ## char -> animal id (data/animals.json) that starts at that tile.
 var critters: Dictionary = {}
 var spawn_char: String = "S"
+var sidekick_char: String = "H"
+## Characters that mark gates on the map edge ("1".."5").
+var gate_chars: String = ""
+## The map's info file (data/maps/<name>.json): id, name, habitat, gates, pens. {} if there is none.
+var meta: Dictionary = {}
 
 
 static func load_map(map_path: String, legend_path: String = LEGEND_PATH) -> MapData:
@@ -29,6 +34,13 @@ static func load_map(map_path: String, legend_path: String = LEGEND_PATH) -> Map
 	map.objects = legend.get("objects", {})
 	map.critters = legend.get("critters", {})
 	map.spawn_char = str(legend.get("spawn", "S"))
+	map.sidekick_char = str(legend.get("sidekick_spot", "H"))
+	map.gate_chars = str(legend.get("gates", ""))
+	var meta_path: String = map_path.get_basename() + ".json"
+	if FileAccess.file_exists(meta_path):
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(meta_path))
+		if parsed is Dictionary:
+			map.meta = parsed
 	for line: String in FileAccess.get_file_as_string(map_path).split("\n"):
 		var row: String = line.strip_edges(false, true)
 		if row != "":
@@ -92,3 +104,47 @@ func cell_to_feet(cell: Vector2i) -> Vector2:
 
 func pixel_size() -> Vector2i:
 	return Vector2i(width, height) * tile_size
+
+
+## The map's id from its info file ("" if it has none).
+func id() -> String:
+	return str(meta.get("id", ""))
+
+
+func habitat() -> String:
+	return str(meta.get("habitat", ""))
+
+
+## gate char -> cell, for every gate character found on the map.
+func gate_cells() -> Dictionary:
+	var gates: Dictionary = {}
+	for c: String in gate_chars:
+		var cell: Vector2i = find_char(c)
+		if cell.x >= 0:
+			gates[c] = cell
+	return gates
+
+
+## The gate's settings from the info file ({} if none): to, arrive, label, locked.
+func gate_info(gate: String) -> Dictionary:
+	return meta.get("gates", {}).get(gate, {})
+
+
+## Where you appear when you come in through a gate: two steps in from the edge.
+func arrival_cell(gate: String) -> Vector2i:
+	var cell: Vector2i = find_char(gate)
+	var inward: Vector2i = Vector2i.ZERO
+	if cell.x == 0:
+		inward = Vector2i.RIGHT
+	elif cell.x == width - 1:
+		inward = Vector2i.LEFT
+	elif cell.y == 0:
+		inward = Vector2i.DOWN
+	elif cell.y == height - 1:
+		inward = Vector2i.UP
+	return cell + inward * 2
+
+
+func is_gate(cell: Vector2i) -> bool:
+	var c: String = char_at(cell)
+	return c != "" and gate_chars.contains(c)

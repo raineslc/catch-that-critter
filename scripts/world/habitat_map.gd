@@ -1,7 +1,9 @@
 class_name HabitatMap
 extends Node2D
-## Builds a habitat from a text map: ground tiles (grass, paths, water), nature objects
-## (trees, bushes, rocks, flowers), invisible walls at the edges, and the ranger at the spawn point.
+## Builds an area from a text map: ground tiles (grass, paths, water), nature objects
+## (trees, bushes, rocks, flowers), invisible walls at the edges, gates to other areas,
+## critters (skipping ones already rescued), and the ranger at the spawn point
+## (or at the gate they came in through).
 
 const TILE: int = 16
 const FLOOR_TEXTURE: Texture2D = preload("res://assets/tilesets/floor.png")
@@ -31,11 +33,23 @@ const MODE_BUTTON_FONT_SIZE: int = 28
 ## A critter won't reappear while the ranger is this close to its spot (pixels).
 const RESPAWN_CLEARANCE: float = 80.0
 const RESPAWN_RETRY_SECONDS: float = 3.0
+const ELEMENT_TEXTURE: Texture2D = preload("res://assets/tilesets/element.png")
+## Rail fence piece in element.png (3 tiles wide, 2 tall): closes locked gates, builds pens.
+const FENCE_REGION: Rect2 = Rect2(11 * 16, 2 * 16, 48, 32)
+const SIGN_FONT_SIZE: int = 10
+const SIGN_TEXT: String = "To the %s"
+const BANNER_SECONDS: float = 2.5
+## Room at the top for the Explore/Race button, so banners sit below it.
+const BANNER_TOP: float = 100.0
+const CAUGHT_TEXT: String = "The %s is safe at the Rescue Center!"
+const LOCKED_TEXT: String = "The %s opens soon!"
 
 ## A critter got startled: a chase is about to start.
 signal chase_requested(critter: Critter)
 ## A chase ended (caught or not).
 signal chase_ended(critter_id: String, caught: bool)
+## The ranger walked through an open gate (tests turn off auto_travel and watch this).
+signal gate_used(to_map: String, scene: String)
 
 @export_file("*.txt") var map_path: String = "res://data/maps/meadow.txt"
 ## Same seed = same grass/flower variety every time the map loads.
@@ -57,6 +71,15 @@ var _rng: RandomNumberGenerator
 var _chase_started_msec: int = 0
 ## Turn off in tests: the chase screen then opens only when open_chase() is called.
 var auto_open_chase: bool = true
+## Turn off in tests: walking through a gate then only emits gate_used.
+var auto_travel: bool = true
+## This area's id and habitat (from data/maps/<name>.json).
+var map_id: String = ""
+var habitat: String = ""
+## gate char -> Area2D (open gates) or StaticBody2D (locked gates).
+var gates: Dictionary = {}
+var _traveling: bool = false
+var _banner_token: int = 0
 
 
 func _ready() -> void:
@@ -65,6 +88,8 @@ func _ready() -> void:
 
 func build() -> void:
 	map = MapData.load_map(map_path)
+	map_id = map.id()
+	habitat = map.habitat()
 	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 	rng.seed = decoration_seed
 	ground = TileMapLayer.new()
@@ -84,7 +109,9 @@ func build() -> void:
 				objects.add_child(_make_object(def, cell, rng))
 	_add_edge_walls()
 	ranger = RANGER_SCENE.instantiate()
-	ranger.position = map.cell_to_feet(map.spawn_cell())
+	var arrive: String = GameState.take_arrival(map_id)
+	var start_cell: Vector2i = map.arrival_cell(arrive) if arrive != "" and map.gate_cells().has(arrive) else map.spawn_cell()
+	ranger.position = map.cell_to_feet(start_cell)
 	objects.add_child(ranger)
 	var size: Vector2i = map.pixel_size()
 	ranger.camera.limit_left = 0
@@ -93,26 +120,33 @@ func build() -> void:
 	ranger.camera.limit_bottom = size.y
 	_spawn_critters(rng)
 	_make_banner()
+	_build_gates()
 
 
 func _spawn_critters(rng: RandomNumberGenerator) -> void:
 	catalog = AnimalCatalog.new()
 	_rng = rng
+	# In playtests caught critters come back, so every spot is used again.
+	var keep_rescued_away: bool = GameState.respawn_seconds() <= 0.0
 	for y: int in map.height:
 		for x: int in map.width:
-			var id: String = map.critter_at(Vector2i(x, y))
-			if id != "":
-				add_critter(id, map.cell_to_feet(Vector2i(x, y)))
+			var cell: Vector2i = Vector2i(x, y)
+			var id: String = map.critter_at(cell)
+			if id == "" or (keep_rescued_away and GameState.is_spot_rescued(map_id, cell)):
+				continue
+			add_critter(id, map.cell_to_feet(cell), cell)
 
 
-## Puts a critter in the habitat with its feet at `feet`. Returns null for unknown animals.
-func add_critter(id: String, feet: Vector2) -> Critter:
+## Puts a critter in the habitat with its feet at `feet`. `cell` is its map spot (to remember
+## the rescue); (-1, -1) for critters that aren't from a map spot. Returns null for unknown animals.
+func add_critter(id: String, feet: Vector2, cell: Vector2i = Vector2i(-1, -1)) -> Critter:
 	if not catalog.has_animal(id):
 		push_error("HabitatMap: unknown animal '%s' in %s" % [id, map_path])
 		return null
 	var is_open: Callable = func(point: Vector2) -> bool: return map.is_walkable(map.pixel_to_cell(point))
 	var critter: Critter = Critter.new()
 	critter.setup(catalog.get_animal(id), feet, is_open, _rng)
+	critter.set_meta("spawn_cell", cell)
 	critter.ranger = ranger
 	critter.startled.connect(_on_critter_startled)
 	objects.add_child(critter)
@@ -173,7 +207,8 @@ func _on_chase_finished(caught: bool) -> void:
 	GameState.log_event("chase_end", {"animal": id, "caught": caught,
 		"seconds": snappedf((Time.get_ticks_msec() - _chase_started_msec) / 1000.0, 0.1)})
 	if caught:
-		GameState.record_rescue(id)
+		GameState.record_rescue(id, habitat, map_id, critter.get_meta("spawn_cell", Vector2i(-1, -1)))
+		show_banner(CAUGHT_TEXT % critter.animal.get("name", "critter"))
 		critters.erase(critter)
 		if GameState.respawn_seconds() > 0.0:
 			_schedule_respawn(id, critter.spawn_point, GameState.respawn_seconds())
@@ -193,7 +228,7 @@ func _make_banner() -> void:
 	banner = Label.new()
 	banner.name = "Banner"
 	banner.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	banner.offset_top = 40
+	banner.offset_top = BANNER_TOP
 	banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	banner.add_theme_font_size_override("font_size", BANNER_FONT_SIZE)
 	banner.add_theme_color_override("font_outline_color", Color(0.2, 0.3, 0.1))
@@ -214,6 +249,111 @@ func _make_banner() -> void:
 		refresh_mode_button())
 	layer.add_child(mode_button)
 	refresh_mode_button()
+
+
+## Shows a message at the top for a few seconds.
+func show_banner(text: String, seconds: float = BANNER_SECONDS) -> void:
+	_banner_token += 1
+	var token: int = _banner_token
+	banner.text = text
+	banner.visible = true
+	get_tree().create_timer(seconds).timeout.connect(func() -> void:
+		if token == _banner_token and chase_target == null:
+			banner.visible = false)
+
+
+## Open gates become triggers; gates to areas that aren't built (or are marked locked) get a
+## fence across them and a "coming soon" sign.
+func _build_gates() -> void:
+	var cells: Dictionary = map.gate_cells()
+	for gate: String in cells:
+		var cell: Vector2i = cells[gate]
+		var info: Dictionary = map.gate_info(gate)
+		var label: String = str(info.get("label", "?"))
+		var feet: Vector2 = map.cell_to_feet(cell)
+		var locked: bool = bool(info.get("locked", false)) or GameState.scene_for(str(info.get("to", ""))) == ""
+		_add_sign(SIGN_TEXT % label + ("\n(coming soon)" if locked else ""), cell)
+		if locked:
+			var body: StaticBody2D = StaticBody2D.new()
+			body.name = "LockedGate_%s" % gate
+			body.position = feet
+			var shape: CollisionShape2D = CollisionShape2D.new()
+			var box: RectangleShape2D = RectangleShape2D.new()
+			box.size = Vector2(TILE, TILE)
+			shape.shape = box
+			shape.position = Vector2(0, -TILE / 2.0)
+			body.add_child(shape)
+			var fence: Sprite2D = Sprite2D.new()
+			fence.texture = ELEMENT_TEXTURE
+			fence.region_enabled = true
+			fence.region_rect = FENCE_REGION
+			fence.offset = Vector2(0, -FENCE_REGION.size.y / 2.0)
+			if cell.x == 0 or cell.x == map.width - 1:
+				fence.rotation_degrees = 90.0
+				fence.offset = Vector2(-FENCE_REGION.size.y / 2.0 + TILE / 2.0, 0)
+			body.add_child(fence)
+			objects.add_child(body)
+			gates[gate] = body
+			_add_gate_area(gate, cell, func() -> void: show_banner(LOCKED_TEXT % label), TILE * 2.5)
+		else:
+			gates[gate] = _add_gate_area(gate, cell, use_gate.bind(gate), TILE * 0.6)
+
+
+## An invisible area over a gate that calls `action` when the ranger walks into it.
+func _add_gate_area(gate: String, cell: Vector2i, action: Callable, size: float) -> Area2D:
+	var area: Area2D = Area2D.new()
+	area.name = "GateArea_%s" % gate
+	area.collision_layer = 0
+	area.collision_mask = PhysicsLayers.RANGER
+	area.position = map.cell_to_feet(cell) + Vector2(0, -TILE / 2.0)
+	var shape: CollisionShape2D = CollisionShape2D.new()
+	var box: RectangleShape2D = RectangleShape2D.new()
+	box.size = Vector2(size, size)
+	shape.shape = box
+	area.add_child(shape)
+	area.body_entered.connect(func(body: Node2D) -> void:
+		if body == ranger:
+			action.call())
+	add_child(area)
+	return area
+
+
+## Walks through a gate to the area it leads to.
+func use_gate(gate: String) -> void:
+	if _traveling or chase_target != null:
+		return
+	var info: Dictionary = map.gate_info(gate)
+	var scene: String = GameState.travel_to(str(info.get("to", "")), str(info.get("arrive", "")))
+	if scene == "":
+		show_banner(LOCKED_TEXT % str(info.get("label", "area")))
+		return
+	_traveling = true
+	gate_used.emit(str(info.get("to", "")), scene)
+	if auto_travel:
+		get_tree().change_scene_to_file.call_deferred(scene)
+
+
+## A small sign label next to a gate, in the world (moves with the map).
+func _add_sign(text: String, cell: Vector2i) -> void:
+	var label: Label = Label.new()
+	label.name = "Sign_%d_%d" % [cell.x, cell.y]
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", SIGN_FONT_SIZE)
+	label.add_theme_color_override("font_color", Color.WHITE)
+	label.add_theme_color_override("font_outline_color", Color(0.25, 0.18, 0.08))
+	label.add_theme_constant_override("outline_size", 4)
+	label.size = Vector2(96, 28)
+	var inward: Vector2i = map.arrival_cell(map.char_at(cell)) - cell
+	var spot: Vector2 = map.cell_to_feet(cell + inward / 2) - Vector2(48, TILE * 2.4)
+	if cell.y == map.height - 1:
+		spot.y -= TILE
+	# Keep signs fully on the map (the camera never shows past its edges).
+	spot.x = clampf(spot.x, 2.0, map.pixel_size().x - label.size.x - 2.0)
+	spot.y = clampf(spot.y, 2.0, map.pixel_size().y - label.size.y - 2.0)
+	label.position = spot
+	label.z_index = 10
+	add_child(label)
 
 
 func refresh_mode_button() -> void:

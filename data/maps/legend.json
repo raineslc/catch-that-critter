@@ -9,9 +9,15 @@
     "T": "grass",
     "P": "grass",
     "S": "grass",
+    "H": "grass",
     "a": "grass",
     "p": "path",
-    "w": "water"
+    "w": "water",
+    "1": "path",
+    "2": "path",
+    "3": "path",
+    "4": "path",
+    "5": "path"
   },
   "objects": {
     ",": {"name": "tuft", "atlas": [3, 10], "size": [1, 1], "blocks": false},
@@ -24,5 +30,7 @@
   "critters": {
     "a": "raccoon"
   },
-  "spawn": "S"
+  "spawn": "S",
+  "sidekick_spot": "H",
+  "gates": "12345"
 }

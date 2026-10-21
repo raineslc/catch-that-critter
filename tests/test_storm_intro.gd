@@ -119,4 +119,4 @@ func test_sidekick_name_is_filled_in() -> void:
 func test_title_screen_starts_the_intro() -> void:
 	var title: GDScript = load("res://scripts/ui/title_screen.gd")
 	assert_eq(title.get_script_constant_map()["START_SCENE"], "res://scenes/story/storm_intro.tscn")
-	assert_eq(StormIntro.NEXT_SCENE, "res://scenes/world/meadow.tscn")
+	assert_eq(StormIntro.NEXT_SCENE, "res://scenes/world/rescue_center.tscn", "new games start at the Rescue Center")

@@ -1,0 +1,8 @@
+{
+  "description": "Every area you can walk into. Gates in data/maps/<id>.json point at these ids. Habitats without an entry here are 'coming soon' (their gates stay locked).",
+  "start": "rescue_center",
+  "maps": {
+    "rescue_center": {"scene": "res://scenes/world/rescue_center.tscn"},
+    "meadow": {"scene": "res://scenes/world/meadow.tscn"}
+  }
+}
