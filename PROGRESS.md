@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Playtest 1 — waiting for Chris to run it with the 7-year-old (checklist: `docs/playtest_1.md`). Phase 3 starts after we review the results.
+Phase 3, step 2 — Rescue Center hub with enclosures and fence repair. (Playtest 1 can continue in parallel with `playtest-1.3`; review logs when Chris has more sessions.)
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -55,9 +55,10 @@ Playtest 1 — waiting for Chris to run it with the 7-year-old (checklist: `docs
 - 2026-10-21 — Playtest 1 froze mid-chase (see DECISIONS.md "Freeze during Playtest 1"). Added `FreezeWatch` breadcrumbs + watchdog, `respawn` log events, `tools/playtest_launch.cmd` (per-session Godot verbose log), freeze reporting in the summary script → `playtest-1.1`. Not yet reproduced; a realistic robot player (walks, clicks, 25s comebacks, 30 chases) is the next check. First data point: 7/7 right at ~1.9s on level 1 → start the 7-year-old higher.
 - 2026-10-21 — **Freeze fixed:** cause was stopping Windows TTS mid-sentence (`tts_stop()`), proven with the robot + freeze detector and a TTS stress test. `Speech` now never interrupts; lines wait until the voice is quiet. 156 tests passing. Playtest copy updated to `playtest-1.2`.
 - 2026-10-21 — **Voice off** (Chris: voices sound weird, some lines off). `GameState.read_aloud` defaults to false; text and Henrito's bubble still show. `Speech` kept for later. Playtest copy → `playtest-1.3`. Open question for Chris: which lines sounded "off".
+- 2026-10-21 — Phase 3, step 1: storm intro (`scenes/story/storm_intro.tscn`, `scripts/story/storm_intro.gd`, `data/story/intro.json`). 7 captioned panels: sunny rescue center pen (raccoon, frog, owl, lizard, bear) → night storm (rain, lightning, storm sound) → fences crash (shake) → animals scatter → morning, Henrito walks in and explains the mission and how to play. Next/click/Space/Enter, Skip. Title → intro → Meadow. New art: frog/owl/lizard/bear sprites, element tileset (fences), storm sound, "Calm Village" music. 167 tests passing.
 
 ## Next
-- Phase 3, step 1: storm intro (a few illustrated panels with TTS narration: thunderstorm, fences fall, animals scatter; Henrito explains the mission). Needs a little art: pack backgrounds/FX or simple drawn panels.
+- Phase 3, step 2: Rescue Center hub — a top-down area (probably a new map, `data/maps/rescue_center.txt`, with the Meadow connected) with enclosures that fill as animals come home, fence sections repaired per capture; rescued animals shown in their enclosure. Needs a decision: separate map vs. center of the Meadow (PLAN says one big map with the center in the middle).
 - Chris: listen to the four chase sounds and say if any should change; try Race mode with the 7-year-old and tell me if 45 seconds feels right.
 
 ## Open issues

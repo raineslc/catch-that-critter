@@ -23,6 +23,13 @@ List every third-party asset here: name, author, source URL, license.
 | `sprites/sidekicks/henrito/sprite_sheet.png` | `Actor/Character/Boy/SpriteSheet.png` |
 | `sprites/sidekicks/henrito/faceset.png` | `Actor/Character/Boy/Faceset.png` |
 | `ui/icon.png`, `ui/icon.ico` | made from `Actor/Animal/Racoon/Faceset.png` (scaled 6×) |
+| `sprites/animals/frog/*` | `Actor/Animal/Frog/SpriteSheet.png`, `Faceset.png` |
+| `sprites/animals/owl/*` | `Actor/Monster/Owl/Owl.png`, `Faceset.png` |
+| `sprites/animals/lizard/*` | `Actor/Monster/Lizard/Lizard.png`, `Faceset.png` |
+| `sprites/animals/bear/*` | `Actor/Monster/Bear/SpriteSheet.png`, `Faceset.png` |
+| `tilesets/element.png` | `Backgrounds/Tilesets/TilesetElement.png` (rail fence at tiles 11–13, 2–3) |
+| `audio/ambient/storm.wav` | `Audio/Sounds/Ambient/Storm.wav` |
+| `audio/music/calm_village.ogg` | `Audio/Musics/33 - Calm Village.ogg` |
 | `audio/sfx/correct.wav` | `Audio/Sounds/Bonus/Coin.wav` |
 | `audio/sfx/try_again.wav` | `Audio/Sounds/Menu/Move3.wav` |
 | `audio/sfx/net_toss.wav` | `Audio/Sounds/Whoosh & Slash/Whoosh.wav` |

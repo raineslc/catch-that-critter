@@ -1,0 +1,19 @@
+{
+  "description": "The storm intro (PLAN.md 3.1). Each panel sets the scene's 'state' and shows a caption; 'speaker': 'sidekick' shows the caption in the sidekick's speech bubble instead. {sidekick} is replaced with the sidekick's name.",
+  "cast": [
+    {"id": "raccoon", "sheet": "res://assets/sprites/animals/raccoon/sprite_sheet.png", "layout": "strip", "frames": 2, "faces": "right"},
+    {"id": "frog", "sheet": "res://assets/sprites/animals/frog/sprite_sheet.png", "layout": "strip", "frames": 2, "faces": "right"},
+    {"id": "owl", "sheet": "res://assets/sprites/animals/owl/sprite_sheet.png", "layout": "grid", "frames": 4},
+    {"id": "lizard", "sheet": "res://assets/sprites/animals/lizard/sprite_sheet.png", "layout": "grid", "frames": 4},
+    {"id": "bear", "sheet": "res://assets/sprites/animals/bear/sprite_sheet.png", "layout": "grid", "frames": 4}
+  ],
+  "panels": [
+    {"state": "sunny", "caption": "This is the Wildlife Rescue Center. Animals get safe and cozy here."},
+    {"state": "storm", "caption": "One night, a big thunderstorm rolled in."},
+    {"state": "fences_fall", "caption": "CRASH! The wind knocked the fences down."},
+    {"state": "scatter", "caption": "The animals got scared and ran off in every direction!"},
+    {"state": "morning", "speaker": "sidekick", "caption": "Oh no! The animals are lost all over the map."},
+    {"state": "morning", "speaker": "sidekick", "caption": "We're rangers! Let's find every animal and bring it home."},
+    {"state": "morning", "speaker": "sidekick", "caption": "Walk close to an animal to start a chase. Answer questions to catch it!"}
+  ]
+}
