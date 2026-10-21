@@ -1,0 +1,21 @@
+{
+  "description": "Playtest 1 settings. Only used when the game is started with the --playtest flag (the desktop shortcut). Chris's request: adding and subtracting only, every number 12 or less.",
+  "respawn_seconds": 25.0,
+  "log": true,
+  "skill": {
+    "id": "playtest_add_sub_12",
+    "name": "Adding and Subtracting to 12",
+    "habitat": "meadow",
+    "grades": "1",
+    "generator": "add_subtract",
+    "levels": [
+      {"description": "Add within 6", "type": "add", "standards": ["K.OA.5"], "hint": "dots", "choices": 3, "params": {"min": 2, "max": 6, "min_part": 1, "spread": 2, "choice_max": 12}},
+      {"description": "Add within 10", "type": "add", "standards": ["1.OA.6"], "hint": "dots", "choices": 3, "params": {"min": 4, "max": 10, "min_part": 1, "spread": 2, "choice_max": 12}},
+      {"description": "Subtract within 10", "type": "subtract", "standards": ["1.OA.6"], "hint": "dots", "choices": 3, "params": {"min": 3, "max": 10, "min_part": 1, "spread": 2}},
+      {"description": "Add within 12", "type": "add", "standards": ["1.OA.6"], "hint": "number_line", "choices": 4, "params": {"min": 7, "max": 12, "min_part": 2, "spread": 3, "choice_max": 12}},
+      {"description": "Subtract within 12", "type": "subtract", "standards": ["1.OA.6"], "hint": "number_line", "choices": 4, "params": {"min": 7, "max": 12, "min_part": 2, "spread": 3}},
+      {"description": "Add and subtract within 12", "type": "mixed", "standards": ["1.OA.6"], "hint": "number_line", "choices": 4, "params": {"min": 5, "max": 12, "min_part": 1, "spread": 3, "choice_max": 12}},
+      {"description": "Find the missing number within 12", "type": "missing_addend", "standards": ["1.OA.8"], "hint": "number_line", "choices": 4, "params": {"min": 5, "max": 12, "min_part": 1, "spread": 3}}
+    ]
+  }
+}

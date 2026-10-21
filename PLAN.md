@@ -169,6 +169,10 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 - [x] Chase screen: answer buttons, speed-up, net capture.
 - [x] Explore and Race modes; Henrito hints after 2 misses (TTS).
 
+### Playtest 1 (added 2026-10-21, Chris's request)
+- [x] Playtest setup: desktop shortcut (`--playtest`), add/subtract to 12 for every chase, 6 raccoons that come back, local answer log + `tools/summarize_playtest.py`, checklist `docs/playtest_1.md`.
+- [ ] Run the playtest with the 7-year-old; review notes + log summary; decide changes before Phase 3.
+
 ### Phase 3 — Story & Rescue Center
 - [ ] Storm intro panels with narration.
 - [ ] Rescue Center hub with enclosures and fence repair.

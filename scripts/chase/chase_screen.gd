@@ -154,9 +154,16 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 		return
 	var correct: bool = problem.is_correct(choice)
 	var elapsed: float = seconds if seconds >= 0.0 else (Time.get_ticks_msec() - _shown_at_msec) / 1000.0
-	if not _first_try_recorded:
+	var first_try: bool = not _first_try_recorded
+	GameState.log_event("answer", {"skill": skill_id, "level": problem.level, "type": problem.type,
+		"prompt": problem.prompt, "answer": problem.answer, "choice": choice, "correct": correct,
+		"first_try": first_try, "seconds": snappedf(elapsed, 0.1), "hint_shown": hint_shown, "mode": chase.mode})
+	if first_try:
 		_first_try_recorded = true
-		GameState.engine.record_answer(skill_id, correct, elapsed)
+		var change: AdaptiveEngine.Change = GameState.engine.record_answer(skill_id, correct, elapsed)
+		if change != AdaptiveEngine.Change.NONE:
+			GameState.log_event("level_change", {"skill": skill_id, "to": GameState.engine.level(skill_id),
+				"direction": "up" if change == AdaptiveEngine.Change.LEVEL_UP else "down"})
 	chase.answer(correct, elapsed)
 	_update_meter()
 	if not correct:
@@ -191,6 +198,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 ## The sidekick's spoken hint and hint picture for the current problem.
 func show_hint() -> void:
 	hint_shown = true
+	GameState.log_event("hint", {"skill": skill_id, "level": problem.level, "type": problem.type, "prompt": problem.prompt})
 	picture.visible = false
 	hint_picture.show_problem(problem)
 	hint_picture.visible = HintPicture.kind_for(problem) != ""
@@ -220,6 +228,7 @@ func choice_buttons() -> Array[Button]:
 
 ## After an escape: start the same chase over.
 func retry() -> void:
+	GameState.log_event("chase_again", {"animal": animal.get("id", "")})
 	chase.restart()
 	_catching = false
 	_update_meter()
@@ -263,6 +272,7 @@ func _on_net_landed() -> void:
 ## Race timer ran out: the critter dashes off; offer to chase again.
 func _begin_escape() -> void:
 	_catching = true
+	GameState.log_event("escaped", {"animal": animal.get("id", ""), "correct": chase.correct, "misses": chase.misses})
 	_clear_question(ESCAPED_TEXT % animal.get("name", "critter"))
 	var tween: Tween = create_tween()
 	tween.tween_property(critter_sprite, "position:x", track.size.x + TILE * SPRITE_SCALE * 2, ESCAPE_RUN_SECONDS)

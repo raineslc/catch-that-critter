@@ -4,7 +4,8 @@ extends RefCounted
 ##
 ## Params: "min"/"max" bound the biggest number in the problem (the sum or the
 ## starting number); "min_part" is the smallest addend or amount taken away;
-## "spread" is how far off the random wrong choices can be.
+## "spread" is how far off the random wrong choices can be; "choice_max" (optional)
+## caps the biggest number shown on an addition button.
 
 
 static func generate(type: String, params: Dictionary, choice_count: int, rng: RandomNumberGenerator) -> MathProblem:
@@ -31,7 +32,8 @@ static func _add(params: Dictionary, choice_count: int, rng: RandomNumberGenerat
 	var a: int = rng.randi_range(min_part, total - min_part)
 	var b: int = total - a
 	var candidates: Array[int] = [absi(a - b), total + 10, total - 10]
-	var values: Array[int] = ChoiceBuilder.numeric(total, choice_count, 0, high + spread, rng, spread, candidates)
+	var choice_max: int = int(params.get("choice_max", high + spread))
+	var values: Array[int] = ChoiceBuilder.numeric(total, choice_count, 0, choice_max, rng, spread, candidates)
 	return MathProblem.create("add", "%d + %d = ?" % [a, b], "What is %d plus %d?" % [a, b],
 		str(total), ChoiceBuilder.to_strings(values), {"a": a, "b": b, "op": "+"})
 

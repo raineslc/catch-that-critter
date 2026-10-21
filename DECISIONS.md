@@ -23,6 +23,14 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Playtest 1 before Phase 3
+Chris asked for a playtest before starting Phase 3. Setup (all playtest-only, switched on by the `--playtest` launch flag so the normal game is unchanged):
+- **Math:** every chase uses `playtest_add_sub_12` from `data/playtest.json` — adding and subtracting with every number (problem and buttons) 12 or less, 7 levels from "add within 6" to "missing number within 12" (Chris: "start with only numbers up to and including 12").
+- **More play:** the Meadow now has 6 raccoon spots (kept for the real game too); in playtests a caught raccoon comes back after 25 seconds.
+- **Log:** every answer, hint, level change, chase, and escape goes to `%APPDATA%\Godot\app_userdata\Catch That Critter\playtest\*.jsonl` (local only). `tools/summarize_playtest.py` makes a readable report.
+- **Launch:** desktop shortcut runs Godot 4.7.2 on a frozen copy of the `playtest-1` tag in `C:\Users\raine\CatchACritter-playtest` (git worktree), so Phase 3 work can't break the playtest.
+- New: `AddSubtractGenerator` "choice_max" param caps addition buttons; `ProblemFactory.add_skill()`; game icon from the raccoon portrait.
+
 ## 2026-10-21 — Race mode and Henrito's hints (details)
 - Race: 45 seconds per chase (`data/chase.json`). A right answer within 5 seconds is a **sprint boost**: closes extra distance and adds 3 seconds. When time runs out the critter gets away; "Chase again" restarts the same chase, "Back to the map" returns to the Meadow. Nothing is lost.
 - The kid picks Explore or Race with a button in the Meadow's corner; it's hidden and Explore is forced when `GameState.explore_locked` is on (the parent area sets it in Phase 5). Default is Explore.

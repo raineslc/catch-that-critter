@@ -28,6 +28,9 @@ const WALL_THICKNESS: float = 16.0
 const BANNER_FONT_SIZE: int = 48
 const MODE_BUTTON_SIZE: Vector2 = Vector2(220, 64)
 const MODE_BUTTON_FONT_SIZE: int = 28
+## A critter won't reappear while the ranger is this close to its spot (pixels).
+const RESPAWN_CLEARANCE: float = 80.0
+const RESPAWN_RETRY_SECONDS: float = 3.0
 
 ## A critter got startled: a chase is about to start.
 signal chase_requested(critter: Critter)
@@ -50,6 +53,8 @@ var chase_screen: ChaseScreen
 var banner: Label
 ## Explore / Race switch (hidden when a parent locks Explore).
 var mode_button: Button
+var _rng: RandomNumberGenerator
+var _chase_started_msec: int = 0
 ## Turn off in tests: the chase screen then opens only when open_chase() is called.
 var auto_open_chase: bool = true
 
@@ -92,21 +97,38 @@ func build() -> void:
 
 func _spawn_critters(rng: RandomNumberGenerator) -> void:
 	catalog = AnimalCatalog.new()
-	var is_open: Callable = func(point: Vector2) -> bool: return map.is_walkable(map.pixel_to_cell(point))
+	_rng = rng
 	for y: int in map.height:
 		for x: int in map.width:
 			var id: String = map.critter_at(Vector2i(x, y))
-			if id == "":
-				continue
-			if not catalog.has_animal(id):
-				push_error("HabitatMap: unknown animal '%s' in %s" % [id, map_path])
-				continue
-			var critter: Critter = Critter.new()
-			critter.setup(catalog.get_animal(id), map.cell_to_feet(Vector2i(x, y)), is_open, rng)
-			critter.ranger = ranger
-			critter.startled.connect(_on_critter_startled)
-			objects.add_child(critter)
-			critters.append(critter)
+			if id != "":
+				add_critter(id, map.cell_to_feet(Vector2i(x, y)))
+
+
+## Puts a critter in the habitat with its feet at `feet`. Returns null for unknown animals.
+func add_critter(id: String, feet: Vector2) -> Critter:
+	if not catalog.has_animal(id):
+		push_error("HabitatMap: unknown animal '%s' in %s" % [id, map_path])
+		return null
+	var is_open: Callable = func(point: Vector2) -> bool: return map.is_walkable(map.pixel_to_cell(point))
+	var critter: Critter = Critter.new()
+	critter.setup(catalog.get_animal(id), feet, is_open, _rng)
+	critter.ranger = ranger
+	critter.startled.connect(_on_critter_startled)
+	objects.add_child(critter)
+	critters.append(critter)
+	return critter
+
+
+## Brings a caught critter back after a while (playtests). Waits longer if the ranger is standing there.
+func _schedule_respawn(id: String, feet: Vector2, seconds: float) -> void:
+	get_tree().create_timer(seconds).timeout.connect(func() -> void:
+		if not is_inside_tree():
+			return
+		if ranger.global_position.distance_to(feet) < RESPAWN_CLEARANCE:
+			_schedule_respawn(id, feet, RESPAWN_RETRY_SECONDS)
+			return
+		add_critter(id, feet))
 
 
 func _on_critter_startled(critter: Critter) -> void:
@@ -131,7 +153,11 @@ func open_chase() -> void:
 	chase_screen.auto_advance = auto_open_chase
 	add_child(chase_screen)
 	chase_screen.finished.connect(_on_chase_finished)
-	chase_screen.start(chase_target.animal, str(chase_target.animal["skill"]))
+	var skill: String = GameState.chase_skill_for(chase_target.animal)
+	_chase_started_msec = Time.get_ticks_msec()
+	GameState.log_event("chase_start", {"animal": chase_target.animal["id"], "mode": GameState.chase_mode(),
+		"skill": skill, "level": GameState.engine.level(skill)})
+	chase_screen.start(chase_target.animal, skill)
 
 
 func _on_chase_finished(caught: bool) -> void:
@@ -140,9 +166,13 @@ func _on_chase_finished(caught: bool) -> void:
 	chase_screen.queue_free()
 	chase_screen = null
 	chase_target = null
+	GameState.log_event("chase_end", {"animal": id, "caught": caught,
+		"seconds": snappedf((Time.get_ticks_msec() - _chase_started_msec) / 1000.0, 0.1)})
 	if caught:
 		GameState.record_rescue(id)
 		critters.erase(critter)
+		if GameState.respawn_seconds() > 0.0:
+			_schedule_respawn(id, critter.spawn_point, GameState.respawn_seconds())
 		critter.queue_free()
 	else:
 		critter.emote.visible = false
