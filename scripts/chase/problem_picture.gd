@@ -13,6 +13,7 @@ const CLOCK_FACE: Color = Color(1, 0.98, 0.92)
 const CLOCK_RIM: Color = Color(0.35, 0.25, 0.15)
 const HOUR_HAND: Color = Color(0.2, 0.2, 0.25)
 const MINUTE_HAND: Color = Color(0.85, 0.3, 0.2)
+const MINUTE_LABEL: Color = Color(0.2, 0.45, 0.85)
 
 ## Coin drawing size (px per mm of real diameter) and colors.
 const COIN_PX_PER_MM: float = 2.6
@@ -80,11 +81,11 @@ func _draw() -> void:
 		"critters":
 			_draw_critters(int(problem.data["count"]))
 		"clock":
-			_draw_clock(int(problem.data["hour"]), int(problem.data["minute"]))
+			draw_clock(self, size / 2.0, int(problem.data["hour"]), int(problem.data["minute"]), false)
 		"coins":
-			_draw_coins(problem.data["coins"])
+			draw_coins(self, size, problem.data["coins"], false)
 		"groups":
-			_draw_groups(int(problem.data["groups"]), int(problem.data["size"]))
+			draw_groups(self, size, int(problem.data["groups"]), int(problem.data["size"]))
 
 
 func _draw_critters(count: int) -> void:
@@ -101,30 +102,31 @@ func _draw_critters(count: int) -> void:
 			draw_circle(rect.get_center(), ICON_SIZE / 2.0, DOT_COLOR)
 
 
-func _draw_clock(hour: int, minute: int) -> void:
-	var center: Vector2 = size / 2.0
-	var font: Font = get_theme_default_font()
-	draw_circle(center, CLOCK_RADIUS + 4.0, CLOCK_RIM)
-	draw_circle(center, CLOCK_RADIUS, CLOCK_FACE)
+## Analog clock. With `minute_labels`, the minutes (5, 10 ... 55) are written around the outside (hint).
+static func draw_clock(ci: CanvasItem, center: Vector2, hour: int, minute: int, minute_labels: bool) -> void:
+	var font: Font = ThemeDB.fallback_font
+	ci.draw_circle(center, CLOCK_RADIUS + 4.0, CLOCK_RIM)
+	ci.draw_circle(center, CLOCK_RADIUS, CLOCK_FACE)
 	for i: int in 60:
 		var angle: float = i / 60.0 * TAU
 		var outward: Vector2 = Vector2(sin(angle), -cos(angle))
 		var inner: float = CLOCK_RADIUS - (8.0 if i % 5 == 0 else 4.0)
-		draw_line(center + outward * inner, center + outward * (CLOCK_RADIUS - 1.0), CLOCK_RIM, 2.0 if i % 5 == 0 else 1.0)
+		ci.draw_line(center + outward * inner, center + outward * (CLOCK_RADIUS - 1.0), CLOCK_RIM, 2.0 if i % 5 == 0 else 1.0)
 	for n: int in range(1, 13):
 		var angle: float = n / 12.0 * TAU
-		var spot: Vector2 = center + Vector2(sin(angle), -cos(angle)) * (CLOCK_RADIUS - 20.0)
-		var text: String = str(n)
-		var text_size: Vector2 = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
-		draw_string(font, spot + Vector2(-text_size.x / 2.0, text_size.y / 3.0), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, CLOCK_RIM)
+		var outward: Vector2 = Vector2(sin(angle), -cos(angle))
+		_draw_centered_text(ci, font, center + outward * (CLOCK_RADIUS - 20.0), str(n), 16, CLOCK_RIM)
+		if minute_labels:
+			_draw_centered_text(ci, font, center + outward * (CLOCK_RADIUS + 15.0), str((n * 5) % 60), 14, MINUTE_LABEL)
 	var angles: Vector2 = hand_angles(hour, minute)
-	draw_line(center, center + Vector2(sin(angles.x), -cos(angles.x)) * CLOCK_RADIUS * 0.5, HOUR_HAND, 7.0)
-	draw_line(center, center + Vector2(sin(angles.y), -cos(angles.y)) * CLOCK_RADIUS * 0.8, MINUTE_HAND, 4.0)
-	draw_circle(center, 5.0, HOUR_HAND)
+	ci.draw_line(center, center + Vector2(sin(angles.x), -cos(angles.x)) * CLOCK_RADIUS * 0.5, HOUR_HAND, 7.0)
+	ci.draw_line(center, center + Vector2(sin(angles.y), -cos(angles.y)) * CLOCK_RADIUS * 0.8, MINUTE_HAND, 4.0)
+	ci.draw_circle(center, 5.0, HOUR_HAND)
 
 
-func _draw_coins(coins: Dictionary) -> void:
-	var font: Font = get_theme_default_font()
+## Coins biggest value first, centered in `area`. Labels show the name, or the value (hint).
+static func draw_coins(ci: CanvasItem, area: Vector2, coins: Dictionary, show_values: bool) -> void:
+	var font: Font = ThemeDB.fallback_font
 	var pieces: Array[String] = []
 	for row: Array in coin_rows(coins):
 		for i: int in int(row[1]):
@@ -132,30 +134,48 @@ func _draw_coins(coins: Dictionary) -> void:
 	var widths: float = 0.0
 	for coin: String in pieces:
 		widths += float(COINS[coin]["mm"]) * COIN_PX_PER_MM + COIN_GAP
-	var x: float = (size.x - widths + COIN_GAP) / 2.0
-	var y: float = size.y / 2.0 - 8.0
+	var x: float = (area.x - widths + COIN_GAP) / 2.0
+	var y: float = area.y / 2.0 - 8.0
 	for coin: String in pieces:
 		var radius: float = float(COINS[coin]["mm"]) * COIN_PX_PER_MM / 2.0
 		var center: Vector2 = Vector2(x + radius, y)
-		draw_circle(center, radius + 2.0, OUTLINE)
-		draw_circle(center, radius, COINS[coin]["color"])
-		draw_arc(center, radius * 0.8, 0.0, TAU, 32, Color(1, 1, 1, 0.35), 2.0)
-		var label_size: Vector2 = font.get_string_size(coin, HORIZONTAL_ALIGNMENT_LEFT, -1, 16)
-		draw_string(font, Vector2(center.x - label_size.x / 2.0, y + radius + 22.0), coin, HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color.WHITE)
+		ci.draw_circle(center, radius + 2.0, OUTLINE)
+		ci.draw_circle(center, radius, COINS[coin]["color"])
+		ci.draw_arc(center, radius * 0.8, 0.0, TAU, 32, Color(1, 1, 1, 0.35), 2.0)
+		var label: String = "%d¢" % int(TimeMoneyGenerator.COIN_VALUES[coin]) if show_values else coin
+		_draw_centered_text(ci, font, Vector2(center.x, y + radius + 16.0), label, 16, Color.WHITE)
 		x += radius * 2.0 + COIN_GAP
 
 
-func _draw_groups(groups: int, group_size: int) -> void:
-	var per_row: int = mini(group_size, 5)
-	var rows: int = ceili(group_size / float(per_row))
-	var dot_step: float = DOT_RADIUS * 2.0 + 4.0
-	var box: Vector2 = Vector2(per_row * dot_step + GROUP_PAD * 2.0 - 4.0, rows * dot_step + GROUP_PAD * 2.0 - 4.0)
-	var total_width: float = groups * box.x + (groups - 1) * GROUP_GAP
-	var origin: Vector2 = Vector2((size.x - total_width) / 2.0, (size.y - box.y) / 2.0)
+## `groups` boxes with `group_size` dots each, centered in `area`. Dots shrink to fit big problems.
+static func draw_groups(ci: CanvasItem, area: Vector2, groups: int, group_size: int, show_question: bool = false) -> void:
+	var font: Font = ThemeDB.fallback_font
+	var per_row: int = maxi(mini(group_size, 5), 1)
+	var rows: int = maxi(ceili(group_size / float(per_row)), 1)
+	var radius: float = DOT_RADIUS
+	var box: Vector2
+	var total_width: float
+	for attempt: int in 4:
+		var dot_step: float = radius * 2.0 + 4.0
+		box = Vector2(per_row * dot_step + GROUP_PAD * 2.0 - 4.0, rows * dot_step + GROUP_PAD * 2.0 - 4.0)
+		total_width = groups * box.x + (groups - 1) * GROUP_GAP
+		if total_width <= area.x - 20.0 and box.y <= area.y:
+			break
+		radius *= 0.7
+	var dot_step: float = radius * 2.0 + 4.0
+	var origin: Vector2 = Vector2((area.x - total_width) / 2.0, (area.y - box.y) / 2.0)
 	for g: int in groups:
 		var top_left: Vector2 = origin + Vector2(g * (box.x + GROUP_GAP), 0)
-		draw_rect(Rect2(top_left, box), GROUP_COLOR)
-		draw_rect(Rect2(top_left, box), OUTLINE, false, 2.0)
+		ci.draw_rect(Rect2(top_left, box), GROUP_COLOR)
+		ci.draw_rect(Rect2(top_left, box), OUTLINE, false, 2.0)
+		if show_question:
+			_draw_centered_text(ci, font, top_left + box / 2.0, "?", 28, OUTLINE)
+			continue
 		for d: int in group_size:
-			var spot: Vector2 = top_left + Vector2(GROUP_PAD + DOT_RADIUS + (d % per_row) * dot_step, GROUP_PAD + DOT_RADIUS + (d / per_row) * dot_step)
-			draw_circle(spot, DOT_RADIUS, DOT_COLOR)
+			var spot: Vector2 = top_left + Vector2(GROUP_PAD + radius + (d % per_row) * dot_step, GROUP_PAD + radius + (d / per_row) * dot_step)
+			ci.draw_circle(spot, radius, DOT_COLOR)
+
+
+static func _draw_centered_text(ci: CanvasItem, font: Font, center: Vector2, text: String, font_size: int, color: Color) -> void:
+	var text_size: Vector2 = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
+	ci.draw_string(font, center + Vector2(-text_size.x / 2.0, text_size.y / 3.0), text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, color)

@@ -1,9 +1,12 @@
 class_name ChaseScreen
 extends CanvasLayer
-## The chase (PLAN.md 3.6): the critter runs along a path with the ranger behind it.
+## The chase (PLAN.md 3.6–3.7): the critter runs along a path with the ranger behind it.
 ## Each problem shows big answer buttons. Right answers speed the ranger up and close the gap;
 ## misses let the critter pull ahead a little. Enough right answers → net toss → caught!
-## Emits `finished(true)` after the catch celebration.
+## The sidekick (Henrito) cheers, and after enough misses on one problem gives a spoken hint
+## with a hint picture. Race mode adds a timer (the critter can get away; "Chase again" retries)
+## and a sprint boost for fast right answers.
+## Emits `finished(caught)` when the player leaves the chase.
 
 signal finished(caught: bool)
 
@@ -28,15 +31,27 @@ const SFX_CAUGHT: AudioStream = preload("res://assets/audio/sfx/caught.wav")
 const PROMPT_FONT_SIZE: int = 56
 const BUTTON_FONT_SIZE: int = 44
 const FEEDBACK_FONT_SIZE: int = 34
+const BUBBLE_FONT_SIZE: int = 26
+const TIMER_FONT_SIZE: int = 34
 const BUTTON_MIN_SIZE: Vector2 = Vector2(190, 110)
+const WIDE_BUTTON_MIN_SIZE: Vector2 = Vector2(360, 110)
 const PICTURE_HEIGHT: float = 150.0
 const METER_DOT_SIZE: float = 34.0
 const NET_TOSS_SECONDS: float = 0.5
+const ESCAPE_RUN_SECONDS: float = 0.8
 const PORTRAIT_SIZE: float = 192.0
+const SIDEKICK_FACE_SIZE: float = 88.0
+const BUBBLE_WIDTH: float = 640.0
+const TIMER_BAR_WIDTH: float = 260.0
+const SPRINT_BURST_MULTIPLIER: float = 1.5
 
 const PRAISE: Array[String] = ["Great job!", "You got it!", "Nice! Keep going!", "Getting closer!"]
 const TRY_AGAIN: String = "Try again. You've got this."
 const CAUGHT_TEXT: String = "You caught the %s!"
+const ESCAPED_TEXT: String = "The %s got away!"
+const SPRINT_TEXT: String = "Sprint boost! +%ds"
+const CHASE_AGAIN: String = "Chase again"
+const BACK_TO_MAP: String = "Back to the map"
 
 ## Turn off in tests so nothing advances on a timer.
 var auto_advance: bool = true
@@ -46,8 +61,12 @@ var skill_id: String = ""
 var chase: ChaseState
 var config: Dictionary = {}
 var problem: MathProblem
-## False while waiting for the next problem or celebrating.
+var sidekick: Sidekick
+## False while waiting for the next problem, celebrating, or after an escape.
 var accepting: bool = false
+## Misses on the current problem (for when the hint appears).
+var misses_this_problem: int = 0
+var hint_shown: bool = false
 
 var track: Control
 var ranger_sprite: AnimatedSprite2D
@@ -56,19 +75,28 @@ var critter_emote: Sprite2D
 var net: Node2D
 var prompt_label: Label
 var picture: ProblemPicture
+var hint_picture: HintPicture
 var choices_box: HBoxContainer
 var feedback: Label
 var meter: HBoxContainer
 ## Big portrait of the rescued animal, shown after the catch.
 var portrait: TextureRect
+var bubble: PanelContainer
+var bubble_label: Label
+var bubble_face: TextureRect
+var timer_box: VBoxContainer
+var timer_label: Label
+var timer_bar: ProgressBar
 
 var _track_rows: Array[TextureRect] = []
 var _scroll: float = 0.0
 var _burst_left: float = 0.0
+var _burst_speed: float = 0.0
 var _first_try_recorded: bool = false
 var _shown_at_msec: int = 0
 var _catching: bool = false
 var _praise_index: int = 0
+var _bubble_hide_at_msec: int = -1
 var _sfx: AudioStreamPlayer
 
 
@@ -78,40 +106,43 @@ func _ready() -> void:
 
 
 ## Begin a chase after `animal` (AnimalCatalog data) using problems from `chase_skill`.
-func start(chase_animal: Dictionary, chase_skill: String, chase_config: Dictionary = {}) -> void:
+## `chase_mode` is ChaseState.EXPLORE or ChaseState.RACE (default: GameState's current mode).
+func start(chase_animal: Dictionary, chase_skill: String, chase_mode: String = "", chase_config: Dictionary = {}) -> void:
 	animal = chase_animal
 	skill_id = chase_skill
 	config = chase_config if not chase_config.is_empty() else ChaseState.load_config()
-	chase = ChaseState.new(config)
+	chase = ChaseState.new(config, chase_mode if chase_mode != "" else GameState.chase_mode())
+	sidekick = Sidekick.load_by_id(GameState.sidekick_id, GameState.rng)
+	bubble_face.texture = sidekick.faceset()
 	critter_sprite.sprite_frames = Critter.build_frames(animal)
 	critter_sprite.flip_h = str(animal.get("faces", "right")) != "right"
-	critter_sprite.play("walk")
-	ranger_sprite.play("walk_right")
-	critter_sprite.position.x = _critter_x()
-	_update_meter()
+	timer_box.visible = chase.is_race()
+	_reset_runners()
+	say_sidekick(sidekick.line("chase_start"), float(config.get("sidekick_line_seconds", 2.5)))
 	next_problem()
 
 
 func next_problem() -> void:
-	if chase == null or chase.caught:
+	if chase == null or chase.is_over():
 		return
 	problem = GameState.factory.generate(skill_id, GameState.engine.level(skill_id), GameState.rng)
 	_first_try_recorded = false
+	misses_this_problem = 0
+	hint_shown = false
 	_shown_at_msec = Time.get_ticks_msec()
 	prompt_label.text = problem.prompt
 	picture.show_problem(problem, critter_sprite.sprite_frames.get_frame_texture("walk", 0))
+	picture.visible = true
+	hint_picture.visible = false
 	feedback.text = ""
-	for child: Node in choices_box.get_children():
-		choices_box.remove_child(child)
-		child.free()
+	if _bubble_hide_at_msec < 0:
+		bubble.visible = false
+	var buttons: Array[Button] = []
 	for choice: String in problem.choices:
-		var button: Button = Button.new()
-		button.text = choice
-		button.custom_minimum_size = BUTTON_MIN_SIZE
-		button.add_theme_font_size_override("font_size", BUTTON_FONT_SIZE)
-		button.focus_mode = Control.FOCUS_NONE
-		button.pressed.connect(answer.bind(choice))
-		choices_box.add_child(button)
+		var button: Button = _big_button(choice, BUTTON_MIN_SIZE)
+		button.pressed.connect(answer.bind(choice), CONNECT_DEFERRED)
+		buttons.append(button)
+	_set_buttons(buttons)
 	accepting = true
 	if GameState.read_aloud:
 		Speech.say(problem.spoken)
@@ -122,31 +153,61 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 	if not accepting:
 		return
 	var correct: bool = problem.is_correct(choice)
+	var elapsed: float = seconds if seconds >= 0.0 else (Time.get_ticks_msec() - _shown_at_msec) / 1000.0
 	if not _first_try_recorded:
 		_first_try_recorded = true
-		var elapsed: float = seconds if seconds >= 0.0 else (Time.get_ticks_msec() - _shown_at_msec) / 1000.0
 		GameState.engine.record_answer(skill_id, correct, elapsed)
-	chase.answer(correct)
+	chase.answer(correct, elapsed)
 	_update_meter()
 	if not correct:
 		_play(SFX_TRY_AGAIN)
 		feedback.text = TRY_AGAIN
+		misses_this_problem += 1
 		for button: Button in choice_buttons():
 			if button.text == choice:
 				button.disabled = true
+		if not hint_shown and misses_this_problem >= GameState.engine.misses_before_hint(skill_id):
+			show_hint()
 		return
 	accepting = false
 	_play(SFX_CORRECT)
 	_burst_left = float(config.get("burst_seconds", 0.6))
+	_burst_speed = float(config.get("burst_scroll_speed", 420.0)) * (SPRINT_BURST_MULTIPLIER if chase.last_sprint else 1.0)
 	for button: Button in choice_buttons():
 		button.disabled = true
 	if chase.caught:
 		_begin_catch()
 		return
-	feedback.text = PRAISE[_praise_index % PRAISE.size()]
-	_praise_index += 1
+	if chase.last_sprint:
+		feedback.text = SPRINT_TEXT % roundi(chase.sprint_time_bonus)
+		say_sidekick(sidekick.line("sprint"), float(config.get("sidekick_line_seconds", 2.5)))
+	else:
+		feedback.text = PRAISE[_praise_index % PRAISE.size()]
+		_praise_index += 1
 	if auto_advance:
 		get_tree().create_timer(float(config.get("next_problem_delay", 0.9))).timeout.connect(next_problem)
+
+
+## The sidekick's spoken hint and hint picture for the current problem.
+func show_hint() -> void:
+	hint_shown = true
+	picture.visible = false
+	hint_picture.show_problem(problem)
+	hint_picture.visible = HintPicture.kind_for(problem) != ""
+	if not hint_picture.visible:
+		picture.visible = true
+	say_sidekick(HintText.for_problem(problem), 0.0)
+
+
+## Shows the sidekick's speech bubble (and says it aloud). `seconds` 0 = stays until the next problem.
+func say_sidekick(text: String, seconds: float) -> void:
+	if text == "":
+		return
+	bubble_label.text = text
+	bubble.visible = true
+	_bubble_hide_at_msec = Time.get_ticks_msec() + int(seconds * 1000.0) if seconds > 0.0 else -1
+	if GameState.read_aloud and sidekick != null:
+		Speech.say(text, sidekick.voice_rate(), sidekick.voice_pitch())
 
 
 func choice_buttons() -> Array[Button]:
@@ -157,7 +218,17 @@ func choice_buttons() -> Array[Button]:
 	return buttons
 
 
-## Ends the chase (called automatically after the catch celebration).
+## After an escape: start the same chase over.
+func retry() -> void:
+	chase.restart()
+	_catching = false
+	_update_meter()
+	_reset_runners()
+	say_sidekick(sidekick.line("chase_start"), float(config.get("sidekick_line_seconds", 2.5)))
+	next_problem()
+
+
+## Leaves the chase (called automatically after the catch celebration).
 func finish() -> void:
 	Speech.stop()
 	finished.emit(chase != null and chase.caught)
@@ -166,44 +237,70 @@ func finish() -> void:
 func _begin_catch() -> void:
 	_catching = true
 	var caught_text: String = CAUGHT_TEXT % animal.get("name", "critter")
-	# Clear the question so the catch is the star.
-	prompt_label.text = caught_text
-	feedback.text = ""
-	picture.show_problem(null)
-	picture.visible = false
+	_clear_question(caught_text)
 	if animal.has("faceset"):
 		portrait.texture = load(str(animal["faceset"]))
 		portrait.visible = true
-	for child: Node in choices_box.get_children():
-		choices_box.remove_child(child)
-		child.free()
 	_play(SFX_NET)
 	net.position = ranger_sprite.position
 	net.visible = true
 	var tween: Tween = create_tween()
 	tween.tween_property(ranger_sprite, "position:x", critter_sprite.position.x - TILE * SPRITE_SCALE * 0.8, NET_TOSS_SECONDS)
 	tween.parallel().tween_property(net, "position", critter_sprite.position + Vector2(0, -TILE * SPRITE_SCALE * 0.4), NET_TOSS_SECONDS)
-	tween.tween_callback(_on_net_landed.bind(caught_text))
+	tween.tween_callback(_on_net_landed)
 
 
-func _on_net_landed(caught_text: String) -> void:
+func _on_net_landed() -> void:
 	critter_sprite.stop()
 	ranger_sprite.play("idle_right")
 	critter_emote.visible = true
 	_play(SFX_CAUGHT)
-	if GameState.read_aloud:
-		Speech.say(caught_text)
+	say_sidekick(sidekick.line("caught"), 0.0)
 	if auto_advance:
 		get_tree().create_timer(float(config.get("caught_show_seconds", 2.5))).timeout.connect(finish)
+
+
+## Race timer ran out: the critter dashes off; offer to chase again.
+func _begin_escape() -> void:
+	_catching = true
+	_clear_question(ESCAPED_TEXT % animal.get("name", "critter"))
+	var tween: Tween = create_tween()
+	tween.tween_property(critter_sprite, "position:x", track.size.x + TILE * SPRITE_SCALE * 2, ESCAPE_RUN_SECONDS)
+	ranger_sprite.play("idle_right")
+	say_sidekick(sidekick.line("escaped"), 0.0)
+	var again: Button = _big_button(CHASE_AGAIN, WIDE_BUTTON_MIN_SIZE)
+	again.pressed.connect(retry, CONNECT_DEFERRED)
+	var back: Button = _big_button(BACK_TO_MAP, WIDE_BUTTON_MIN_SIZE)
+	back.pressed.connect(finish, CONNECT_DEFERRED)
+	_set_buttons([again, back])
+
+
+func _clear_question(headline: String) -> void:
+	accepting = false
+	prompt_label.text = headline
+	feedback.text = ""
+	picture.show_problem(null)
+	picture.visible = false
+	hint_picture.visible = false
+	_set_buttons([])
 
 
 func _process(delta: float) -> void:
 	if chase == null:
 		return
+	if _bubble_hide_at_msec >= 0 and Time.get_ticks_msec() >= _bubble_hide_at_msec:
+		bubble.visible = false
+		_bubble_hide_at_msec = -1
+	if chase.tick(delta):
+		_begin_escape()
+	if chase.is_race():
+		timer_label.text = "%ds" % ceili(chase.time_left)
+		timer_bar.max_value = maxf(chase.race_seconds, chase.time_left)
+		timer_bar.value = chase.time_left
 	_burst_left = maxf(_burst_left - delta, 0.0)
 	var speed: float = 0.0
 	if not _catching:
-		speed = float(config.get("burst_scroll_speed" if _burst_left > 0.0 else "run_scroll_speed", 160.0))
+		speed = _burst_speed if _burst_left > 0.0 else float(config.get("run_scroll_speed", 160.0))
 	_scroll += speed * delta
 	var tile_px: float = TILE * SPRITE_SCALE
 	for row: TextureRect in _track_rows:
@@ -217,6 +314,16 @@ func _critter_x() -> float:
 	return RANGER_X + TILE * SPRITE_SCALE + chase.gap * float(config.get("gap_pixels", 170))
 
 
+func _reset_runners() -> void:
+	ranger_sprite.position.x = RANGER_X
+	ranger_sprite.play("walk_right")
+	critter_sprite.position.x = _critter_x()
+	critter_sprite.play("walk")
+	critter_emote.visible = false
+	net.visible = false
+	portrait.visible = false
+
+
 func _update_meter() -> void:
 	var filled: int = chase.correct if chase != null else 0
 	var slots: Array[Node] = meter.get_children()
@@ -225,6 +332,25 @@ func _update_meter() -> void:
 		var style: StyleBoxFlat = dot.get_theme_stylebox("panel").duplicate()
 		style.bg_color = Color(1, 0.8, 0.2) if i < filled else Color(1, 1, 1, 0.35)
 		dot.add_theme_stylebox_override("panel", style)
+
+
+func _big_button(text: String, min_size: Vector2) -> Button:
+	var button: Button = Button.new()
+	button.text = text
+	button.custom_minimum_size = min_size
+	button.add_theme_font_size_override("font_size", BUTTON_FONT_SIZE)
+	button.focus_mode = Control.FOCUS_NONE
+	return button
+
+
+## Replaces the answer buttons. Old buttons are freed right away; that's safe because every
+## button's `pressed` is connected deferred (see _big_button), so none is mid-signal here.
+func _set_buttons(buttons: Array) -> void:
+	for child: Node in choices_box.get_children():
+		choices_box.remove_child(child)
+		child.free()
+	for button: Variant in buttons:
+		choices_box.add_child(button)
 
 
 func _play(stream: AudioStream) -> void:
@@ -288,6 +414,9 @@ func _build() -> void:
 		dot.add_theme_stylebox_override("panel", style)
 		meter.add_child(dot)
 
+	_build_timer()
+	_build_bubble()
+
 	var column: VBoxContainer = VBoxContainer.new()
 	column.position = Vector2(0, TRACK_TOP + TRACK_ROWS * tile_px + 6)
 	column.size = Vector2(1280, 720 - column.position.y)
@@ -302,6 +431,11 @@ func _build() -> void:
 	picture = ProblemPicture.new()
 	picture.custom_minimum_size = Vector2(1280, PICTURE_HEIGHT)
 	column.add_child(picture)
+	hint_picture = HintPicture.new()
+	hint_picture.name = "HintPicture"
+	hint_picture.custom_minimum_size = Vector2(1280, PICTURE_HEIGHT)
+	hint_picture.visible = false
+	column.add_child(hint_picture)
 	portrait = TextureRect.new()
 	portrait.name = "Portrait"
 	portrait.custom_minimum_size = Vector2(PORTRAIT_SIZE, PORTRAIT_SIZE)
@@ -324,6 +458,67 @@ func _build() -> void:
 
 	_sfx = AudioStreamPlayer.new()
 	add_child(_sfx)
+
+
+## Race timer, over the track between the sidekick's bubble and the catch meter.
+func _build_timer() -> void:
+	timer_box = VBoxContainer.new()
+	timer_box.name = "RaceTimer"
+	timer_box.position = Vector2(16 + BUBBLE_WIDTH + 40, TRACK_TOP + 6)
+	timer_box.custom_minimum_size = Vector2(TIMER_BAR_WIDTH, 0)
+	timer_box.visible = false
+	add_child(timer_box)
+	timer_label = Label.new()
+	timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	timer_label.add_theme_font_size_override("font_size", TIMER_FONT_SIZE)
+	timer_label.add_theme_color_override("font_outline_color", Color(0.15, 0.25, 0.1))
+	timer_label.add_theme_constant_override("outline_size", 8)
+	timer_box.add_child(timer_label)
+	timer_bar = ProgressBar.new()
+	timer_bar.show_percentage = false
+	timer_bar.custom_minimum_size = Vector2(TIMER_BAR_WIDTH, 16)
+	var back: StyleBoxFlat = StyleBoxFlat.new()
+	back.bg_color = Color(0.15, 0.25, 0.1, 0.6)
+	back.set_corner_radius_all(8)
+	timer_bar.add_theme_stylebox_override("background", back)
+	var fill: StyleBoxFlat = StyleBoxFlat.new()
+	fill.bg_color = Color(1, 0.8, 0.2)
+	fill.set_corner_radius_all(8)
+	timer_bar.add_theme_stylebox_override("fill", fill)
+	timer_box.add_child(timer_bar)
+
+
+## Sidekick portrait + speech bubble, top left over the track.
+func _build_bubble() -> void:
+	bubble = PanelContainer.new()
+	bubble.name = "SidekickBubble"
+	bubble.position = Vector2(16, TRACK_TOP + 8)
+	var style: StyleBoxFlat = StyleBoxFlat.new()
+	style.bg_color = Color(1, 1, 0.97)
+	style.border_color = Color(0.3, 0.25, 0.15)
+	style.set_border_width_all(3)
+	style.set_corner_radius_all(16)
+	style.set_content_margin_all(10)
+	bubble.add_theme_stylebox_override("panel", style)
+	bubble.visible = false
+	add_child(bubble)
+	var row: HBoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	bubble.add_child(row)
+	bubble_face = TextureRect.new()
+	bubble_face.custom_minimum_size = Vector2(SIDEKICK_FACE_SIZE, SIDEKICK_FACE_SIZE)
+	bubble_face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bubble_face.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	bubble_face.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	row.add_child(bubble_face)
+	bubble_label = Label.new()
+	bubble_label.custom_minimum_size = Vector2(BUBBLE_WIDTH - SIDEKICK_FACE_SIZE - 40, 0)
+	bubble_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	bubble_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	bubble_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	bubble_label.add_theme_font_size_override("font_size", BUBBLE_FONT_SIZE)
+	bubble_label.add_theme_color_override("font_color", Color(0.2, 0.18, 0.12))
+	row.add_child(bubble_label)
 
 
 func _actor_sprite(frames: SpriteFrames, at: Vector2) -> AnimatedSprite2D:

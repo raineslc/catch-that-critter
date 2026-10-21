@@ -26,11 +26,11 @@ static func voice() -> String:
 
 
 ## Stops anything already speaking, then says `text`.
-static func say(text: String) -> void:
+static func say(text: String, rate: float = RATE, pitch: float = PITCH) -> void:
 	if not is_available() or text == "":
 		return
 	DisplayServer.tts_stop()
-	DisplayServer.tts_speak(text, voice(), 50, PITCH, RATE)
+	DisplayServer.tts_speak(text, voice(), 50, pitch, rate)
 
 
 static func stop() -> void:

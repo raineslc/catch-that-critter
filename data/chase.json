@@ -10,5 +10,10 @@
   "burst_seconds": 0.6,
   "next_problem_delay": 0.9,
   "start_delay": 0.8,
-  "caught_show_seconds": 2.5
+  "caught_show_seconds": 2.5,
+  "race_seconds": 45.0,
+  "sprint_seconds": 5.0,
+  "sprint_time_bonus": 3.0,
+  "sprint_extra_close": 0.5,
+  "sidekick_line_seconds": 2.5
 }

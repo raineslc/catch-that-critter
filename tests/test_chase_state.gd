@@ -40,6 +40,60 @@ func test_misses_do_not_stop_the_catch() -> void:
 	assert_true(chase.caught)
 
 
+const RACE_CONFIG: Dictionary = {"correct_to_catch": 3, "start_gap": 3.0, "close_per_correct": 1.0, "pull_per_miss": 0.5,
+	"max_gap": 4.0, "race_seconds": 10.0, "sprint_seconds": 5.0, "sprint_time_bonus": 3.0, "sprint_extra_close": 0.5}
+
+
+func test_explore_has_no_timer() -> void:
+	var chase: ChaseState = ChaseState.new(CONFIG)
+	assert_false(chase.tick(1000.0))
+	assert_false(chase.escaped)
+
+
+func test_race_timer_runs_out_and_the_critter_escapes() -> void:
+	var chase: ChaseState = ChaseState.new(RACE_CONFIG, ChaseState.RACE)
+	assert_eq(chase.time_left, 10.0)
+	assert_false(chase.tick(9.0))
+	assert_true(chase.tick(1.5), "escapes on the tick time runs out")
+	assert_true(chase.escaped)
+	assert_false(chase.tick(1.0), "only reports the escape once")
+	chase.answer(true)
+	assert_eq(chase.correct, 0, "answers after escaping are ignored")
+
+
+func test_fast_right_answer_sprints_in_race_only() -> void:
+	var race: ChaseState = ChaseState.new(RACE_CONFIG, ChaseState.RACE)
+	race.answer(true, 2.0)
+	assert_true(race.last_sprint)
+	assert_almost_eq(race.gap, 1.5, 0.001, "closes extra")
+	assert_almost_eq(race.time_left, 13.0, 0.001, "bonus seconds")
+	race.answer(true, 9.0)
+	assert_false(race.last_sprint, "slow answers don't sprint")
+	var explore: ChaseState = ChaseState.new(RACE_CONFIG, ChaseState.EXPLORE)
+	explore.answer(true, 1.0)
+	assert_false(explore.last_sprint)
+
+
+func test_catching_stops_the_race_clock() -> void:
+	var chase: ChaseState = ChaseState.new(RACE_CONFIG, ChaseState.RACE)
+	for i: int in 3:
+		chase.answer(true, 9.0)
+	assert_true(chase.caught)
+	assert_false(chase.tick(100.0))
+	assert_false(chase.escaped)
+
+
+func test_restart_starts_fresh() -> void:
+	var chase: ChaseState = ChaseState.new(RACE_CONFIG, ChaseState.RACE)
+	chase.answer(true, 9.0)
+	chase.tick(20.0)
+	chase.restart()
+	assert_false(chase.escaped)
+	assert_eq(chase.correct, 0)
+	assert_eq(chase.gap, 3.0)
+	assert_eq(chase.time_left, 10.0)
+
+
 func test_answers_after_the_catch_are_ignored() -> void:
 	var chase: ChaseState = ChaseState.new(CONFIG)
 	for i: int in 3:

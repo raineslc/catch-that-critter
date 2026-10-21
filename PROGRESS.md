@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 2, step 4 — Explore and Race modes; Henrito hints after 2 misses (TTS).
+Phase 3, step 1 — Storm intro panels with narration.
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -43,9 +43,17 @@ Phase 2, step 4 — Explore and Race modes; Henrito hints after 2 misses (TTS).
   - Fixed: a startled critter kept moving after the world froze (physics error).
   - 117 tests passing.
 
+- 2026-10-21 — Phase 2, step 4: modes and Henrito.
+  - `ChaseState`: Race timer, escape, sprint boost, restart. `GameState`: mode, explore lock, sidekick id. Meadow mode button.
+  - `Sidekick` (`scripts/sidekick/sidekick.gd`, `data/sidekicks.json`): Henrito's art, voice, and lines. `HintText`: one-sentence strategy hint per problem type. `HintPicture`: counted dots, add/take-away dots, number line with hops, base-ten blocks (shrink to fit), clock with minute labels, coins with values, groups.
+  - Chase screen: Henrito bubble, hints after the engine's miss limit, race timer bar, "Got away!" → Chase again / Back to the map.
+  - `ProblemPicture` drawing refactored into shared static helpers (clock, coins, groups).
+  - 139 tests passing.
+- **Phase 2 (map & chase prototype) complete.**
+
 ## Next
-- Phase 2, step 4: Explore vs Race modes (Race: timer per chase, critter escapes when time runs out, fast answers give a sprint boost; parent can lock Explore). Henrito: portrait + speech bubble, calm TTS hints after 2 misses (1 with extra help) using the hint type (dots, number line, clock, coins, groups), shown as pictures.
-- Chris: listen to the four chase sounds and say if any should change.
+- Phase 3, step 1: storm intro (a few illustrated panels with TTS narration: thunderstorm, fences fall, animals scatter; Henrito explains the mission). Needs a little art: pack backgrounds/FX or simple drawn panels.
+- Chris: listen to the four chase sounds and say if any should change; try Race mode with the 7-year-old and tell me if 45 seconds feels right.
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.
