@@ -155,7 +155,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 
 ### Phase 0 — Setup
 - [x] Create GitHub repo; add PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
-- [ ] Init Godot 4 project, folders, GUT, CI.
+- [x] Init Godot 4 project, folders, GUT, CI.
 
 ### Phase 1 — Math Core (no graphics)
 - [ ] Problem generators for the five skill areas with Common Core tags + tests.

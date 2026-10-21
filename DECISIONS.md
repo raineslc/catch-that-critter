@@ -14,5 +14,8 @@ Free, small web exports, built-in tilemaps, camera and text-to-speech; easy desk
 ## 2026-10-20 — Multi-AI workflow
 The GitHub repo is the single source of truth so Claude, ChatGPT, and Gemini can all pick up the work. Shared files: PLAN, CONVENTIONS, PROGRESS, DECISIONS; pointer files: CLAUDE.md, AGENTS.md, GEMINI.md.
 
+## 2026-10-20 — Pinned Godot 4.7.2 and GUT 9.7.1
+Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release made for Godot 4.7. Compatibility renderer so the same project runs well on the web.
+
 ## 2026-10-20 — Local saves only, TTS first, free art first
 No accounts or cloud; privacy for kids. Text-to-speech before recorded voices; free asset packs before custom art.

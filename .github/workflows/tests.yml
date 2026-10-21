@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  GODOT_VERSION: 4.7.2
+
+jobs:
+  gut:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download Godot ${{ env.GODOT_VERSION }}
+        run: |
+          curl -sSfL -o godot.zip "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          chmod +x godot
+          ./godot --version
+
+      - name: Import project
+        run: ./godot --headless --import
+
+      - name: Run GUT tests
+        run: ./godot --headless -s addons/gut/gut_cmdln.gd -gdir=res://tests -gexit
