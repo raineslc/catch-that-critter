@@ -13,6 +13,8 @@ var tile_size: int = 16
 var ground: Dictionary = {}
 ## char -> object definition (name, atlas, size, blocks).
 var objects: Dictionary = {}
+## char -> animal id (data/animals.json) that starts at that tile.
+var critters: Dictionary = {}
 var spawn_char: String = "S"
 
 
@@ -25,6 +27,7 @@ static func load_map(map_path: String, legend_path: String = LEGEND_PATH) -> Map
 	map.tile_size = int(legend.get("tile_size", 16))
 	map.ground = legend.get("ground", {})
 	map.objects = legend.get("objects", {})
+	map.critters = legend.get("critters", {})
 	map.spawn_char = str(legend.get("spawn", "S"))
 	for line: String in FileAccess.get_file_as_string(map_path).split("\n"):
 		var row: String = line.strip_edges(false, true)
@@ -52,6 +55,15 @@ func ground_at(cell: Vector2i) -> String:
 
 func object_at(cell: Vector2i) -> Dictionary:
 	return objects.get(char_at(cell), {})
+
+
+## Animal id that starts at this tile, or "".
+func critter_at(cell: Vector2i) -> String:
+	return str(critters.get(char_at(cell), ""))
+
+
+func pixel_to_cell(point: Vector2) -> Vector2i:
+	return Vector2i(floori(point.x / tile_size), floori(point.y / tile_size))
 
 
 ## Can the ranger stand here? (No water, no blocking objects, inside the map.)

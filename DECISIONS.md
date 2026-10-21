@@ -23,6 +23,9 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Missing species: pack animals now, fill gaps later
+Chris chose to build with the pack's animals first (raccoon in the Meadow now) and find or make fox, rabbit, deer, turtle, tortoise, mountain goat, snow leopard, and eagle before they're needed (fox/rabbit/deer before the MVP is done). The confirmed animal list in PLAN.md is unchanged.
+
 ## 2026-10-21 — Maps are text files
 Habitat layouts live in `data/maps/*.txt` (one character per 16px tile; meanings in `data/maps/legend.json`) so they can be edited without Godot. Ponds must be convex (no inside corners); a test enforces it.
 

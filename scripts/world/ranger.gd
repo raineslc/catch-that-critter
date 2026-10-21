@@ -36,6 +36,8 @@ var _stuck_frames: int = 0
 
 func _ready() -> void:
 	ensure_input_actions()
+	collision_layer = PhysicsLayers.RANGER
+	collision_mask = PhysicsLayers.WORLD
 	sprite = AnimatedSprite2D.new()
 	sprite.name = "Sprite"
 	sprite.sprite_frames = build_frames(DEFAULT_SHEET)

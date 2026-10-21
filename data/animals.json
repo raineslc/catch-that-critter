@@ -1,0 +1,27 @@
+{
+  "defaults": {
+    "frame_size": [16, 16],
+    "frames": 2,
+    "faces": "right",
+    "animation_fps": 6.0,
+    "wander_speed": 22.0,
+    "flee_speed": 90.0,
+    "wander_radius_tiles": 4,
+    "idle_seconds": [1.0, 3.0],
+    "startle_radius": 40.0,
+    "startle_seconds": 0.6,
+    "flee_seconds": 1.2,
+    "cooldown_seconds": 4.0
+  },
+  "animals": [
+    {
+      "id": "raccoon",
+      "name": "Raccoon",
+      "habitat": "meadow",
+      "skill": "counting",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/raccoon/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/raccoon/faceset.png"
+    }
+  ]
+}

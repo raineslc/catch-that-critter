@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 2, step 2 — Wandering animal that starts a chase when approached.
+Phase 2, step 3 — Chase screen: answer buttons, speed-up, net capture.
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -29,8 +29,14 @@ Phase 2, step 2 — Wandering animal that starts a chase when approached.
   - Title screen → any key → Meadow.
   - 88 tests passing (physics tests: walking, pond blocks, click-to-move, stuck give-up).
 
+- 2026-10-21 — Phase 2, step 2: wandering critters.
+  - `data/animals.json` (defaults + raccoon) read by `AnimalCatalog`; map legend `a` = raccoon spawn (2 in the Meadow).
+  - `Critter`: idle → wander near home (`WanderBrain`) → startles with the pack's "!" emote when the ranger is within 40px → emits `startled` → darts away → cooldown. `PhysicsLayers`: ranger and critters only collide with the world.
+  - `HabitatMap` emits `chase_requested(critter)` and shows a "Chase the Raccoon!" banner (placeholder until the chase screen).
+  - 99 tests passing.
+
 ## Next
-- Phase 2, step 2: one wandering Meadow critter (raccoon is in the pack) that startles and starts a chase when the ranger gets close. Decide with Chris what to do about missing species (fox, rabbit, deer, ...).
+- Phase 2, step 3: chase screen. On `chase_requested`: camera follows the critter running along a path, ranger follows automatically; a problem (ProblemFactory at the AdaptiveEngine level for the habitat's skill) with 3–4 big buttons; correct → ranger speeds up; 3 correct → net toss → capture; wrong → critter pulls ahead + gentle sound. Pictures for counting/clock/coin problems needed here.
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.

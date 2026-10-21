@@ -16,5 +16,8 @@ List every third-party asset here: name, author, source URL, license.
 | `tilesets/nature.png` | `Backgrounds/Tilesets/TilesetNature.png` |
 | `sprites/ranger/sprite_sheet.png` | `Actor/Character/Hunter/SpriteSheet.png` |
 | `sprites/ranger/faceset.png` | `Actor/Character/Hunter/Faceset.png` |
+| `sprites/animals/raccoon/sprite_sheet.png` | `Actor/Animal/Racoon/SpriteSheet.png` |
+| `sprites/animals/raccoon/faceset.png` | `Actor/Animal/Racoon/Faceset.png` |
+| `ui/emotes/startled.png` | `Ui/Emote/emote22.png` |
 
 Thank you, Pixel-Boy and AAA! (Attribution isn't required by CC0 but they appreciate it; the game's credits screen should link the pack page.)

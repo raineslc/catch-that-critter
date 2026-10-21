@@ -165,7 +165,7 @@ One scrolling top-down tilemap; Rescue Center in the middle; habitats around it.
 
 ### Phase 2 — Map & Chase Prototype
 - [x] Meadow tilemap with free 2D tiles; ranger walking + camera.
-- [ ] Wandering animal that starts a chase when approached.
+- [x] Wandering animal that starts a chase when approached.
 - [ ] Chase screen: answer buttons, speed-up, net capture.
 - [ ] Explore and Race modes; Henrito hints after 2 misses (TTS).
 
