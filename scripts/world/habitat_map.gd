@@ -26,6 +26,8 @@ const SMALL_BLOCKER: Vector2 = Vector2(12, 8)
 const TREE_BLOCKER: Vector2 = Vector2(16, 10)
 const WALL_THICKNESS: float = 16.0
 const BANNER_FONT_SIZE: int = 48
+const MODE_BUTTON_SIZE: Vector2 = Vector2(220, 64)
+const MODE_BUTTON_FONT_SIZE: int = 28
 
 ## A critter got startled: a chase is about to start.
 signal chase_requested(critter: Critter)
@@ -46,6 +48,8 @@ var critters: Array[Critter] = []
 var chase_target: Critter
 var chase_screen: ChaseScreen
 var banner: Label
+## Explore / Race switch (hidden when a parent locks Explore).
+var mode_button: Button
 ## Turn off in tests: the chase screen then opens only when open_chase() is called.
 var auto_open_chase: bool = true
 
@@ -162,6 +166,25 @@ func _make_banner() -> void:
 	banner.add_theme_constant_override("outline_size", 10)
 	banner.visible = false
 	layer.add_child(banner)
+	mode_button = Button.new()
+	mode_button.name = "ModeButton"
+	mode_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	mode_button.offset_left = -MODE_BUTTON_SIZE.x - 16
+	mode_button.offset_top = 16
+	mode_button.offset_right = -16
+	mode_button.offset_bottom = 16 + MODE_BUTTON_SIZE.y
+	mode_button.add_theme_font_size_override("font_size", MODE_BUTTON_FONT_SIZE)
+	mode_button.focus_mode = Control.FOCUS_NONE
+	mode_button.pressed.connect(func() -> void:
+		GameState.toggle_mode()
+		refresh_mode_button())
+	layer.add_child(mode_button)
+	refresh_mode_button()
+
+
+func refresh_mode_button() -> void:
+	mode_button.visible = not GameState.explore_locked
+	mode_button.text = "Race mode" if GameState.chase_mode() == ChaseState.RACE else "Explore mode"
 
 
 func _place_ground(cell: Vector2i, rng: RandomNumberGenerator) -> void:

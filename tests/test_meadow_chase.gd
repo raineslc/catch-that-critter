@@ -28,6 +28,26 @@ func test_startle_freezes_the_world_and_opens_the_chase() -> void:
 	assert_false(meadow.banner.visible)
 
 
+func test_mode_button_switches_explore_and_race() -> void:
+	assert_true(meadow.mode_button.visible)
+	assert_eq(meadow.mode_button.text, "Explore mode")
+	meadow.mode_button.pressed.emit()
+	assert_eq(GameState.chase_mode(), ChaseState.RACE)
+	assert_eq(meadow.mode_button.text, "Race mode")
+	meadow.open_chase()
+	assert_true(meadow.chase_screen.chase.is_race(), "chases use the chosen mode")
+
+
+func test_parent_lock_keeps_explore_and_hides_the_button() -> void:
+	GameState.mode = ChaseState.RACE
+	GameState.explore_locked = true
+	meadow.refresh_mode_button()
+	assert_false(meadow.mode_button.visible)
+	assert_eq(GameState.chase_mode(), ChaseState.EXPLORE)
+	GameState.toggle_mode()
+	assert_eq(GameState.chase_mode(), ChaseState.EXPLORE)
+
+
 func test_second_critter_cannot_start_another_chase() -> void:
 	var other: Critter = meadow.critters[1]
 	meadow._on_critter_startled(other)

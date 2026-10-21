@@ -23,6 +23,13 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Race mode and Henrito's hints (details)
+- Race: 45 seconds per chase (`data/chase.json`). A right answer within 5 seconds is a **sprint boost**: closes extra distance and adds 3 seconds. When time runs out the critter gets away; "Chase again" restarts the same chase, "Back to the map" returns to the Meadow. Nothing is lost.
+- The kid picks Explore or Race with a button in the Meadow's corner; it's hidden and Explore is forced when `GameState.explore_locked` is on (the parent area sets it in Phase 5). Default is Explore.
+- Henrito appears as a portrait in a speech bubble: cheers at the start, on sprints, on catches and escapes (lines in `data/sidekicks.json`), and after 2 misses on one problem (1 with extra help) says a one-sentence strategy hint aloud while a hint picture replaces the problem picture. Hints point to a strategy (count up, look at the biggest place, start with the biggest coin) and never say the answer.
+- Henrito's art is the pack's "Boy" character (brown hair). His voice is TTS at rate 0.9, slightly higher pitch.
+- Answer buttons now handle clicks a frame later (deferred) so old buttons can be removed safely.
+
 ## 2026-10-21 — Chase is its own screen
 PLAN 3.6 says the camera follows the animal along a path with the ranger following automatically. Built as a full-screen chase view: a scrolling path at 4× zoom (critter ahead, ranger behind, gap shrinks/grows with answers) above a big question panel. The world freezes underneath and resumes after. Simpler and clearer for a 7-year-old than steering through the real map, and it leaves room for the problem, picture, and big buttons.
 - Every try moves the chase (right closes the gap, a miss lets the critter pull ahead); only the first try goes to the difficulty engine.

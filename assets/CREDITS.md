@@ -20,6 +20,8 @@ List every third-party asset here: name, author, source URL, license.
 | `sprites/animals/raccoon/faceset.png` | `Actor/Animal/Racoon/Faceset.png` |
 | `ui/emotes/startled.png` | `Ui/Emote/emote22.png` |
 | `ui/emotes/happy.png` | `Ui/Emote/emote27.png` |
+| `sprites/sidekicks/henrito/sprite_sheet.png` | `Actor/Character/Boy/SpriteSheet.png` |
+| `sprites/sidekicks/henrito/faceset.png` | `Actor/Character/Boy/Faceset.png` |
 | `audio/sfx/correct.wav` | `Audio/Sounds/Bonus/Coin.wav` |
 | `audio/sfx/try_again.wav` | `Audio/Sounds/Menu/Move3.wav` |
 | `audio/sfx/net_toss.wav` | `Audio/Sounds/Whoosh & Slash/Whoosh.wav` |
