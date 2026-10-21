@@ -34,7 +34,7 @@ func test_stalled_main_loop_is_reported_with_the_last_steps() -> void:
 	await wait_frames(2)
 	watch.mark("tts: speak 'What is 5 plus 1?'")
 	OS.delay_msec(900)  # freeze the main thread on purpose
-	await wait_frames(3)
+	await wait_process_frames(3)  # process frames: physics catch-up after the stall runs first
 	var events: Array = _events()
 	var freezes: Array = events.filter(func(e: Dictionary) -> bool: return e["event"] == "freeze")
 	assert_eq(freezes.size(), 1, "one freeze report per stall")
