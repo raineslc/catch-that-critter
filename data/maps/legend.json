@@ -9,6 +9,7 @@
     "T": "grass",
     "P": "grass",
     "S": "grass",
+    "a": "grass",
     "p": "path",
     "w": "water"
   },
@@ -19,6 +20,9 @@
     "r": {"name": "rock", "atlas": [4, 13], "size": [1, 1], "blocks": true},
     "T": {"name": "tree", "atlas": [0, 0], "size": [2, 2], "blocks": true},
     "P": {"name": "pine", "atlas": [2, 0], "size": [2, 2], "blocks": true}
+  },
+  "critters": {
+    "a": "raccoon"
   },
   "spawn": "S"
 }

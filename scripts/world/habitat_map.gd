@@ -25,6 +25,11 @@ const PHYSICS_LAYER: int = 0
 const SMALL_BLOCKER: Vector2 = Vector2(12, 8)
 const TREE_BLOCKER: Vector2 = Vector2(16, 10)
 const WALL_THICKNESS: float = 16.0
+const BANNER_SECONDS: float = 1.5
+const BANNER_FONT_SIZE: int = 48
+
+## A critter got startled: the chase should start. (Phase 2 step 3 opens the chase screen.)
+signal chase_requested(critter: Critter)
 
 @export_file("*.txt") var map_path: String = "res://data/maps/meadow.txt"
 ## Same seed = same grass/flower variety every time the map loads.
@@ -34,6 +39,11 @@ var map: MapData
 var ground: TileMapLayer
 var objects: Node2D
 var ranger: Ranger
+var catalog: AnimalCatalog
+var critters: Array[Critter] = []
+## The critter being chased, or null.
+var chase_target: Critter
+var banner: Label
 
 
 func _ready() -> void:
@@ -68,6 +78,51 @@ func build() -> void:
 	ranger.camera.limit_top = 0
 	ranger.camera.limit_right = size.x
 	ranger.camera.limit_bottom = size.y
+	_spawn_critters(rng)
+	_make_banner()
+
+
+func _spawn_critters(rng: RandomNumberGenerator) -> void:
+	catalog = AnimalCatalog.new()
+	var is_open: Callable = func(point: Vector2) -> bool: return map.is_walkable(map.pixel_to_cell(point))
+	for y: int in map.height:
+		for x: int in map.width:
+			var id: String = map.critter_at(Vector2i(x, y))
+			if id == "":
+				continue
+			if not catalog.has_animal(id):
+				push_error("HabitatMap: unknown animal '%s' in %s" % [id, map_path])
+				continue
+			var critter: Critter = Critter.new()
+			critter.setup(catalog.get_animal(id), map.cell_to_feet(Vector2i(x, y)), is_open, rng)
+			critter.ranger = ranger
+			critter.startled.connect(_on_critter_startled)
+			objects.add_child(critter)
+			critters.append(critter)
+
+
+func _on_critter_startled(critter: Critter) -> void:
+	chase_target = critter
+	banner.text = "Chase the %s!" % critter.animal.get("name", "critter")
+	banner.visible = true
+	get_tree().create_timer(BANNER_SECONDS).timeout.connect(func() -> void: banner.visible = false)
+	chase_requested.emit(critter)
+
+
+func _make_banner() -> void:
+	var layer: CanvasLayer = CanvasLayer.new()
+	layer.name = "Hud"
+	add_child(layer)
+	banner = Label.new()
+	banner.name = "Banner"
+	banner.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	banner.offset_top = 40
+	banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	banner.add_theme_font_size_override("font_size", BANNER_FONT_SIZE)
+	banner.add_theme_color_override("font_outline_color", Color(0.2, 0.3, 0.1))
+	banner.add_theme_constant_override("outline_size", 10)
+	banner.visible = false
+	layer.add_child(banner)
 
 
 func _place_ground(cell: Vector2i, rng: RandomNumberGenerator) -> void:

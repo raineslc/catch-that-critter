@@ -27,8 +27,8 @@ func test_objects_are_placed_for_trees_bushes_rocks_flowers() -> void:
 		for c: String in row:
 			if meadow.map.objects.has(c):
 				expected += 1
-	# +1 for the ranger, who lives in the same y-sorted layer
-	assert_eq(meadow.objects.get_child_count(), expected + 1)
+	# + the ranger and critters, who live in the same y-sorted layer
+	assert_eq(meadow.objects.get_child_count(), expected + 1 + meadow.critters.size())
 	assert_true(meadow.objects.y_sort_enabled)
 
 
