@@ -3,7 +3,7 @@
 Every assistant updates this at the end of a session.
 
 ## Current step
-Phase 1, step 3 — Simple debug screen to answer generated problems.
+Phase 2, step 1 — Meadow tilemap with free 2D tiles; ranger walking + camera.
 
 ## Done
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
@@ -18,10 +18,16 @@ Phase 1, step 3 — Simple debug screen to answer generated problems.
   - `data/adaptive.json`: all tuning numbers. Rule details logged in DECISIONS.md (2026-10-21).
   - 59 tests passing (23 new).
 
+- 2026-10-21 — Phase 1, step 3: debug screen `scenes/debug/problem_tester.tscn` (script `scripts/debug/problem_tester.gd`). Pick a skill/level, answer with big buttons, see level changes, extra help, hints (in words), lifetime stats, end-session mastery; "Read aloud" toggle uses Godot TTS. 70 tests passing.
+  - TTS check on Chris's Windows PC: Godot found 3 English voices (Microsoft David, Zira, Mark). Web TTS still untested.
+- **Phase 1 (math core) complete.**
+
 ## Next
-- Phase 1, step 3: debug screen (`scenes/debug/problem_tester.tscn`): pick a skill, answer generated problems with big buttons, see level changes, extra help, and hint type; not shipped to kids.
+- Phase 2, step 1: pick ONE free 2D asset pack family (Kenney or similar, CC0) for tiles + animals + ranger; Meadow tilemap; ranger walks with arrows/WASD/click; Camera2D follows. Ask Chris before downloading assets.
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.
 - Export presets (Web, Windows, macOS) not set up yet; they need Godot export templates (~1.3 GB) — do this in Phase 7 or when first needed.
 - Preschool problem set is Phase 8 (not in skills.json yet).
+- Tuning: "Count coins with quarters" (time_money level 5) sometimes makes a pile with no quarter; consider a "require at least one quarter" param.
+- The debug screen describes pictures and hints in words; real clock/coin/dot visuals come with the chase screen (Phase 2).
