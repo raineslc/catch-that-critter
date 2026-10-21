@@ -1,10 +1,10 @@
 # Playtest 1 — Chase prototype (Meadow)
 
-**Who:** older son (7). **How long:** 10–15 minutes. **Version:** git tag `playtest-1.2` (`playtest-1` froze mid-chase on 2026-10-21 — cause found and fixed: the voice was being cut off mid-sentence; the freeze detector stays on just in case).
+**Who:** older son (7). **How long:** 10–15 minutes. **Version:** git tag `playtest-1.3` — voice off. (`playtest-1` froze mid-chase on 2026-10-21; cause found and fixed in 1.2; the freeze detector stays on just in case.)
 
 ## Before you start
 - Double-click **"Catch That Critter (playtest)"** on the desktop. It opens full-window; close it with the window's X (or Alt+F4).
-- Turn the volume up: questions and Henrito's hints are read aloud.
+- The voice is off in this version (Henrito's words show in his speech bubble). Sounds are still on, so keep the volume up.
 - What's in this version: the Meadow with 6 raccoons (caught ones come back after ~25 seconds). Every chase asks **adding and subtracting with numbers up to 12**. It starts easy (add within 6) and gets harder as he gets answers right quickly.
 - Explore mode (no timer) is on at the start. The button in the top-right corner switches to **Race mode** (45-second timer).
 - Try not to help unless he's really stuck — Henrito should do the helping.
@@ -13,7 +13,7 @@
 The freeze we saw is fixed, but the detector is still on. If everything stops moving:
 1. **Wait about 10 seconds** before closing it — the detector writes down what the game was doing.
 2. Then close it (Task Manager is fine).
-3. Note roughly what was on screen and whether the voice was talking, and tell Claude.
+3. Note roughly what was on screen and tell Claude.
 
 ## Suggested run
 1. Let him figure out how to walk (arrows, WASD, or clicking) without explaining. ~1 min.
@@ -28,7 +28,7 @@ The freeze we saw is fixed, but the detector is still on. If everything stops mo
 
 **The chase**
 - [ ] Understood what the answer buttons are for right away?
-- [ ] Read the question himself, or waited for the voice?
+- [ ] Could he read the questions himself? Any words he got stuck on?
 - [ ] Noticed the catch meter (3 dots top-right) / the raccoon getting closer?
 - [ ] Liked the net toss and "You caught the Raccoon!"?
 
@@ -38,7 +38,7 @@ The freeze we saw is fixed, but the detector is still on. If everything stops mo
 - [ ] When he missed: frustrated, or just tried again?
 
 **Henrito's hints**
-- [ ] Noticed Henrito? Listened to the hint?
+- [ ] Noticed Henrito? Read his hint bubble?
 - [ ] Did the hint picture (dots / number line) actually help him get it?
 
 **Race mode**
@@ -46,9 +46,8 @@ The freeze we saw is fixed, but the detector is still on. If everything stops mo
 - [ ] Got a "Sprint boost!"? Did he notice it?
 - [ ] If a raccoon got away: upset, or happy to "Chase again"?
 
-**Sound & voice**
+**Sound**
 - [ ] Any sound annoying or confusing? (right answer, try again, net, caught)
-- [ ] Could he understand the voice? Too slow / too fast?
 
 ## Ask him afterward
 1. What was the best part?

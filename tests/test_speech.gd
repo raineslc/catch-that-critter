@@ -65,6 +65,18 @@ func test_game_state_polls_the_waiting_line() -> void:
 	assert_eq(spoken, ["one", "two"] as Array[String])
 
 
+func test_voice_is_off_by_default_so_chases_stay_silent() -> void:
+	GameState.reset()
+	assert_false(GameState.read_aloud, "voice paused (DECISIONS.md 2026-10-21)")
+	var screen: ChaseScreen = ChaseScreen.new()
+	screen.auto_advance = false
+	add_child_autofree(screen)
+	screen.start(GameState.catalog.get_animal("raccoon"), "counting")
+	screen.show_hint()
+	assert_eq(spoken, [] as Array[String], "no question, cheer, or hint is spoken")
+	assert_true(screen.bubble.visible, "Henrito's words still show in his bubble")
+
+
 func test_no_code_stops_or_interrupts_the_voice() -> void:
 	var offenders: Array[String] = []
 	for dir: String in ["res://scripts"]:

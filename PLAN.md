@@ -34,7 +34,7 @@ Not a commercial product: no pricing, store listings, ads, or school licensing.
 - **Special rare animals:** yes; species chosen by Chris later.
 - **No day/night cycle.**
 - Art: **free 2D asset packs** (e.g., Kenney top-down/RPG tiles and animal sprites); custom art later.
-- Read-aloud: **text-to-speech** first.
+- Read-aloud: **text-to-speech** first. **Paused 2026-10-21 (Chris):** the Windows voices sounded weird and some lines were off, so the voice is off for now; all text still shows on screen. Revisit before the preschool level (which needs audio) — better voices or recorded audio.
 - Saves: **local on device only**.
 
 ## 3. Design Details

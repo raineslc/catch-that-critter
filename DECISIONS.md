@@ -23,6 +23,9 @@ Godot 4.7.2 was the latest stable 4.x at setup. GUT 9.7.1 is the GUT release mad
 - The pack's characters are whole sprites, not hair/skin/outfit layers. "Customizable ranger via swappable sprite layers" (PLAN 2) likely becomes "pick from several kid rangers" in Phase 5 — needs Chris's OK then. Placeholder ranger: the pack's "Hunter".
 - Meadow uses the pack's lighter yellow-green grass: it's the only grass that matches the pond shore tiles.
 
+## 2026-10-21 — Voice off for now (changes a confirmed decision, with Chris's approval)
+Chris: "some of the voice lines are off and they all sound weird. Let's leave the voice out of it for now." `GameState.read_aloud` now defaults to off: questions, Henrito's cheers and hints are shown as text only (his speech bubble stays). The `Speech` wrapper (never-interrupt fix included) stays in the code, unused, so audio can return later — better voices or recorded lines. Must be revisited before the preschool level (Phase 8), which can't work without audio. Open: which lines sounded "off" (wording vs. pronunciation).
+
 ## 2026-10-21 — Freeze during Playtest 1: investigation
 - **What happened:** first playtest session (14:32) hard-froze (everything stopped; force-quit from Task Manager) right after the first answer of chase 3, at t=47.1s — exactly 25.0s after the first raccoon was caught, i.e. the moment it came back. No Windows hang/crash report; Godot's own log wasn't written for the shortcut launch.
 - **Tried:** a robot player (12 chases, real window, TTS on, comebacks every 4s landing mid-chase) did not freeze.
