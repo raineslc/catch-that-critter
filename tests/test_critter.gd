@@ -9,6 +9,7 @@ var raccoon: Critter
 
 func before_each() -> void:
 	meadow = SCENE.instantiate()
+	meadow.auto_open_chase = false
 	add_child_autofree(meadow)
 	raccoon = meadow.critters[0]
 	await wait_physics_frames(2)
@@ -60,7 +61,9 @@ func test_far_away_ranger_does_not_startle() -> void:
 	assert_signal_not_emitted(raccoon, "startled")
 
 
+## On its own (not hooked to the Meadow's chase), a startled critter darts away and cools down.
 func test_startled_critter_darts_away_then_cools_down() -> void:
+	raccoon.startled.disconnect(meadow._on_critter_startled)
 	watch_signals(raccoon)
 	_put_ranger_near(raccoon, Vector2(20, 0))
 	var start_x: float = raccoon.global_position.x

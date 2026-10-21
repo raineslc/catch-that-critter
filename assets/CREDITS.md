@@ -19,5 +19,10 @@ List every third-party asset here: name, author, source URL, license.
 | `sprites/animals/raccoon/sprite_sheet.png` | `Actor/Animal/Racoon/SpriteSheet.png` |
 | `sprites/animals/raccoon/faceset.png` | `Actor/Animal/Racoon/Faceset.png` |
 | `ui/emotes/startled.png` | `Ui/Emote/emote22.png` |
+| `ui/emotes/happy.png` | `Ui/Emote/emote27.png` |
+| `audio/sfx/correct.wav` | `Audio/Sounds/Bonus/Coin.wav` |
+| `audio/sfx/try_again.wav` | `Audio/Sounds/Menu/Move3.wav` |
+| `audio/sfx/net_toss.wav` | `Audio/Sounds/Whoosh & Slash/Whoosh.wav` |
+| `audio/sfx/caught.wav` | `Audio/Jingles/Success1.wav` |
 
 Thank you, Pixel-Boy and AAA! (Attribution isn't required by CC0 but they appreciate it; the game's credits screen should link the pack page.)

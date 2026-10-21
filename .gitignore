@@ -17,3 +17,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 *.tmp
+
+# Throwaway screenshot helpers
+.tmp_shots/

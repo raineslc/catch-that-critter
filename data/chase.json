@@ -1,0 +1,14 @@
+{
+  "correct_to_catch": 3,
+  "start_gap": 3.0,
+  "close_per_correct": 1.0,
+  "pull_per_miss": 0.5,
+  "max_gap": 4.0,
+  "gap_pixels": 170,
+  "run_scroll_speed": 160.0,
+  "burst_scroll_speed": 420.0,
+  "burst_seconds": 0.6,
+  "next_problem_delay": 0.9,
+  "start_delay": 0.8,
+  "caught_show_seconds": 2.5
+}
