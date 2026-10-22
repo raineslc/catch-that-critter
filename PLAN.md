@@ -176,7 +176,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 ### Phase 3 — Story & Rescue Center
 - [x] Storm intro panels with narration. (Captions instead of spoken narration while the voice is off.)
 - [x] Rescue Center hub with enclosures and fence repair.
-- [ ] Feeding via spelling, care notes, fact cards with read-aloud.
+- [x] Feeding via spelling, care notes, fact cards with read-aloud. (Read-aloud button appears when the voice is on; it's off for now.)
 - [ ] Stars, animal levels, collection book.
 
 ### Phase 4 — Full Map

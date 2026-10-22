@@ -34,5 +34,8 @@ List every third-party asset here: name, author, source URL, license.
 | `audio/sfx/try_again.wav` | `Audio/Sounds/Menu/Move3.wav` |
 | `audio/sfx/net_toss.wav` | `Audio/Sounds/Whoosh & Slash/Whoosh.wav` |
 | `audio/sfx/caught.wav` | `Audio/Jingles/Success1.wav` |
+| `ui/food/fish.png` | `Items/Food/Fish.png` |
+| `ui/food/shrimp.png` | `Items/Food/Shrimp.png` |
+| `ui/food/honey.png` | `Items/Food/Honey.png` |
 
 Thank you, Pixel-Boy and AAA! (Attribution isn't required by CC0 but they appreciate it; the game's credits screen should link the pack page.)
