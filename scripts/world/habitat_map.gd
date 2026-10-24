@@ -28,7 +28,7 @@ const SMALL_BLOCKER: Vector2 = Vector2(12, 8)
 const TREE_BLOCKER: Vector2 = Vector2(16, 10)
 const WALL_THICKNESS: float = 16.0
 const BANNER_FONT_SIZE: int = 48
-const MODE_BUTTON_SIZE: Vector2 = Vector2(220, 64)
+const MODE_BUTTON_SIZE: Vector2 = Vector2(300, 64)
 const MODE_BUTTON_FONT_SIZE: int = 28
 ## A critter won't reappear while the ranger is this close to its spot (pixels).
 const RESPAWN_CLEARANCE: float = 80.0
@@ -358,7 +358,14 @@ func _add_sign(text: String, cell: Vector2i) -> void:
 
 func refresh_mode_button() -> void:
 	mode_button.visible = not GameState.explore_locked
-	mode_button.text = "Race mode" if GameState.chase_mode() == ChaseState.RACE else "Explore mode"
+	mode_button.text = "Race mode (M)" if GameState.chase_mode() == ChaseState.RACE else "Explore mode (M)"
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if objects.process_mode != Node.PROCESS_MODE_DISABLED and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_M:
+		get_viewport().set_input_as_handled()
+		GameState.toggle_mode()
+		refresh_mode_button()
 
 
 func _place_ground(cell: Vector2i, rng: RandomNumberGenerator) -> void:

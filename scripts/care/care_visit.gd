@@ -60,7 +60,8 @@ static func make(catalog: CareCatalog, id: String, grade: String, visits_done: i
 	var notes: Array = catalog.notes_for(id)
 	if not notes.is_empty():
 		visit.note = notes[visits_done % notes.size()]
-		visit.note_choice = CareChoice.make(str(visit.note["question"]), str(visit.note["good"]), visit.note.get("others", []), rng)
+		var others: Array = visit.note.get("older_others", visit.note.get("others", [])) if grade in ["2", "3"] else visit.note.get("others", [])
+		visit.note_choice = CareChoice.make(str(visit.note["question"]), str(visit.note["good"]), others, rng)
 	if visit.food_id == "":
 		visit.step = Step.NOTE if visit.note_choice != null else Step.FACT
 	return visit

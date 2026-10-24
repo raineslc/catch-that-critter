@@ -163,3 +163,68 @@ func test_kid_text_is_kind() -> void:
 	for text: String in texts:
 		for word: String in UNKIND_WORDS:
 			assert_false(text.to_lower().contains(word), "'%s' avoids '%s'" % [text, word])
+
+
+func _key(code: Key) -> void:
+	var event: InputEventKey = InputEventKey.new()
+	event.keycode = code
+	event.physical_keycode = code
+	event.pressed = true
+	Input.parse_input_event(event)
+	await wait_frames(2)
+	event = event.duplicate()
+	event.pressed = false
+	Input.parse_input_event(event)
+	await wait_frames(2)
+
+
+func test_keyboard_finishes_spelling_note_and_fact_card() -> void:
+	_open(_visit("2"))
+	await wait_frames(2)
+	assert_eq(screen.get_viewport().gui_get_focus_owner(), screen.tile_buttons[0])
+	# Arrow keys move among tiles; Enter activates the focused tile.
+	await _key(KEY_RIGHT)
+	assert_eq(screen.get_viewport().gui_get_focus_owner(), screen.tile_buttons[1])
+	while not screen.visit.spelling.is_done():
+		var tile: Button = screen.tile_buttons[screen.visit.spelling.hint_tile()]
+		for move: int in screen.tile_buttons.size() + 4:
+			if screen.get_viewport().gui_get_focus_owner() == tile:
+				break
+			await _key(KEY_TAB)
+		assert_eq(screen.get_viewport().gui_get_focus_owner(), tile)
+		await _key(KEY_ENTER)
+	assert_eq(screen.get_viewport().gui_get_focus_owner(), screen.next_button)
+	await _key(KEY_ENTER)
+	assert_eq(screen.visit.step, CareVisit.Step.NOTE)
+	for move: int in 4:
+		var focused: Button = screen.get_viewport().gui_get_focus_owner()
+		if focused.text == screen.visit.note_choice.answer:
+			break
+		await _key(KEY_RIGHT)
+	await _key(KEY_ENTER)
+	assert_true(screen.visit.note_choice.solved)
+	await _key(KEY_ENTER)
+	assert_eq(screen.visit.step, CareVisit.Step.FACT)
+	watch_signals(screen)
+	await _key(KEY_ENTER)
+	assert_signal_emitted_with_parameters(screen, "finished", [true])
+
+
+func test_word_clue_is_optional_and_does_not_fill_letters() -> void:
+	_open(_visit("2"))
+	assert_ne(screen.food_hint_label.text, screen.visit.food_word)
+	screen._toggle_word_clue()
+	assert_eq(screen.food_hint_label.text, screen.visit.food_word)
+	assert_eq(screen.visit.spelling.placed, 0)
+	screen._toggle_word_clue()
+	assert_ne(screen.food_hint_label.text, screen.visit.food_word)
+	assert_false(GameState.read_aloud)
+
+
+func test_escape_leaves_care_and_duplicate_finish_is_ignored() -> void:
+	_open(_visit("2"))
+	watch_signals(screen)
+	await _key(KEY_ESCAPE)
+	screen.finish(false)
+	assert_signal_emitted_with_parameters(screen, "finished", [false])
+	assert_signal_emit_count(screen, "finished", 1)

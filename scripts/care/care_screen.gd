@@ -87,6 +87,11 @@ var _sfx: AudioStreamPlayer
 var _glow_tween: Tween
 ## The bubble is showing a letter hint (hidden again after the next right letter).
 var _hint_showing: bool = false
+var _finished: bool = false
+var word_clue_button: Button
+var food_hint_label: Label
+var read_button: Button
+var _word_revealed: bool = false
 
 
 func _ready() -> void:
@@ -96,6 +101,7 @@ func _ready() -> void:
 
 ## Begin caring for `care_animal` (AnimalCatalog data) with a prepared visit.
 func start(care_animal: Dictionary, care_visit: CareVisit, care_catalog: CareCatalog = null) -> void:
+	_finished = false
 	animal = care_animal
 	visit = care_visit
 	catalog = care_catalog if care_catalog != null else GameState.care_catalog
@@ -114,7 +120,7 @@ func animal_name() -> String:
 
 ## Tapped letter tile `index` (spelling and first-letter modes).
 func press_tile(index: int) -> void:
-	if visit.spelling == null or visit.step != CareVisit.Step.FEED:
+	if _finished or visit.spelling == null or visit.step != CareVisit.Step.FEED:
 		return
 	var result: SpellingTask.Result = visit.spelling.press(index)
 	match result:
@@ -141,11 +147,13 @@ func press_tile(index: int) -> void:
 			tile.disabled = true
 			tile.modulate.a = USED_TILE_ALPHA
 		_fed()
+	else:
+		_refresh_focus()
 
 
 ## Tapped a food picture (picture-match mode).
 func pick_picture(food_id: String) -> void:
-	if visit.picture_choice == null or visit.picture_choice.solved or visit.step != CareVisit.Step.FEED:
+	if _finished or visit.picture_choice == null or visit.picture_choice.solved or visit.step != CareVisit.Step.FEED:
 		return
 	if visit.picture_choice.pick(food_id):
 		_play(SFX_CORRECT)
@@ -164,7 +172,7 @@ func pick_picture(food_id: String) -> void:
 
 ## Picked a care note choice.
 func pick_note(option: String) -> void:
-	if visit.note_choice == null or visit.note_choice.solved or visit.step != CareVisit.Step.NOTE:
+	if _finished or visit.note_choice == null or visit.note_choice.solved or visit.step != CareVisit.Step.NOTE:
 		return
 	if visit.note_choice.pick(option):
 		_play(SFX_CORRECT)
@@ -172,6 +180,7 @@ func pick_note(option: String) -> void:
 		for button: Button in choice_buttons:
 			button.disabled = button.text != option
 		next_button.visible = true
+		_refresh_focus(next_button)
 		return
 	_play(SFX_TRY_AGAIN)
 	feedback.text = ""
@@ -179,11 +188,12 @@ func pick_note(option: String) -> void:
 	for button: Button in choice_buttons:
 		if button.text == option:
 			button.disabled = true
+	_refresh_focus()
 
 
 ## Next step (the Next/Done button).
 func next_step() -> void:
-	if not next_button.visible:
+	if _finished or not next_button.visible:
 		return
 	if visit.advance() == CareVisit.Step.DONE:
 		finish(true)
@@ -193,10 +203,29 @@ func next_step() -> void:
 
 ## Leaves the care screen. `completed` = the whole visit was done.
 func finish(completed: bool) -> void:
+	if _finished:
+		return
+	_finished = true
 	_stop_glow()
+	Speech.stop()
 	GameState.log_event("care_end", {"animal": visit.animal_id if visit != null else "", "completed": completed,
 		"feed_misses": _feed_misses(), "note_misses": visit.note_choice.misses if visit != null and visit.note_choice != null else 0})
 	finished.emit(completed)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _finished and event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		finish(false)
+
+
+func _refresh_focus(preferred: Button = null) -> void:
+	var buttons: Array[Button] = []
+	buttons.append_array(tile_buttons)
+	buttons.append_array(picture_buttons)
+	buttons.append_array(choice_buttons)
+	buttons.append_array([word_clue_button, read_button, next_button, later_button])
+	KeyboardFocus.connect_group(buttons, preferred)
 
 
 ## Shows the sidekick's bubble with `text` until the next line.
@@ -232,11 +261,13 @@ func _show_step() -> void:
 			say_sidekick(_fill(sidekick.line("care_done")))
 			next_button.text = DONE
 			next_button.visible = true
+	_refresh_focus(next_button if visit.step == CareVisit.Step.FACT else null)
 
 
 func _fed() -> void:
 	feedback.text = FED_TEXT % [animal_name().to_lower(), visit.food_word]
 	next_button.visible = true
+	_refresh_focus(next_button)
 	GameState.log_event("fed", {"animal": visit.animal_id, "food": visit.food_id, "mode": visit.feed_mode, "misses": _feed_misses()})
 
 
@@ -281,7 +312,20 @@ func _refresh_letters() -> void:
 func _build_spelling() -> void:
 	var prompt: Label = _label(SPELL_PROMPT if visit.feed_mode == CareVisit.SPELL else FIRST_LETTER_PROMPT, TEXT_FONT_SIZE)
 	content.add_child(prompt)
-	content.add_child(_food_picture(visit.food_id, FOOD_SIZE))
+	var food_row: HBoxContainer = _row(24)
+	content.add_child(food_row)
+	food_row.add_child(_food_picture(visit.food_id, FOOD_SIZE))
+	var clue: VBoxContainer = VBoxContainer.new()
+	food_row.add_child(clue)
+	food_hint_label = _label(str(catalog.food(visit.food_id).get("description", "")), BUBBLE_FONT_SIZE)
+	food_hint_label.custom_minimum_size.x = 380
+	food_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	clue.add_child(food_hint_label)
+	_word_revealed = false
+	word_clue_button = _button("Show word clue", Vector2(240, 64), 28)
+	word_clue_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	word_clue_button.pressed.connect(_toggle_word_clue, CONNECT_DEFERRED)
+	clue.add_child(word_clue_button)
 	var boxes: HBoxContainer = _row(10)
 	boxes.name = "LetterBoxes"
 	content.add_child(boxes)
@@ -321,6 +365,18 @@ func _build_picture_match() -> void:
 		button.pressed.connect(pick_picture.bind(food_id), CONNECT_DEFERRED)
 		row.add_child(button)
 		picture_buttons.append(button)
+
+
+func _toggle_word_clue() -> void:
+	if _finished or visit.step != CareVisit.Step.FEED:
+		return
+	_word_revealed = not _word_revealed
+	food_hint_label.text = visit.food_word if _word_revealed else str(catalog.food(visit.food_id).get("description", ""))
+	word_clue_button.text = "Hide word clue" if _word_revealed else "Show word clue"
+	if _word_revealed:
+		GameState.log_event("word_clue", {"animal": visit.animal_id, "food": visit.food_id})
+		if GameState.read_aloud:
+			Speech.say(visit.food_word)
 
 
 func _build_note() -> void:
@@ -363,6 +419,7 @@ func _build_fact_card() -> void:
 		fact_labels.append(fact)
 	if GameState.read_aloud:
 		var read: Button = _button(READ_ALOUD, Vector2(240, 64), BUTTON_FONT_SIZE - 8)
+		read_button = read
 		read.name = "ReadAloud"
 		read.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		read.pressed.connect(func() -> void: Speech.say(" ".join(facts)), CONNECT_DEFERRED)
@@ -371,6 +428,9 @@ func _build_fact_card() -> void:
 
 func _clear_content() -> void:
 	_stop_glow()
+	word_clue_button = null
+	food_hint_label = null
+	read_button = null
 	tile_buttons.clear()
 	letter_labels.clear()
 	picture_buttons.clear()
@@ -517,7 +577,7 @@ func _button(text: String, min_size: Vector2, font_size: int) -> Button:
 	button.text = text
 	button.custom_minimum_size = min_size
 	button.add_theme_font_size_override("font_size", font_size)
-	button.focus_mode = Control.FOCUS_NONE
+	KeyboardFocus.style(button)
 	return button
 
 
@@ -528,7 +588,7 @@ func _letter_tile(letter: String) -> Button:
 	tile.add_theme_stylebox_override("hover", _box_style(TILE_HOVER_COLOR, 12))
 	tile.add_theme_stylebox_override("pressed", _box_style(TILE_HOVER_COLOR, 12))
 	tile.add_theme_stylebox_override("disabled", _box_style(TILE_COLOR, 12))
-	for state: String in ["font_color", "font_hover_color", "font_pressed_color", "font_disabled_color"]:
+	for state: String in ["font_color", "font_hover_color", "font_pressed_color", "font_disabled_color", "font_focus_color"]:
 		tile.add_theme_color_override(state, INK)
 	return tile
 

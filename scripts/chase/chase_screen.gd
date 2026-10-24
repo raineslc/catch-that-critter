@@ -98,6 +98,10 @@ var _catching: bool = false
 var _praise_index: int = 0
 var _bubble_hide_at_msec: int = -1
 var _sfx: AudioStreamPlayer
+var later_button: Button
+var _delay_tween: Tween
+var _motion_tween: Tween
+var _finished: bool = false
 
 
 func _ready() -> void:
@@ -108,6 +112,9 @@ func _ready() -> void:
 ## Begin a chase after `animal` (AnimalCatalog data) using problems from `chase_skill`.
 ## `chase_mode` is ChaseState.EXPLORE or ChaseState.RACE (default: GameState's current mode).
 func start(chase_animal: Dictionary, chase_skill: String, chase_mode: String = "", chase_config: Dictionary = {}) -> void:
+	_cancel_transitions()
+	_finished = false
+	_catching = false
 	animal = chase_animal
 	skill_id = chase_skill
 	config = chase_config if not chase_config.is_empty() else ChaseState.load_config()
@@ -123,7 +130,7 @@ func start(chase_animal: Dictionary, chase_skill: String, chase_mode: String = "
 
 
 func next_problem() -> void:
-	if chase == null or chase.is_over():
+	if _finished or chase == null or chase.is_over():
 		return
 	GameState.breadcrumb("chase: next problem (level %d)" % GameState.engine.level(skill_id))
 	problem = GameState.factory.generate(skill_id, GameState.engine.level(skill_id), GameState.rng)
@@ -153,7 +160,7 @@ func next_problem() -> void:
 
 ## One button press. `seconds` overrides the measured answer time (tests).
 func answer(choice: String, seconds: float = -1.0) -> void:
-	if not accepting:
+	if _finished or not accepting:
 		return
 	GameState.breadcrumb("chase: pressed '%s'" % choice)
 	var correct: bool = problem.is_correct(choice)
@@ -168,6 +175,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 		if change != AdaptiveEngine.Change.NONE:
 			GameState.log_event("level_change", {"skill": skill_id, "to": GameState.engine.level(skill_id),
 				"direction": "up" if change == AdaptiveEngine.Change.LEVEL_UP else "down"})
+		GameState.save_progress()
 	chase.answer(correct, elapsed)
 	_update_meter()
 	if not correct:
@@ -179,6 +187,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 				button.disabled = true
 		if not hint_shown and misses_this_problem >= GameState.engine.misses_before_hint(skill_id):
 			show_hint()
+		_refresh_focus()
 		return
 	accepting = false
 	_play(SFX_CORRECT)
@@ -186,6 +195,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 	_burst_speed = float(config.get("burst_scroll_speed", 420.0)) * (SPRINT_BURST_MULTIPLIER if chase.last_sprint else 1.0)
 	for button: Button in choice_buttons():
 		button.disabled = true
+	_refresh_focus()
 	if chase.caught:
 		_begin_catch()
 		return
@@ -196,7 +206,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 		feedback.text = PRAISE[_praise_index % PRAISE.size()]
 		_praise_index += 1
 	if auto_advance:
-		get_tree().create_timer(float(config.get("next_problem_delay", 0.9))).timeout.connect(next_problem)
+		_schedule(float(config.get("next_problem_delay", 0.9)), next_problem)
 
 
 ## The sidekick's spoken hint and hint picture for the current problem.
@@ -232,6 +242,9 @@ func choice_buttons() -> Array[Button]:
 
 ## After an escape: start the same chase over.
 func retry() -> void:
+	if _finished:
+		return
+	_cancel_transitions()
 	GameState.log_event("chase_again", {"animal": animal.get("id", "")})
 	chase.restart()
 	_catching = false
@@ -243,11 +256,46 @@ func retry() -> void:
 
 ## Leaves the chase (called automatically after the catch celebration).
 func finish() -> void:
+	if _finished:
+		return
+	_finished = true
+	accepting = false
+	_cancel_transitions()
 	Speech.stop()
 	finished.emit(chase != null and chase.caught)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not _finished and event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		finish()
+
+
+func _schedule(seconds: float, action: Callable) -> void:
+	if _delay_tween != null:
+		_delay_tween.kill()
+	_delay_tween = create_tween()
+	_delay_tween.tween_interval(seconds)
+	_delay_tween.tween_callback(action)
+
+
+func _cancel_transitions() -> void:
+	if _delay_tween != null:
+		_delay_tween.kill()
+		_delay_tween = null
+	if _motion_tween != null:
+		_motion_tween.kill()
+		_motion_tween = null
+
+
+func _refresh_focus() -> void:
+	var buttons: Array[Button] = choice_buttons()
+	buttons.append(later_button)
+	KeyboardFocus.connect_group(buttons)
+
+
 func _begin_catch() -> void:
+	_cancel_transitions()
 	GameState.breadcrumb("chase: net toss")
 	_catching = true
 	var caught_text: String = CAUGHT_TEXT % animal.get("name", "critter")
@@ -258,7 +306,8 @@ func _begin_catch() -> void:
 	_play(SFX_NET)
 	net.position = ranger_sprite.position
 	net.visible = true
-	var tween: Tween = create_tween()
+	_motion_tween = create_tween()
+	var tween: Tween = _motion_tween
 	tween.tween_property(ranger_sprite, "position:x", critter_sprite.position.x - TILE * SPRITE_SCALE * 0.8, NET_TOSS_SECONDS)
 	tween.parallel().tween_property(net, "position", critter_sprite.position + Vector2(0, -TILE * SPRITE_SCALE * 0.4), NET_TOSS_SECONDS)
 	tween.tween_callback(_on_net_landed)
@@ -272,15 +321,17 @@ func _on_net_landed() -> void:
 	_play(SFX_CAUGHT)
 	say_sidekick(sidekick.line("caught"), 0.0)
 	if auto_advance:
-		get_tree().create_timer(float(config.get("caught_show_seconds", 2.5))).timeout.connect(finish)
+		_schedule(float(config.get("caught_show_seconds", 2.5)), finish)
 
 
 ## Race timer ran out: the critter dashes off; offer to chase again.
 func _begin_escape() -> void:
+	_cancel_transitions()
 	_catching = true
 	GameState.log_event("escaped", {"animal": animal.get("id", ""), "correct": chase.correct, "misses": chase.misses})
 	_clear_question(ESCAPED_TEXT % animal.get("name", "critter"))
-	var tween: Tween = create_tween()
+	_motion_tween = create_tween()
+	var tween: Tween = _motion_tween
 	tween.tween_property(critter_sprite, "position:x", track.size.x + TILE * SPRITE_SCALE * 2, ESCAPE_RUN_SECONDS)
 	ranger_sprite.play("idle_right")
 	say_sidekick(sidekick.line("escaped"), 0.0)
@@ -302,7 +353,7 @@ func _clear_question(headline: String) -> void:
 
 
 func _process(delta: float) -> void:
-	if chase == null:
+	if _finished or chase == null:
 		return
 	if _bubble_hide_at_msec >= 0 and Time.get_ticks_msec() >= _bubble_hide_at_msec:
 		bubble.visible = false
@@ -355,7 +406,7 @@ func _big_button(text: String, min_size: Vector2) -> Button:
 	button.text = text
 	button.custom_minimum_size = min_size
 	button.add_theme_font_size_override("font_size", BUTTON_FONT_SIZE)
-	button.focus_mode = Control.FOCUS_NONE
+	KeyboardFocus.style(button)
 	return button
 
 
@@ -367,6 +418,10 @@ func _set_buttons(buttons: Array) -> void:
 		child.free()
 	for button: Variant in buttons:
 		choices_box.add_child(button)
+	var preferred: Button = buttons[0] if not buttons.is_empty() else later_button
+	var focus_buttons: Array[Button] = choice_buttons()
+	focus_buttons.append(later_button)
+	KeyboardFocus.connect_group(focus_buttons, preferred)
 
 
 func _play(stream: AudioStream) -> void:
@@ -433,6 +488,11 @@ func _build() -> void:
 
 	_build_timer()
 	_build_bubble()
+	later_button = _big_button("Later (Esc)", Vector2(220, 64))
+	later_button.add_theme_font_size_override("font_size", 28)
+	later_button.position = Vector2(16, 210)
+	later_button.pressed.connect(finish, CONNECT_DEFERRED)
+	add_child(later_button)
 
 	var column: VBoxContainer = VBoxContainer.new()
 	column.position = Vector2(0, TRACK_TOP + TRACK_ROWS * tile_px + 6)
