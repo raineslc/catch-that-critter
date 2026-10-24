@@ -22,6 +22,7 @@ Standing rules for Claude Code (AGENTS.md and GEMINI.md should say the same thin
 
 ## Workflow (Chris's process)
 - Build **one checklist step from PLAN.md at a time**: say which step, build only it, run it, fix errors, commit with a clear message, check it off in PLAN.md, update PROGRESS.md, then **confirm with Chris before the next step**.
+- GitHub `main` (`raineslc/catch-that-critter`) is the source of truth. Start every task by fetching and branching from the latest `origin/main`, never from an old local branch or leftover uncommitted edits.
 - Work on a feature branch; merge only when tests pass.
 - If scope changes, update PLAN.md first and log it in DECISIONS.md.
 - Never change a confirmed decision (PLAN.md section 2) without Chris's approval.
