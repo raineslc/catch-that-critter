@@ -118,6 +118,7 @@ func finish() -> void:
 	if _done:
 		return
 	_done = true
+	GameState.finish_intro()
 	finished.emit()
 	if auto_change_scene:
 		get_tree().change_scene_to_file(NEXT_SCENE)

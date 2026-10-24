@@ -191,3 +191,87 @@ func test_track_scrolls_while_running() -> void:
 	var before: float = screen._track_rows[0].position.x
 	await wait_frames(10)
 	assert_ne(screen._track_rows[0].position.x, before)
+
+
+func test_retry_cancels_old_question_delay_and_escape_motion() -> void:
+	_start_race(10.0)
+	screen.auto_advance = true
+	screen.config["next_problem_delay"] = 0.3
+	screen.answer(screen.problem.answer, 9.0)
+	screen.chase.time_left = 0.01
+	screen._process(0.02)
+	assert_true(screen.chase.escaped)
+	screen.retry()
+	var fresh: MathProblem = screen.problem
+	var position: float = screen.critter_sprite.position.x
+	await wait_seconds(0.95)
+	assert_same(screen.problem, fresh, "old callback must not replace the new question")
+	assert_almost_eq(screen.critter_sprite.position.x, position, 1.0, "old escape tween must not move the runner")
+
+
+func test_leaving_cancels_pending_question_and_emits_only_once() -> void:
+	watch_signals(screen)
+	screen.auto_advance = true
+	screen.config["next_problem_delay"] = 0.1
+	screen.answer(screen.problem.answer, 2.0)
+	var old: MathProblem = screen.problem
+	screen.finish()
+	screen.finish()
+	await wait_seconds(0.2)
+	assert_signal_emitted_with_parameters(screen, "finished", [false])
+	assert_signal_emit_count(screen, "finished", 1)
+	assert_same(screen.problem, old)
+	assert_false(screen.accepting)
+
+
+func test_explore_has_a_keyboard_accessible_way_out() -> void:
+	assert_true(screen.later_button.visible)
+	assert_eq(screen.later_button.focus_mode, Control.FOCUS_ALL)
+	watch_signals(screen)
+	var escape: InputEventAction = InputEventAction.new()
+	escape.action = "ui_cancel"
+	escape.pressed = true
+	screen._unhandled_input(escape)
+	assert_signal_emitted_with_parameters(screen, "finished", [false])
+
+
+func test_disabled_answer_moves_focus_to_an_available_choice() -> void:
+	var wrong: Button
+	for button: Button in screen.choice_buttons():
+		if button.text != screen.problem.answer:
+			wrong = button
+	wrong.grab_focus()
+	screen.answer(wrong.text, 2.0)
+	var focused: Control = screen.get_viewport().gui_get_focus_owner()
+	assert_ne(focused, wrong)
+	assert_true(focused is Button)
+	assert_false((focused as Button).disabled)
+
+
+func test_keyboard_selects_an_answer_and_can_leave_during_feedback() -> void:
+	var buttons: Array[Button] = screen.choice_buttons()
+	assert_eq(screen.get_viewport().gui_get_focus_owner(), buttons[0])
+	for move: int in buttons.size():
+		var focused: Button = screen.get_viewport().gui_get_focus_owner()
+		if focused.text == screen.problem.answer:
+			break
+		await _key(KEY_RIGHT)
+	await _key(KEY_ENTER)
+	assert_eq(screen.chase.correct, 1)
+	assert_eq(screen.get_viewport().gui_get_focus_owner(), screen.later_button)
+	watch_signals(screen)
+	await _key(KEY_ESCAPE)
+	assert_signal_emitted_with_parameters(screen, "finished", [false])
+
+
+func _key(code: Key) -> void:
+	var event: InputEventKey = InputEventKey.new()
+	event.keycode = code
+	event.physical_keycode = code
+	event.pressed = true
+	Input.parse_input_event(event)
+	await wait_process_frames(2)
+	event = event.duplicate()
+	event.pressed = false
+	Input.parse_input_event(event)
+	await wait_process_frames(2)

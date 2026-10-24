@@ -72,3 +72,11 @@ func test_one_new_fact_per_visit_until_all_are_known() -> void:
 	var later: CareVisit = CareVisit.make(catalog, "raccoon", "2", facts.size() + 3, rng)
 	assert_eq(later.facts_to_show(), facts)
 	assert_eq(later.new_fact_index(), -1)
+
+
+func test_older_readers_get_plausible_distractors_without_changing_k() -> void:
+	var young: CareVisit = CareVisit.make(catalog, "raccoon", "K", 0, rng)
+	var older: CareVisit = CareVisit.make(catalog, "raccoon", "2", 0, rng)
+	assert_has(young.note_choice.choices, "A big hat")
+	assert_has(older.note_choice.choices, "A drink of water")
+	assert_eq(young.note_choice.answer, older.note_choice.answer)

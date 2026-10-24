@@ -30,10 +30,10 @@ func test_startle_freezes_the_world_and_opens_the_chase() -> void:
 
 func test_mode_button_switches_explore_and_race() -> void:
 	assert_true(meadow.mode_button.visible)
-	assert_eq(meadow.mode_button.text, "Explore mode")
+	assert_eq(meadow.mode_button.text, "Explore mode (M)")
 	meadow.mode_button.pressed.emit()
 	assert_eq(GameState.chase_mode(), ChaseState.RACE)
-	assert_eq(meadow.mode_button.text, "Race mode")
+	assert_eq(meadow.mode_button.text, "Race mode (M)")
 	meadow.open_chase()
 	assert_true(meadow.chase_screen.chase.is_race(), "chases use the chosen mode")
 
@@ -52,6 +52,19 @@ func test_second_critter_cannot_start_another_chase() -> void:
 	var other: Critter = meadow.critters[1]
 	meadow._on_critter_startled(other)
 	assert_eq(meadow.chase_target, raccoon)
+
+
+func test_leaving_unfinished_chase_resumes_world_without_a_rescue() -> void:
+	meadow.open_chase()
+	var screen: ChaseScreen = meadow.chase_screen
+	screen.answer(screen.problem.answer, 2.0)
+	screen.finish()
+	assert_eq(GameState.rescued_count(), 0)
+	assert_null(meadow.chase_screen)
+	assert_null(meadow.chase_target)
+	assert_eq(meadow.objects.process_mode, Node.PROCESS_MODE_INHERIT)
+	assert_true(meadow.critters.has(raccoon))
+	assert_gt(raccoon.cooldown_left, 0.0)
 
 
 func test_catching_rescues_the_critter_and_unfreezes_the_world() -> void:

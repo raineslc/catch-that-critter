@@ -9,9 +9,9 @@
     "hint_after_misses": 2
   },
   "foods": {
-    "fish": {"word": "fish", "picture": "res://assets/ui/food/fish.png"},
-    "honey": {"word": "honey", "picture": "res://assets/ui/food/honey.png"},
-    "shrimp": {"word": "shrimp", "picture": "res://assets/ui/food/shrimp.png"}
+    "fish": {"word": "fish", "description": "It swims using fins.", "picture": "res://assets/ui/food/fish.png"},
+    "honey": {"word": "honey", "description": "Bees make this sweet food.", "picture": "res://assets/ui/food/honey.png"},
+    "shrimp": {"word": "shrimp", "description": "It has a curled body and long feelers.", "picture": "res://assets/ui/food/shrimp.png"}
   },
   "animals": {
     "raccoon": {
@@ -21,25 +21,29 @@
           "text": "The raccoon got muddy in the storm.",
           "question": "What will help?",
           "good": "A warm bath",
-          "others": ["A big hat"]
+          "others": ["A big hat"],
+          "older_others": ["A drink of water"]
         },
         {
           "text": "The raccoon is thirsty after its long run.",
           "question": "What does it need?",
           "good": "Fresh water",
-          "others": ["A toy car"]
+          "others": ["A toy car"],
+          "older_others": ["A log to climb"]
         },
         {
           "text": "The raccoon loves to climb.",
           "question": "What can we put in its pen?",
           "good": "A log to climb",
-          "others": ["A pillow"]
+          "others": ["A pillow"],
+          "older_others": ["A bowl of water"]
         },
         {
           "text": "The raccoon sleeps in the day.",
           "question": "What should we do at nap time?",
           "good": "Be very quiet",
-          "others": ["Sing a loud song"]
+          "others": ["Sing a loud song"],
+          "older_others": ["Play beside its bed"]
         }
       ],
       "facts": [
