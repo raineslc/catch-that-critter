@@ -25,11 +25,15 @@ func to_dict() -> Dictionary:
 	var streak_data: Dictionary = {}
 	for key: Variant in streaks:
 		streak_data[str(key)] = streaks[key]
+	var session_data: Dictionary = {}
+	for key: Variant in session:
+		session_data[str(key)] = session[key].duplicate()
 	return {
 		"level": level,
 		"window": window.duplicate(true),
 		"extra_help": extra_help,
 		"streaks": streak_data,
+		"session": session_data,
 		"mastered": mastered.duplicate(),
 		"total_answers": total_answers,
 		"total_correct": total_correct,
@@ -49,6 +53,9 @@ static func from_dict(data: Dictionary) -> SkillProgress:
 	var streak_data: Dictionary = data.get("streaks", {})
 	for key: Variant in streak_data:
 		progress.streaks[int(key)] = int(streak_data[key])
+	for key: Variant in data.get("session", {}):
+		var result: Dictionary = data["session"][key]
+		progress.session[int(key)] = {"answers": int(result["answers"]), "correct": int(result["correct"])}
 	for value: Variant in data.get("mastered", []):
 		progress.mastered.append(int(value))
 	progress.total_answers = int(data.get("total_answers", 0))

@@ -45,6 +45,7 @@ var care_button: Button
 var care_screen: CareScreen
 ## The animal id the care button is offering, or "".
 var care_target: String = ""
+var rest_button: Button
 
 
 func build() -> void:
@@ -55,6 +56,7 @@ func build() -> void:
 	_build_talk_bubble()
 	_build_care_button()
 	_show_repairs()
+	_build_rest_button()
 
 
 ## Fence sections in a pen: one rail piece per column, top and bottom rows.
@@ -94,6 +96,12 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if care_screen != null:
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F10:
+		get_viewport().set_input_as_handled()
+		_rest()
+		return
 	if care_target != "" and care_screen == null and event.is_action_pressed("ui_accept"):
 		get_viewport().set_input_as_handled()
 		open_care(care_target)
@@ -136,6 +144,7 @@ func open_care(animal_id: String) -> void:
 	care_button.visible = false
 	talk_bubble.visible = false
 	mode_button.visible = false
+	rest_button.visible = false
 	var visit: CareVisit = CareVisit.make(GameState.care_catalog, animal_id, GameState.grade,
 		GameState.care_visits_for(animal_id), GameState.rng)
 	care_screen = CareScreen.new()
@@ -150,6 +159,7 @@ func _on_care_finished(completed: bool, animal_id: String) -> void:
 	care_target = ""
 	objects.process_mode = Node.PROCESS_MODE_INHERIT
 	refresh_mode_button()
+	rest_button.visible = true
 	if not completed:
 		return
 	GameState.record_care(animal_id)
@@ -268,8 +278,27 @@ func _show_repairs() -> void:
 			newly_repaired += new_now
 			messages.append(REPAIRED_TEXT % [new_now, "" if new_now == 1 else "s", str(pen["label"]), fixed, pen_sections(pen)])
 		GameState.pen_repairs_shown[habitat_id] = fixed
+	GameState.save_progress()
 	if not messages.is_empty():
 		show_banner(" ".join(messages), BANNER_SECONDS + newly_repaired * REPAIR_STAGGER)
+
+
+func _build_rest_button() -> void:
+	rest_button = Button.new()
+	rest_button.text = "Save & rest (F10)"
+	rest_button.position = Vector2(16, 16)
+	rest_button.custom_minimum_size = Vector2(280, 64)
+	rest_button.add_theme_font_size_override("font_size", 28)
+	# World arrows move the ranger; F10 supplies the keyboard shortcut here.
+	rest_button.focus_mode = Control.FOCUS_NONE
+	rest_button.pressed.connect(_rest, CONNECT_DEFERRED)
+	get_node("Hud").add_child(rest_button)
+
+
+func _rest() -> void:
+	if care_screen == null and GameState.finish_session():
+		Speech.stop()
+		get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 
 ## Rescued animals from this habitat, wandering inside the pen (they never get startled).

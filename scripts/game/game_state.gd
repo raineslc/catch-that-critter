@@ -1,6 +1,6 @@
 extends Node
 ## Autoload "GameState": shared state for this play session.
-## (Profiles and saving come in Phase 5; for now everything resets when the game closes.)
+## One local profile now persists progress. Multiple profiles and parent settings remain Phase 5.
 ##
 ## Playtest mode: starting the game with `-- --playtest` (the desktop shortcut does this)
 ## loads data/playtest.json: a playtest-only math skill for every chase, critters that come
@@ -11,6 +11,18 @@ const PLAYTEST_FLAG: String = "--playtest"
 const SPEECH_POLL_SECONDS: float = 0.1
 const READ_ALOUD_DEFAULT: bool = false
 const WORLD_PATH: String = "res://data/maps/world.json"
+const FULL_PLAYTEST_PATH: String = "res://data/playtest_2.json"
+const PROFILE_PATH: String = "user://profiles/default.json"
+const PLAYTEST_PROFILE_PATH: String = "user://profiles/playtest_2.json"
+
+signal save_status_changed(message: String)
+
+var persistence_enabled: bool = false
+var profile_path: String = ""
+var profile_id: String = "default"
+var intro_seen: bool = false
+var save_message: String = ""
+var _save_blocked: bool = false
 
 var factory: ProblemFactory
 var engine: AdaptiveEngine
@@ -52,8 +64,21 @@ var _speech_poll_left: float = 0.0
 
 func _ready() -> void:
 	reset()
-	if OS.get_cmdline_user_args().has(PLAYTEST_FLAG):
+	# Script runners (GUT and utilities) must never load or write the player's profile.
+	var args: PackedStringArray = OS.get_cmdline_args()
+	if Engine.is_editor_hint() or args.has("-s") or args.has("--script"):
+		return
+	var user_args: PackedStringArray = OS.get_cmdline_user_args()
+	if user_args.has("--playtest-full"):
+		enable_playtest(load_playtest_config(FULL_PLAYTEST_PATH))
+		if not user_args.has("--no-save"):
+			start_profile(PLAYTEST_PROFILE_PATH, "playtest-2")
+	elif user_args.has(PLAYTEST_FLAG):
 		enable_playtest()
+	elif not user_args.has("--no-save"):
+		start_profile(PROFILE_PATH)
+	get_tree().auto_accept_quit = false
+	add_child(SaveNotice.new())
 
 
 ## Speaks a waiting text-to-speech line once the voice is free (see Speech).
@@ -65,6 +90,12 @@ func _process(delta: float) -> void:
 
 
 func reset() -> void:
+	persistence_enabled = false
+	profile_path = ""
+	profile_id = "default"
+	intro_seen = false
+	_save_blocked = false
+	_set_save_message("")
 	_stop_freeze_watch()
 	if playtest_log != null:
 		playtest_log.close()
@@ -95,6 +126,7 @@ func enable_playtest(config: Dictionary = {}, log_dir: String = "") -> void:
 	if playtest.has("skill"):
 		factory.add_skill(playtest["skill"])
 		engine = AdaptiveEngine.new(AdaptiveEngine.level_counts_from(factory))
+		engine.set_level(playtest_skill(), int(playtest.get("starting_level", 1)))
 	if bool(playtest.get("log", false)):
 		playtest_log = PlaytestLog.new()
 		if playtest_log.open(log_dir if log_dir != "" else PlaytestLog.DIR):
@@ -163,6 +195,7 @@ func toggle_mode() -> void:
 	if not explore_locked:
 		mode = ChaseState.RACE if mode == ChaseState.EXPLORE else ChaseState.EXPLORE
 		log_event("mode", {"mode": mode})
+		save_progress()
 
 
 ## Remembers a rescue. `habitat`/`map_id`/`cell` say where it came from (so it stays rescued
@@ -170,6 +203,7 @@ func toggle_mode() -> void:
 func record_rescue(animal_id: String, habitat: String = "", map_id: String = "", cell: Vector2i = Vector2i(-1, -1)) -> void:
 	rescued.append(animal_id)
 	rescues.append({"animal": animal_id, "habitat": habitat, "map": map_id, "cell": [cell.x, cell.y]})
+	save_progress()
 
 
 func rescued_count(habitat: String = "") -> int:
@@ -195,6 +229,7 @@ func care_visits_for(animal_id: String) -> int:
 func record_care(animal_id: String) -> void:
 	care_visits[animal_id] = care_visits_for(animal_id) + 1
 	log_event("care", {"animal": animal_id, "visits": care_visits[animal_id]})
+	save_progress()
 
 
 ## Was the critter that starts at this spot already rescued?
@@ -223,6 +258,7 @@ func travel_to(map_id: String, gate: String) -> String:
 	arrival_map = map_id
 	arrival_gate = gate
 	log_event("travel", {"to": map_id, "gate": gate})
+	save_progress()
 	return scene
 
 
@@ -236,10 +272,97 @@ func take_arrival(map_id: String) -> String:
 	return gate
 
 
-## Writes a summary to the playtest log when the window closes.
+## Finish mastery exactly once on an orderly close, then persist before quitting.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_PREDELETE:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if _save_blocked or finish_session():
+			end_playtest_log()
+			get_tree().quit()
+	elif what == NOTIFICATION_PREDELETE:
 		end_playtest_log()
+
+
+## Explicit paths let tests exercise saves without ever touching the real profile.
+func start_profile(path: String, id: String = "default") -> bool:
+	profile_path = path
+	profile_id = id
+	persistence_enabled = true
+	var result: Dictionary = ProfileStore.read_profile(path)
+	if result.status in ["invalid", "newer"]:
+		_save_blocked = true
+		_set_save_message("Your saved game needs a grown-up's help. It has been kept safe.")
+		return false
+	if result.status in ["ok", "recovered"]:
+		if result.data.profile_id != id:
+			_save_blocked = true
+			_set_save_message("This saved game belongs to another profile. It has been kept safe.")
+			return false
+		_restore(result.data)
+		if result.status == "recovered":
+			_set_save_message("Your backup saved game was recovered.")
+	return true
+
+
+func snapshot() -> Dictionary:
+	return {
+		"version": ProfileStore.VERSION, "profile_id": profile_id,
+		"intro_seen": intro_seen, "rescues": rescues.duplicate(true),
+		"care_visits": care_visits.duplicate(), "pen_repairs_shown": pen_repairs_shown.duplicate(),
+		"progress": engine.to_dict(), "grade": grade, "sidekick_id": sidekick_id,
+		"mode": mode, "explore_locked": explore_locked,
+	}
+
+
+func _restore(data: Dictionary) -> void:
+	intro_seen = data.intro_seen
+	rescues.clear()
+	rescued.clear()
+	for rescue: Dictionary in data.rescues:
+		if catalog.has_animal(str(rescue.animal)):
+			rescues.append(rescue.duplicate(true))
+			rescued.append(str(rescue.animal))
+	care_visits = data.care_visits.duplicate()
+	pen_repairs_shown = data.pen_repairs_shown.duplicate()
+	engine.load_dict(data.progress)
+	grade = data.grade
+	sidekick_id = data.sidekick_id
+	mode = data.mode
+	explore_locked = data.explore_locked
+
+
+func save_progress() -> bool:
+	if not persistence_enabled:
+		return true
+	if _save_blocked:
+		return false
+	var error: Error = ProfileStore.write_profile(profile_path, snapshot())
+	_set_save_message("" if error == OK else "We couldn't save yet. Keep the game open and ask a grown-up to help.")
+	return error == OK
+
+
+func finish_session() -> bool:
+	var pending: Dictionary = engine.to_dict()
+	# end_session clears its answers, so repeated closes never count twice.
+	engine.end_session()
+	if save_progress():
+		return true
+	# A failed save leaves the session open, including any further answers.
+	engine.load_dict(pending)
+	return false
+
+
+func finish_intro() -> void:
+	intro_seen = true
+	save_progress()
+
+
+func can_start() -> bool:
+	return not _save_blocked
+
+
+func _set_save_message(message: String) -> void:
+	save_message = message
+	save_status_changed.emit(message)
 
 
 func end_playtest_log() -> void:

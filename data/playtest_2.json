@@ -1,0 +1,108 @@
+{
+  "description": "Playtest 2: current story, hub, rescue and care loop. Separate local save; voice off. Start at mixed addition/subtraction within 20, then adapt.",
+  "version": "playtest-2.0-review",
+  "starting_level": 3,
+  "respawn_seconds": 0.0,
+  "log": true,
+  "freeze_after_ms": 5000,
+  "skill": {
+    "id": "playtest_add_subtract",
+    "name": "Adding and Subtracting",
+    "habitat": "meadow",
+    "grades": "1-2",
+    "generator": "add_subtract",
+    "levels": [
+      {
+        "description": "Add within 10",
+        "type": "add",
+        "standards": [
+          "1.OA.6"
+        ],
+        "hint": "dots",
+        "choices": 3,
+        "params": {
+          "min": 2,
+          "max": 10,
+          "min_part": 1,
+          "spread": 2
+        }
+      },
+      {
+        "description": "Subtract within 10",
+        "type": "subtract",
+        "standards": [
+          "1.OA.6"
+        ],
+        "hint": "dots",
+        "choices": 3,
+        "params": {
+          "min": 2,
+          "max": 10,
+          "min_part": 1,
+          "spread": 2
+        }
+      },
+      {
+        "description": "Add and subtract within 20",
+        "type": "mixed",
+        "standards": [
+          "1.OA.6",
+          "2.OA.2"
+        ],
+        "hint": "number_line",
+        "choices": 4,
+        "params": {
+          "min": 6,
+          "max": 20,
+          "min_part": 1,
+          "spread": 3
+        }
+      },
+      {
+        "description": "Find the missing number within 20",
+        "type": "missing_addend",
+        "standards": [
+          "1.OA.8"
+        ],
+        "hint": "number_line",
+        "choices": 4,
+        "params": {
+          "min": 6,
+          "max": 20,
+          "min_part": 1,
+          "spread": 3
+        }
+      },
+      {
+        "description": "Add within 100",
+        "type": "add",
+        "standards": [
+          "2.NBT.5"
+        ],
+        "hint": "base_ten_blocks",
+        "choices": 4,
+        "params": {
+          "min": 30,
+          "max": 100,
+          "min_part": 10,
+          "spread": 5
+        }
+      },
+      {
+        "description": "Subtract within 100",
+        "type": "subtract",
+        "standards": [
+          "2.NBT.5"
+        ],
+        "hint": "base_ten_blocks",
+        "choices": 4,
+        "params": {
+          "min": 30,
+          "max": 100,
+          "min_part": 10,
+          "spread": 5
+        }
+      }
+    ]
+  }
+}
