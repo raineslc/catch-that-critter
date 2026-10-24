@@ -1,5 +1,9 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-10-23 — Review fixes authorized on a review branch
+Chris: "Go ahead and make the suggested changes. Create a new branch that claude can review and merge to main."
+Implement the review follow-up together on `codex/review-fixes`, leaving merge to Claude. Bring a single local save profile and session completion forward from Phase 5; keep multi-profile customization, timed wrap-up, and the parent area planned. Give the current full-loop playtest its own save so it cannot alter normal-game progress. Keep speech off; use a short food description and an optional reveal-and-hide word clue for unclear pictures. Preserve the frozen Playtest 1 worktree and shortcut.
+
 Dated log of decisions and why. Confirmed decisions (PLAN.md section 2) change only with Chris's approval.
 
 ## 2026-10-20 — Plan approved

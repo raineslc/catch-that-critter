@@ -154,6 +154,15 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 
 ## 7. Build Steps (one at a time; run, commit, check off, confirm before the next)
 
+### Approved review follow-up — 2026-10-23
+Chris authorized the review suggestions together on a new branch for Claude to review and merge. This brings minimal saving/session completion forward; the remaining Phase 5 features stay planned.
+- [x] Cancel stale chase transitions; allow leaving unfinished chases.
+- [x] Support keyboard navigation through chase and care.
+- [x] Add one local profile with autosave, recovery, and session mastery completion.
+- [x] Prepare a separately saved, versioned full-loop playtest with suitable starting math.
+- [x] Clarify food prompts and add harder care-note distractors for older readers; keep voice off.
+- [x] Run regression tests and visual checks; leave a review handoff for Claude without merging.
+
 ### Phase 0 — Setup
 - [x] Create GitHub repo; add PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
 - [x] Init Godot 4 project, folders, GUT, CI.

@@ -1,12 +1,16 @@
-# HANDOFF — Catch That Critter (as of 2026-10-21)
+# HANDOFF — Catch That Critter (review branch, 2026-10-23)
 
 Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTIONS.md` → `PROGRESS.md` → `DECISIONS.md`, then run the tests.
 
+## Review implementation for Claude (2026-10-23)
+
+Chris subsequently authorized implementing the suggestions on a branch for Claude to review and merge. Read [the implementation handoff](CLAUDE_REVIEW_HANDOFF.md) first. `codex/review-fixes` adds chase cancellation/exit, keyboard controls, local saving and session completion, Playtest 2, and food clues. The [original review](CODEX_REVIEW_2026-10-23.md) is retained as historical context. Main is not merged.
+
 ## Where things stand
-- **Repo:** `C:\Users\raine\CatchACritter`, GitHub `raineslc/catch-that-critter` (private). `main` has everything merged (last: PR #14, Rescue Center hub). **180 GUT tests pass** locally and in CI. Branch `phase3/care` (not merged yet) adds Phase 3 step 3 — 213 tests pass.
-- **Done:** Phase 0 (setup), Phase 1 (math core), Phase 2 (Meadow + chase prototype), Playtest 1 setup, Phase 3 steps 1–2 (storm intro, Rescue Center hub).
-- **Phase 3, step 3 (care) built** on `phase3/care`: walk to a pen with animals → "Care for the Raccoon" → spell the food (fish/shrimp) → care note → fact card (one new fact per visit). Waiting on Chris to push/PR/merge.
-- **Next step: Phase 3, step 4** — stars, animal levels 1–5 through care, collection book.
+- **Repo:** `C:\Users\raine\CatchACritter`, GitHub `raineslc/catch-that-critter` (private). Main includes PR #16 (care). Review checkout: `C:\Users\raine\OneDrive\Documents\ChatGPT\CatchACritter\review-fixes`. **235 GUT tests pass locally** on the review branch; see its PR for current CI.
+- **Done:** Phase 0 (setup), Phase 1 (math core), Phase 2 (Meadow + chase prototype), Playtest 1 setup, Phase 3 steps 1–3 (storm intro, Rescue Center hub, care).
+- **Phase 3, step 3 (care) merged** (PR #16): walk to a pen with animals → "Care for the Raccoon" → spell the food (fish/shrimp) → care note → fact card (one new fact per visit).
+- **Next:** Claude reviews this branch and CI, then Chris runs [Playtest 2](playtest_2.md). Stars, animal levels, and collection book remain Phase 3 step 4.
 - **Game flow today:** title → storm intro (7 captioned panels) → Rescue Center hub (Henrito in the plaza, 5 pens with storm-broken fences, 5 gates; only the Meadow gate is open) → Meadow (6 raccoons) → walk close → chase (3 right answers = net toss = rescue) → back at the hub each rescue fixes one fence section of that habitat's pen and the animal lives in the pen → walk up to the pen to care for it (feed by spelling, care note, fact card).
 
 ## How Chris works (follow this)
@@ -25,7 +29,7 @@ Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTION
 - **Never stop/interrupt TTS** (`tts_stop()` / interrupting `tts_speak`) — it froze/crashed Godot on Windows (Playtest 1 freeze). Test-enforced.
 - World = **hub with gates**; new games start at the Rescue Center. Maps are text files `data/maps/<id>.txt` + info `data/maps/<id>.json` + `data/maps/world.json`. Ponds convex; gates are digits on the map edge.
 - Adaptive difficulty: last 10 first-try answers per skill; ≥80% and fast → up; <50% (after 6) → down + extra help; mastery = 3 good sessions (credit flows to easier levels).
-- Progress resets when the game closes until profiles/saves (Phase 5).
+- This branch saves one local profile (separate Playtest 2 profile), resumes at the hub, and completes mastery on Save & rest or orderly close. Multiple profiles, timed wrap-up, and parent settings remain Phase 5.
 
 ## Playtest
 - Desktop shortcut **"Catch That Critter (playtest)"** → `tools/playtest_launch.cmd` in frozen worktree `C:\Users\raine\CatchACritter-playtest` at tag **`playtest-1.3`** (pre-intro/hub version: Meadow only, add/subtract ≤12, raccoons come back, voice off). Don't develop in that folder; to update: tag a new version on `main`, `git -C C:\Users\raine\CatchACritter-playtest checkout --detach <tag>`, run `--import` there.

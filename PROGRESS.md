@@ -3,9 +3,11 @@
 Every assistant updates this at the end of a session. Quick overview for a new session: `docs/HANDOFF.md`.
 
 ## Current step
-Phase 3, step 3 — Feeding via spelling, care notes, fact cards with read-aloud. (Playtest 1 can continue in parallel with `playtest-1.3`.)
+Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's review and merge. See [implementation handoff](docs/CLAUDE_REVIEW_HANDOFF.md). Phase 3 care remains complete; rewards remain next after review/playtesting.
 
 ## Done
+- 2026-10-23 — Implemented the authorized review suggestions: cancelled stale chase transitions, Later/Esc exit, full chase/care keyboard navigation, one local save profile with backup recovery and session mastery, separately saved Playtest 2, food descriptions/word clues, and older-reader care distractors. 235 GUT tests pass; separate-process save/reopen and real-render visual checks pass. No merge to main; child playtest still needed.
+- 2026-10-23 - Codex completed a read-only review and, at Chris's request, saved [notes for Claude](docs/CODEX_REVIEW_2026-10-23.md) and linked them from the handoff. Existing care-merge CI success was checked; no fresh local test run or gameplay session was performed. Suggestions await prioritization with Chris; no game code or plan changes.
 - 2026-10-20 — Phase 0, step 1: private GitHub repo raineslc/catch-that-critter created with PLAN.md, CONVENTIONS.md, PROGRESS.md, DECISIONS.md, CLAUDE.md, AGENTS.md, GEMINI.md, .gitignore, .env.example.
 - 2026-10-20 — Phase 0, step 2: Godot 4.7.2 project (`project.godot`, placeholder title screen `scenes/main.tscn`), folder skeleton, GUT 9.7.1 in `addons/gut/`, smoke tests, GitHub Actions workflow running GUT on pushes to main and PRs.
 - 2026-10-20 — Phase 1, step 1: math problem generators.
@@ -63,6 +65,8 @@ Phase 3, step 3 — Feeding via spelling, care notes, fact cards with read-aloud
 - 2026-10-21 — Phase 3, step 3: care at the Rescue Center. Walk up to a pen with animals → "Care for the Raccoon" → `CareScreen` (`scripts/care/`): feed by spelling the food's name with letter tiles (K: first letter or picture match), a short care note with a choice, then the fact card (one new fact per visit). Logic in `CareCatalog` (`data/care.json`), `SpellingTask`, `CareChoice`, `CareVisit`; `GameState.grade` ("2") and `care_visits`. Henrito hints after 2 misses. Food art: fish, shrimp, honey. Details in DECISIONS.md. 213 tests passing.
 
 ## Next
+- Claude: review `codex/review-fixes` using `docs/CLAUDE_REVIEW_HANDOFF.md` and its CI, then merge if satisfied.
+- Chris: run `tools/playtest_2_launch.cmd` in the review checkout and follow `docs/playtest_2.md`; the old desktop shortcut still launches Playtest 1.
 - Phase 3, step 4: stars (from chases and care), animal levels 1–5 through care, collection book.
 - Chris: try a care visit; are fish/shrimp OK as raccoon spelling words (shrimp is harder), and are the care notes/facts at the right reading level?
 - Chris: listen to the four chase sounds and say if any should change; try Race mode with the 7-year-old and tell me if 45 seconds feels right.
