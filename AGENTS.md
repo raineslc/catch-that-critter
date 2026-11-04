@@ -13,3 +13,15 @@ Same standing rules as `CLAUDE.md`. Short version:
 6. Never change a confirmed decision (PLAN.md section 2) without Chris's approval; log changes in `DECISIONS.md`.
 7. No secrets in the repo; no network calls, ads, analytics, or external links in the game. Saves stay local.
 8. Kid-facing text: short, calm, encouraging; never say "wrong."
+
+## Review guidelines
+Codex reviews every pull request on GitHub. Flag only real problems, most serious first:
+- Bugs that would break the game for a 7-year-old: crashes, freezes, soft-locks (no way to leave a screen), lost or corrupted saves.
+- Never call `DisplayServer.tts_stop()` or interrupting `tts_speak` (froze Godot on Windows); all speech goes through `Speech.say()`.
+- No network calls, analytics, ads, external links, or secrets. Saves stay local, and tests must never touch a real player's save.
+- New logic ships with GUT tests; tuning numbers live in `data/*.json` or named constants, not magic numbers.
+- GDScript is statically typed; game logic stays out of scene scripts so it can be unit-tested.
+- Kid-facing text is short, calm, and encouraging; never "wrong," "bad," or "fail."
+- New art or sound is CC0 (or compatible) and listed in `assets/CREDITS.md`.
+- A change to a confirmed decision (PLAN.md section 2) needs a DECISIONS.md entry with Chris's approval.
+Skip style nitpicks the tests and existing code already settle.
