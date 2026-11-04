@@ -5,7 +5,7 @@ const CONFIG: Dictionary = {"correct_to_catch": 3, "start_gap": 3.0, "close_per_
 
 func test_config_file_has_the_chase_rules() -> void:
 	var config: Dictionary = ChaseState.load_config()
-	for key: String in ["correct_to_catch", "start_gap", "close_per_correct", "pull_per_miss", "max_gap"]:
+	for key: String in ["correct_to_catch", "misses_to_escape", "start_gap", "close_per_correct", "pull_per_miss", "max_gap"]:
 		assert_true(config.has(key), "chase.json missing " + key)
 
 
@@ -22,22 +22,41 @@ func test_three_right_answers_catch() -> void:
 
 
 func test_misses_let_the_critter_pull_ahead_up_to_a_limit() -> void:
-	var chase: ChaseState = ChaseState.new(CONFIG)
+	var settings: Dictionary = CONFIG.duplicate()
+	settings["misses_to_escape"] = 0
+	var chase: ChaseState = ChaseState.new(settings)
 	chase.answer(false)
 	assert_almost_eq(chase.gap, 3.5, 0.001)
 	for i: int in 10:
 		chase.answer(false)
 	assert_eq(chase.gap, 4.0)
 	assert_eq(chase.misses, 11)
-	assert_false(chase.caught, "misses never end an explore chase")
+	assert_false(chase.is_over(), "with misses_to_escape 0, misses never end a chase")
 
 
 func test_misses_do_not_stop_the_catch() -> void:
 	var chase: ChaseState = ChaseState.new(CONFIG)
-	for i: int in 3:
+	for i: int in 2:
 		chase.answer(false)
 		chase.answer(true)
+	chase.answer(true)
 	assert_true(chase.caught)
+
+
+func test_three_misses_in_one_chase_and_it_gets_away() -> void:
+	for mode: String in [ChaseState.EXPLORE, ChaseState.RACE]:
+		var chase: ChaseState = ChaseState.new(CONFIG, mode)
+		chase.answer(false)
+		chase.answer(true)
+		chase.answer(false)
+		assert_false(chase.escaped, "two misses: still chasing")
+		chase.answer(false)
+		assert_true(chase.escaped, "%s: the third miss lets it get away" % mode)
+		chase.answer(true)
+		assert_false(chase.caught, "no catching after it got away")
+		chase.restart()
+		assert_false(chase.escaped)
+		assert_eq(chase.misses, 0, "Chase again starts fresh")
 
 
 const RACE_CONFIG: Dictionary = {"correct_to_catch": 3, "start_gap": 3.0, "close_per_correct": 1.0, "pull_per_miss": 0.5,

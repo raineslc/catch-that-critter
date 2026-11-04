@@ -21,6 +21,8 @@ var race_seconds: float = 45.0
 var sprint_seconds: float = 5.0
 var sprint_time_bonus: float = 3.0
 var sprint_extra_close: float = 0.5
+## Misses in one chase before the critter gets away (0 = never).
+var misses_to_escape: int = 3
 
 var correct: int = 0
 var misses: int = 0
@@ -45,6 +47,7 @@ func _init(config: Dictionary = {}, chase_mode: String = EXPLORE) -> void:
 	sprint_seconds = float(settings.get("sprint_seconds", sprint_seconds))
 	sprint_time_bonus = float(settings.get("sprint_time_bonus", sprint_time_bonus))
 	sprint_extra_close = float(settings.get("sprint_extra_close", sprint_extra_close))
+	misses_to_escape = int(settings.get("misses_to_escape", misses_to_escape))
 	restart()
 
 
@@ -81,6 +84,7 @@ func answer(is_correct: bool, seconds: float = INF) -> void:
 	if not is_correct:
 		misses += 1
 		gap = minf(gap + pull_per_miss, max_gap)
+		escaped = misses_to_escape > 0 and misses >= misses_to_escape
 		return
 	correct += 1
 	var close: float = close_per_correct

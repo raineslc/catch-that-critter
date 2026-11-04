@@ -140,6 +140,21 @@ func test_arriving_from_the_meadow_puts_you_at_the_west_gate() -> void:
 	assert_eq(GameState.arrival_map, "", "arrival is used up")
 
 
+func test_holding_the_key_after_arriving_does_not_bounce_you_back() -> void:
+	GameState.travel_to("rescue_center", "1")
+	await _open_hub()
+	watch_signals(hub)
+	hub.ranger.input_override = Vector2.LEFT
+	await wait_physics_frames(90)
+	assert_signal_not_emitted(hub, "gate_used", "the gate you came through waits until you walk away")
+	hub.ranger.input_override = Vector2.RIGHT
+	await wait_physics_frames(60)
+	assert_eq(hub.arrived_gate, "", "walking away turns the gate back on")
+	hub.ranger.input_override = Vector2.LEFT
+	await wait_physics_frames(120)
+	assert_signal_emitted(hub, "gate_used")
+
+
 ## Puts the ranger just below a pen's bottom fence.
 func _stand_by_pen(habitat_id: String) -> void:
 	var rect: Rect2 = RescueCenter.pen_rect(hub.pen_for(habitat_id))

@@ -41,6 +41,9 @@ const SIGN_TEXT: String = "To the %s"
 const BANNER_SECONDS: float = 2.5
 ## Room at the top for the Explore/Race button, so banners sit below it.
 const BANNER_TOP: float = 100.0
+## The gate you arrive through works again once you are this far (pixels) from it, so holding
+## the arrow key that brought you here doesn't walk you straight back out.
+const GATE_REARM_DISTANCE: float = TILE * 3.0
 const CAUGHT_TEXT: String = "The %s is safe at the Rescue Center!"
 const LOCKED_TEXT: String = "The %s opens soon!"
 
@@ -79,6 +82,8 @@ var habitat: String = ""
 ## gate char -> Area2D (open gates) or StaticBody2D (locked gates).
 var gates: Dictionary = {}
 var _traveling: bool = false
+## The gate just arrived through (ignored until the ranger walks away from it), or "".
+var arrived_gate: String = ""
 var _banner_token: int = 0
 
 
@@ -112,6 +117,8 @@ func build() -> void:
 	var arrive: String = GameState.take_arrival(map_id)
 	var start_cell: Vector2i = map.arrival_cell(arrive) if arrive != "" and map.gate_cells().has(arrive) else map.spawn_cell()
 	ranger.position = map.cell_to_feet(start_cell)
+	if start_cell != map.spawn_cell():
+		arrived_gate = arrive
 	objects.add_child(ranger)
 	var size: Vector2i = map.pixel_size()
 	ranger.camera.limit_left = 0
@@ -318,9 +325,16 @@ func _add_gate_area(gate: String, cell: Vector2i, action: Callable, size: float)
 	return area
 
 
+func _physics_process(_delta: float) -> void:
+	if arrived_gate != "" and ranger != null:
+		var gate_feet: Vector2 = map.cell_to_feet(map.gate_cells()[arrived_gate])
+		if ranger.global_position.distance_to(gate_feet) >= GATE_REARM_DISTANCE:
+			arrived_gate = ""
+
+
 ## Walks through a gate to the area it leads to.
 func use_gate(gate: String) -> void:
-	if _traveling or chase_target != null:
+	if _traveling or chase_target != null or gate == arrived_gate:
 		return
 	var info: Dictionary = map.gate_info(gate)
 	var scene: String = GameState.travel_to(str(info.get("to", "")), str(info.get("arrive", "")))

@@ -131,6 +131,19 @@ func test_extra_help_hints_after_one_miss() -> void:
 	assert_true(screen.hint_shown)
 
 
+func test_third_miss_lets_it_get_away_with_chase_again() -> void:
+	for i: int in 2:
+		screen.answer(_wrong_choices()[0], 2.0)
+	assert_false(screen.chase.escaped)
+	screen.answer(_wrong_choices()[0], 2.0)
+	assert_true(screen.chase.escaped)
+	assert_string_contains(screen.prompt_label.text, "got away")
+	var labels: Array[String] = []
+	for button: Button in screen.choice_buttons():
+		labels.append(button.text)
+	assert_eq(labels, [ChaseScreen.CHASE_AGAIN, ChaseScreen.BACK_TO_MAP])
+
+
 func test_explore_has_no_timer() -> void:
 	assert_false(screen.timer_box.visible)
 	await wait_seconds(0.3)

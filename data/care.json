@@ -10,12 +10,22 @@
   },
   "foods": {
     "fish": {"word": "fish", "description": "It swims using fins.", "picture": "res://assets/ui/food/fish.png"},
-    "honey": {"word": "honey", "description": "Bees make this sweet food.", "picture": "res://assets/ui/food/honey.png"},
-    "shrimp": {"word": "shrimp", "description": "It has a curled body and long feelers.", "picture": "res://assets/ui/food/shrimp.png"}
+    "corn": {"word": "corn", "description": "It grows on a tall plant and has yellow kernels.", "picture": "res://assets/ui/food/corn.png"},
+    "bugs": {"word": "bugs", "description": "They are small and crawl on six legs.", "picture": "res://assets/ui/food/bugs.png"},
+    "nuts": {"word": "nuts", "description": "They have a hard shell and fall from trees.", "picture": "res://assets/ui/food/nuts.png"},
+    "eggs": {"word": "eggs", "description": "Birds lay these.", "picture": "res://assets/ui/food/eggs.png"},
+    "crab": {"word": "crab", "description": "It walks sideways and has big claws.", "picture": "res://assets/ui/food/crab.png"},
+    "clams": {"word": "clams", "description": "They live in a shell that opens and shuts.", "picture": "res://assets/ui/food/clams.png"},
+    "plums": {"word": "plums", "description": "They are sweet purple fruits.", "picture": "res://assets/ui/food/plums.png"},
+    "worms": {"word": "worms", "description": "They wiggle in the dirt after rain.", "picture": "res://assets/ui/food/worms.png"},
+    "grapes": {"word": "grapes", "description": "They grow in bunches on a vine.", "picture": "res://assets/ui/food/grapes.png"},
+    "apples": {"word": "apples", "description": "They are crunchy fruits that grow on trees.", "picture": "res://assets/ui/food/apples.png"},
+    "shrimp": {"word": "shrimp", "description": "It has a curled body and long feelers.", "picture": "res://assets/ui/food/shrimp.png"},
+    "honey": {"word": "honey", "description": "Bees make this sweet food.", "picture": "res://assets/ui/food/honey.png"}
   },
   "animals": {
     "raccoon": {
-      "foods": ["fish", "shrimp"],
+      "foods": ["fish", "corn", "bugs", "nuts", "eggs", "crab", "clams", "plums", "worms", "grapes", "apples", "shrimp"],
       "care_notes": [
         {
           "text": "The raccoon got muddy in the storm.",

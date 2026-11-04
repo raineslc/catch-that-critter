@@ -66,10 +66,11 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 
 - 2026-11-04 — Codex review on GitHub: review guidelines added to AGENTS.md (PR #19). Chris's answers: Race mode 30 seconds, rare animals picked (albino raccoon, white deer, axolotl, fennec fox, red panda), fish/shrimp stay, chase sounds fine, voice stays off (maybe ElevenLabs later). See DECISIONS.md.
 
+- 2026-11-04 — Playtest 2 run and reviewed (10 min, 6 catches, no freezes; adaptive difficulty moved him from level 3 to 2). Fixes from Chris: 3 misses = the animal gets away, raccoon spelling cycles through 12 foods (10 new icons), gate bounce fixed. 240 tests passing.
+
 ## Next
 - Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
-- Chris: run `tools/playtest_2_launch.cmd` in this checkout and follow `docs/playtest_2.md`; then review the log summary together.
-- Phase 3, step 4 (after Playtest 2): stars (from chases and care), animal levels 1–5 through care, collection book.
+- Phase 3, step 4 (next): stars (from chases and care), animal levels 1–5 through care, collection book.
 - Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 
 ## Open issues

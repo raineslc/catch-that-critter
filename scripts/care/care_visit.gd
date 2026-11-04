@@ -38,7 +38,8 @@ static func make(catalog: CareCatalog, id: String, grade: String, visits_done: i
 	visit.facts = catalog.facts_for(id)
 	var foods: Array[String] = catalog.foods_for(id)
 	if not foods.is_empty():
-		visit.food_id = foods[rng.randi_range(0, foods.size() - 1)]
+		# Cycle through the animal's whole food list before any word repeats.
+		visit.food_id = foods[visits_done % foods.size()]
 		visit.food_word = str(catalog.food(visit.food_id).get("word", visit.food_id))
 	var rules: Dictionary = catalog.feeding_rules(grade)
 	var modes: Array = rules.get("modes", [SPELL])

@@ -178,6 +178,10 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 		GameState.save_progress()
 	chase.answer(correct, elapsed)
 	_update_meter()
+	if chase.escaped:
+		_play(SFX_TRY_AGAIN)
+		_begin_escape()
+		return
 	if not correct:
 		_play(SFX_TRY_AGAIN)
 		feedback.text = TRY_AGAIN
