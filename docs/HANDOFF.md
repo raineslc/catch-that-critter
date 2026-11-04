@@ -10,7 +10,8 @@ Chris subsequently authorized implementing the suggestions on a branch for Claud
 - **Repo:** `C:\Users\raine\CatchACritter`, GitHub `raineslc/catch-that-critter` (private). Main includes PR #16 (care). Review checkout: `C:\Users\raine\OneDrive\Documents\ChatGPT\CatchACritter\review-fixes`. **235 GUT tests pass locally** on the review branch; see its PR for current CI.
 - **Done:** Phase 0 (setup), Phase 1 (math core), Phase 2 (Meadow + chase prototype), Playtest 1 setup, Phase 3 steps 1–3 (storm intro, Rescue Center hub, care).
 - **Phase 3, step 3 (care) merged** (PR #16): walk to a pen with animals → "Care for the Raccoon" → spell the food (fish/shrimp) → care note → fact card (one new fact per visit).
-- **Next:** Claude reviews this branch and CI, then Chris runs [Playtest 2](playtest_2.md). Stars, animal levels, and collection book remain Phase 3 step 4.
+- **Phase 3 complete** (2026-11-04): Playtest 2 fixes (3 misses = it gets away, 12 food words, gate bounce) and step 4 (stars, animal levels, pen shop, Rescue Book).
+- **Next:** Phase 4 step 1 — the other habitats, unlocking, and all animal data (needs art for missing species).
 - **Game flow today:** title → storm intro (7 captioned panels) → Rescue Center hub (Henrito in the plaza, 5 pens with storm-broken fences, 5 gates; only the Meadow gate is open) → Meadow (6 raccoons) → walk close → chase (3 right answers = net toss = rescue) → back at the hub each rescue fixes one fence section of that habitat's pen and the animal lives in the pen → walk up to the pen to care for it (feed by spelling, care note, fact card).
 
 ## How Chris works (follow this)

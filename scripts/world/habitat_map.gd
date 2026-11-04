@@ -45,6 +45,9 @@ const BANNER_TOP: float = 100.0
 ## the arrow key that brought you here doesn't walk you straight back out.
 const GATE_REARM_DISTANCE: float = TILE * 3.0
 const CAUGHT_TEXT: String = "The %s is safe at the Rescue Center!"
+const STARS_EARNED_TEXT: String = " +%d stars"
+const STARS_TEXT: String = "★ %d"
+const STARS_FONT_SIZE: int = 36
 const LOCKED_TEXT: String = "The %s opens soon!"
 
 ## A critter got startled: a chase is about to start.
@@ -68,6 +71,8 @@ var critters: Array[Critter] = []
 var chase_target: Critter
 var chase_screen: ChaseScreen
 var banner: Label
+## Star count, top left.
+var stars_label: Label
 ## Explore / Race switch (hidden when a parent locks Explore).
 var mode_button: Button
 var _rng: RandomNumberGenerator
@@ -208,6 +213,7 @@ func open_chase() -> void:
 func _on_chase_finished(caught: bool) -> void:
 	var critter: Critter = chase_target
 	var id: String = str(critter.animal["id"])
+	var misses: int = chase_screen.chase.misses if chase_screen.chase != null else 0
 	chase_screen.queue_free()
 	chase_screen = null
 	chase_target = null
@@ -215,7 +221,9 @@ func _on_chase_finished(caught: bool) -> void:
 		"seconds": snappedf((Time.get_ticks_msec() - _chase_started_msec) / 1000.0, 0.1)})
 	if caught:
 		GameState.record_rescue(id, habitat, map_id, critter.get_meta("spawn_cell", Vector2i(-1, -1)))
-		show_banner(CAUGHT_TEXT % critter.animal.get("name", "critter"))
+		var earned: int = GameState.rewards.catch_stars(misses)
+		GameState.add_stars(earned, "catch")
+		show_banner(CAUGHT_TEXT % critter.animal.get("name", "critter") + STARS_EARNED_TEXT % earned)
 		critters.erase(critter)
 		if GameState.respawn_seconds() > 0.0:
 			_schedule_respawn(id, critter.spawn_point, GameState.respawn_seconds())
@@ -242,6 +250,26 @@ func _make_banner() -> void:
 	banner.add_theme_constant_override("outline_size", 10)
 	banner.visible = false
 	layer.add_child(banner)
+	stars_label = Label.new()
+	stars_label.name = "Stars"
+	# Under the mode button, on a dark backing so it reads over any ground.
+	stars_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	stars_label.offset_left = -MODE_BUTTON_SIZE.x - 16
+	stars_label.offset_right = -16
+	stars_label.offset_top = 16 + MODE_BUTTON_SIZE.y + 8
+	stars_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var backing: StyleBoxFlat = StyleBoxFlat.new()
+	backing.bg_color = Color(0.1, 0.08, 0.05, 0.6)
+	backing.set_corner_radius_all(6)
+	backing.set_content_margin_all(6)
+	stars_label.add_theme_stylebox_override("normal", backing)
+	stars_label.add_theme_font_size_override("font_size", STARS_FONT_SIZE)
+	stars_label.add_theme_color_override("font_color", Color(1, 0.85, 0.3))
+	stars_label.add_theme_color_override("font_outline_color", Color(0.25, 0.18, 0.08))
+	stars_label.add_theme_constant_override("outline_size", 10)
+	layer.add_child(stars_label)
+	GameState.stars_changed.connect(_refresh_stars)
+	_refresh_stars(GameState.stars)
 	mode_button = Button.new()
 	mode_button.name = "ModeButton"
 	mode_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
@@ -256,6 +284,10 @@ func _make_banner() -> void:
 		refresh_mode_button())
 	layer.add_child(mode_button)
 	refresh_mode_button()
+
+
+func _refresh_stars(total: int) -> void:
+	stars_label.text = STARS_TEXT % total
 
 
 ## Shows a message at the top for a few seconds.

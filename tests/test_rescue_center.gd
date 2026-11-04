@@ -196,6 +196,50 @@ func test_finishing_care_counts_a_visit_and_makes_the_animal_happy() -> void:
 		assert_true(resident.emote.visible)
 
 
+func test_care_earns_stars_and_shows_the_level_on_the_pen() -> void:
+	_rescue(1)
+	await _open_hub()
+	assert_eq(hub.pen_for("meadow")["level_label"].text, "Raccoon level 1")
+	assert_false(hub.pen_for("forest")["level_label"].visible, "empty pens show no level")
+	await _stand_by_pen("meadow")
+	hub.open_care(hub.care_target)
+	hub.care_screen.finish(true)
+	assert_eq(GameState.stars, 4)
+	assert_string_contains(hub.banner.text, "Level 2!")
+	assert_string_contains(hub.banner.text, "+4 stars")
+	assert_eq(hub.pen_for("meadow")["level_label"].text, "Raccoon level 2")
+	assert_string_contains(hub.stars_label.text, "4")
+
+
+func test_decorate_button_opens_the_shop_and_the_decoration_appears() -> void:
+	_rescue(1)
+	GameState.add_stars(8, "test")
+	await _open_hub()
+	await _stand_by_pen("meadow")
+	assert_true(hub.decorate_button.visible)
+	hub.open_shop(hub.decorate_target)
+	assert_not_null(hub.shop_screen)
+	assert_eq(hub.objects.process_mode, Node.PROCESS_MODE_DISABLED, "the world waits")
+	hub.shop_screen.buy("rock")
+	hub.shop_screen.close()
+	assert_null(hub.shop_screen)
+	assert_not_null(hub.objects.get_node_or_null("Decoration_meadow_rock"))
+	hub.queue_free()
+	await wait_frames(2)
+	await _open_hub()
+	assert_not_null(hub.objects.get_node_or_null("Decoration_meadow_rock"), "still there next visit")
+
+
+func test_book_opens_and_closes() -> void:
+	await _open_hub()
+	hub.open_book()
+	assert_not_null(hub.book_screen)
+	assert_false(hub.book_button.visible)
+	hub.book_screen.close()
+	assert_null(hub.book_screen)
+	assert_true(hub.book_button.visible)
+
+
 func test_leaving_care_early_does_not_count() -> void:
 	_rescue(1)
 	await _open_hub()
@@ -228,6 +272,8 @@ func test_meadow_has_a_gate_back_and_remembers_rescues() -> void:
 	assert_true(GameState.is_spot_rescued("meadow", spot))
 	assert_eq(GameState.rescued_count("meadow"), 1)
 	assert_string_contains(meadow.banner.text, "safe at the Rescue Center")
+	assert_eq(GameState.stars, 4, "3 for the catch + 1 for no misses")
+	assert_string_contains(meadow.banner.text, "+4 stars")
 	meadow.queue_free()
 	await wait_frames(2)
 	var again: HabitatMap = MEADOW.instantiate()

@@ -17,6 +17,15 @@ const CARE_BUTTON_SIZE: Vector2 = Vector2(420, 84)
 const CARE_BUTTON_FONT_SIZE: int = 34
 const CARE_BUTTON_TEXT: String = "Care for the %s"
 const CARED_TEXT: String = "The %s is happy and full!"
+const LEVEL_UP_TEXT: String = " Level %d!"
+const PEN_LEVEL_TEXT: String = "%s level %d"
+const DECORATE_TEXT: String = "Decorate"
+const DECORATE_BUTTON_WIDTH: float = 240.0
+const BOOK_TEXT: String = "Book (B)"
+const HUD_BUTTON_SIZE: Vector2 = Vector2(280, 64)
+const HUD_GAP: float = 8.0
+## Same decoration variety every visit.
+const DECORATION_SEED: int = 7
 const HAPPY_EMOTE: Texture2D = preload("res://assets/ui/emotes/happy.png")
 const HAPPY_EMOTE_SECONDS: float = 2.5
 ## How close (pixels) the ranger must be for the sidekick to talk.
@@ -45,6 +54,12 @@ var care_button: Button
 var care_screen: CareScreen
 ## The animal id the care button is offering, or "".
 var care_target: String = ""
+var decorate_button: Button
+var book_button: Button
+var shop_screen: ShopScreen
+var book_screen: BookScreen
+## The pen the Decorate button is offering (its habitat), or "".
+var decorate_target: String = ""
 var rest_button: Button
 
 
@@ -57,6 +72,7 @@ func build() -> void:
 	_build_care_button()
 	_show_repairs()
 	_build_rest_button()
+	_build_book_button()
 
 
 ## Fence sections in a pen: one rail piece per column, top and bottom rows.
@@ -81,8 +97,13 @@ static func is_fixed(fence: StaticBody2D) -> bool:
 	return not (fence.get_child(0) as CollisionShape2D).disabled
 
 
+## A care, shop, or book screen is open (the world waits).
+func screen_open() -> bool:
+	return care_screen != null or shop_screen != null or book_screen != null
+
+
 func _process(_delta: float) -> void:
-	if ranger == null or care_screen != null:
+	if ranger == null or screen_open():
 		return
 	_update_care_button()
 	if sidekick_sprite == null:
@@ -96,7 +117,11 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if care_screen != null:
+	if screen_open():
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_B:
+		get_viewport().set_input_as_handled()
+		open_book()
 		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F10:
 		get_viewport().set_input_as_handled()
@@ -116,18 +141,27 @@ static func pen_rect(pen: Dictionary) -> Rect2:
 ## The animal to care for at a spot: the first resident (with care data) of a pen within
 ## CARE_DISTANCE, or "".
 func care_animal_near(point: Vector2) -> String:
-	for pen: Dictionary in pens:
-		if not pen_rect(pen).grow(CARE_DISTANCE).has_point(point):
-			continue
-		for resident: Critter in pen["residents"]:
-			var id: String = str(resident.animal.get("id", ""))
-			if GameState.care_catalog.has_animal(id):
-				return id
+	var pen: Dictionary = pen_near(point)
+	for resident: Critter in pen.get("residents", []):
+		var id: String = str(resident.animal.get("id", ""))
+		if GameState.care_catalog.has_animal(id):
+			return id
 	return ""
+
+
+## The pen within CARE_DISTANCE of a spot, or {}.
+func pen_near(point: Vector2) -> Dictionary:
+	for pen: Dictionary in pens:
+		if pen_rect(pen).grow(CARE_DISTANCE).has_point(point):
+			return pen
+	return {}
 
 
 func _update_care_button() -> void:
 	var id: String = care_animal_near(ranger.global_position)
+	# Pens can be decorated once someone lives there.
+	decorate_target = str(pen_near(ranger.global_position).get("habitat", "")) if id != "" else ""
+	decorate_button.visible = decorate_target != ""
 	if id == care_target:
 		return
 	care_target = id
@@ -136,15 +170,60 @@ func _update_care_button() -> void:
 		care_button.text = CARE_BUTTON_TEXT % catalog.get_animal(id).get("name", id)
 
 
+## Freezes the world and hides the hub buttons while a screen is open (or brings them back).
+func _set_world_waiting(waiting: bool) -> void:
+	objects.process_mode = Node.PROCESS_MODE_DISABLED if waiting else Node.PROCESS_MODE_INHERIT
+	care_button.visible = false
+	decorate_button.visible = false
+	rest_button.visible = not waiting
+	book_button.visible = not waiting
+	care_target = ""
+	decorate_target = ""
+	if waiting:
+		talk_bubble.visible = false
+		mode_button.visible = false
+	else:
+		refresh_mode_button()
+
+
+## Opens the pen shop for a habitat's pen.
+func open_shop(habitat_id: String) -> void:
+	if screen_open() or pen_for(habitat_id).is_empty():
+		return
+	_set_world_waiting(true)
+	shop_screen = ShopScreen.new()
+	add_child(shop_screen)
+	shop_screen.closed.connect(_on_shop_closed.bind(habitat_id))
+	shop_screen.start(habitat_id, str(pen_for(habitat_id).get("label", habitat_id)), map.objects)
+
+
+func _on_shop_closed(habitat_id: String) -> void:
+	shop_screen.queue_free()
+	shop_screen = null
+	_set_world_waiting(false)
+	_place_decorations(pen_for(habitat_id))
+
+
+func open_book() -> void:
+	if screen_open():
+		return
+	_set_world_waiting(true)
+	book_screen = BookScreen.new()
+	add_child(book_screen)
+	book_screen.closed.connect(_on_book_closed)
+
+
+func _on_book_closed() -> void:
+	book_screen.queue_free()
+	book_screen = null
+	_set_world_waiting(false)
+
+
 ## Opens the care screen for `animal_id` (one of the residents). The world waits meanwhile.
 func open_care(animal_id: String) -> void:
-	if care_screen != null or not catalog.has_animal(animal_id):
+	if screen_open() or not catalog.has_animal(animal_id):
 		return
-	objects.process_mode = Node.PROCESS_MODE_DISABLED
-	care_button.visible = false
-	talk_bubble.visible = false
-	mode_button.visible = false
-	rest_button.visible = false
+	_set_world_waiting(true)
 	var visit: CareVisit = CareVisit.make(GameState.care_catalog, animal_id, GameState.grade,
 		GameState.care_visits_for(animal_id), GameState.rng)
 	care_screen = CareScreen.new()
@@ -156,14 +235,16 @@ func open_care(animal_id: String) -> void:
 func _on_care_finished(completed: bool, animal_id: String) -> void:
 	care_screen.queue_free()
 	care_screen = null
-	care_target = ""
-	objects.process_mode = Node.PROCESS_MODE_INHERIT
-	refresh_mode_button()
-	rest_button.visible = true
+	_set_world_waiting(false)
 	if not completed:
 		return
-	GameState.record_care(animal_id)
-	show_banner(CARED_TEXT % catalog.get_animal(animal_id).get("name", animal_id))
+	var stars_before: int = GameState.stars
+	var leveled_up: bool = GameState.record_care(animal_id)
+	var text: String = CARED_TEXT % catalog.get_animal(animal_id).get("name", animal_id)
+	if leveled_up:
+		text += LEVEL_UP_TEXT % GameState.animal_level(animal_id)
+	show_banner(text + STARS_EARNED_TEXT % (GameState.stars - stars_before))
+	_refresh_pen_levels()
 	for pen: Dictionary in pens:
 		for resident: Critter in pen["residents"]:
 			if resident.animal.get("id", "") == animal_id:
@@ -184,8 +265,9 @@ func _build_care_button() -> void:
 	care_button = Button.new()
 	care_button.name = "CareButton"
 	care_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	care_button.offset_left = -CARE_BUTTON_SIZE.x / 2.0
-	care_button.offset_right = CARE_BUTTON_SIZE.x / 2.0
+	# Care on the left, Decorate on the right, centered together.
+	care_button.offset_left = -(CARE_BUTTON_SIZE.x + HUD_GAP + DECORATE_BUTTON_WIDTH) / 2.0
+	care_button.offset_right = care_button.offset_left + CARE_BUTTON_SIZE.x
 	care_button.offset_top = -CARE_BUTTON_SIZE.y - 30
 	care_button.offset_bottom = -30
 	care_button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
@@ -195,6 +277,66 @@ func _build_care_button() -> void:
 		if care_target != "":
 			open_care(care_target), CONNECT_DEFERRED)
 	get_node("Hud").add_child(care_button)
+	decorate_button = Button.new()
+	decorate_button.name = "DecorateButton"
+	decorate_button.text = DECORATE_TEXT
+	decorate_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	decorate_button.offset_left = care_button.offset_right + HUD_GAP
+	decorate_button.offset_right = decorate_button.offset_left + DECORATE_BUTTON_WIDTH
+	decorate_button.offset_top = care_button.offset_top
+	decorate_button.offset_bottom = care_button.offset_bottom
+	decorate_button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
+	decorate_button.focus_mode = Control.FOCUS_NONE
+	decorate_button.visible = false
+	decorate_button.pressed.connect(func() -> void:
+		if decorate_target != "":
+			open_shop(decorate_target), CONNECT_DEFERRED)
+	get_node("Hud").add_child(decorate_button)
+
+
+func _build_book_button() -> void:
+	book_button = Button.new()
+	book_button.name = "BookButton"
+	book_button.text = BOOK_TEXT
+	book_button.position = Vector2(16, 16 + HUD_BUTTON_SIZE.y + HUD_GAP)
+	book_button.custom_minimum_size = HUD_BUTTON_SIZE
+	book_button.add_theme_font_size_override("font_size", 28)
+	# World arrows move the ranger; B is the keyboard shortcut.
+	book_button.focus_mode = Control.FOCUS_NONE
+	book_button.pressed.connect(open_book, CONNECT_DEFERRED)
+	get_node("Hud").add_child(book_button)
+
+
+## Shows the pen's bought decorations (each once).
+func _place_decorations(pen: Dictionary) -> void:
+	if pen.is_empty():
+		return
+	var cell: Vector2i = Vector2i(int(pen["cell"][0]), int(pen["cell"][1]))
+	var placed: Dictionary = pen.get("decorations", {})
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = DECORATION_SEED
+	for id: Variant in GameState.decorations.get(str(pen["habitat"]), []):
+		var item: Dictionary = GameState.rewards.decoration(str(id))
+		if item.is_empty() or placed.has(id) or not map.objects.has(str(item["object"])):
+			continue
+		var def: Dictionary = (map.objects[str(item["object"])] as Dictionary).duplicate()
+		def["blocks"] = false  # residents wander through and never get stuck
+		var node: Node2D = _make_object(def, cell + Vector2i(int(item["spot"][0]), int(item["spot"][1])), rng)
+		node.name = "Decoration_%s_%s" % [pen["habitat"], id]
+		objects.add_child(node)
+		placed[id] = node
+	pen["decorations"] = placed
+
+
+## "Raccoon level 2" under each pen with animals in it.
+func _refresh_pen_levels() -> void:
+	for pen: Dictionary in pens:
+		var label: Label = pen["level_label"]
+		var residents: Array = pen["residents"]
+		label.visible = not residents.is_empty()
+		if label.visible:
+			var id: String = str((residents[0] as Critter).animal["id"])
+			label.text = PEN_LEVEL_TEXT % [catalog.get_animal(id).get("name", id), GameState.animal_level(id)]
 
 
 ## What the sidekick says when you walk up: where to go at first, then how it's going.
@@ -218,8 +360,12 @@ func _build_pens() -> void:
 				fences.append(fence)
 		pen["fences"] = fences
 		_add_pen_label(PEN_LABEL_TEXT % str(pen.get("label", "")), cell, pieces)
+		pen["level_label"] = _add_pen_label("", cell, pieces)
+		(pen["level_label"] as Label).position.y += PEN_LABEL_FONT_SIZE + 2
 		pen["residents"] = _add_residents(str(pen["habitat"]), cell, pieces, depth)
 		pens.append(pen)
+		_place_decorations(pen)
+	_refresh_pen_levels()
 
 
 ## One rail section, starting knocked over (no collision).
@@ -296,7 +442,7 @@ func _build_rest_button() -> void:
 
 
 func _rest() -> void:
-	if care_screen == null and GameState.finish_session():
+	if not screen_open() and GameState.finish_session():
 		Speech.stop()
 		get_tree().change_scene_to_file("res://scenes/main.tscn")
 
@@ -321,7 +467,7 @@ func _add_residents(habitat_id: String, cell: Vector2i, pieces: int, depth: int)
 	return residents
 
 
-func _add_pen_label(text: String, cell: Vector2i, pieces: int) -> void:
+func _add_pen_label(text: String, cell: Vector2i, pieces: int) -> Label:
 	var label: Label = Label.new()
 	label.text = text
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -333,6 +479,7 @@ func _add_pen_label(text: String, cell: Vector2i, pieces: int) -> void:
 	label.position = Vector2(cell.x * TILE, (cell.y - 2) * TILE - 4)
 	label.z_index = 10
 	add_child(label)
+	return label
 
 
 func _place_sidekick() -> void:
