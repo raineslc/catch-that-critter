@@ -16,6 +16,8 @@ const PROFILE_PATH: String = "user://profiles/default.json"
 const PLAYTEST_PROFILE_PATH: String = "user://profiles/playtest_2.json"
 
 signal save_status_changed(message: String)
+## Stars went up or down (shown in the corner of the maps).
+signal stars_changed(total: int)
 
 var persistence_enabled: bool = false
 var profile_path: String = ""
@@ -39,6 +41,11 @@ var grade: String = CareCatalog.DEFAULT_GRADE
 ## animal id -> finished care visits (each one adds a fact to its card).
 var care_visits: Dictionary = {}
 var care_catalog: CareCatalog
+var rewards: Rewards
+## Stars earned from chases and care, spent in the pen shop (PLAN.md 3.10).
+var stars: int = 0
+## habitat -> decoration ids bought for its pen, in buying order.
+var decorations: Dictionary = {}
 ## Set by travel_to(): the area being entered and the gate to appear at.
 var arrival_map: String = ""
 var arrival_gate: String = ""
@@ -110,6 +117,9 @@ func reset() -> void:
 	grade = CareCatalog.DEFAULT_GRADE
 	care_visits.clear()
 	care_catalog = CareCatalog.new()
+	rewards = Rewards.new()
+	stars = 0
+	decorations.clear()
 	arrival_map = ""
 	arrival_gate = ""
 	world = load_world()
@@ -225,11 +235,44 @@ func care_visits_for(animal_id: String) -> int:
 	return int(care_visits.get(animal_id, 0))
 
 
-## A care visit was finished (fed, care note done, fact card seen).
-func record_care(animal_id: String) -> void:
+## A care visit was finished (fed, care note done, fact card seen). Earns stars, plus bonus
+## stars when the animal reaches a new level. Returns true on a level-up.
+func record_care(animal_id: String) -> bool:
+	var before: int = animal_level(animal_id)
 	care_visits[animal_id] = care_visits_for(animal_id) + 1
-	log_event("care", {"animal": animal_id, "visits": care_visits[animal_id]})
+	var leveled_up: bool = animal_level(animal_id) > before
+	log_event("care", {"animal": animal_id, "visits": care_visits[animal_id], "level": animal_level(animal_id)})
+	add_stars(rewards.stars_for("care") + (rewards.stars_for("level_up") if leveled_up else 0), "care")
+	return leveled_up
+
+
+## Animal level 1–5 (per species) from its care visits.
+func animal_level(animal_id: String) -> int:
+	return rewards.level_for(care_visits_for(animal_id))
+
+
+## Adds (or, with a negative amount, spends) stars and saves.
+func add_stars(amount: int, reason: String) -> void:
+	stars = maxi(stars + amount, 0)
+	log_event("stars", {"change": amount, "reason": reason, "total": stars})
+	stars_changed.emit(stars)
 	save_progress()
+
+
+func has_decoration(habitat_id: String, decoration_id: String) -> bool:
+	return (decorations.get(habitat_id, []) as Array).has(decoration_id)
+
+
+## Buys a decoration for a habitat's pen. False if it's unknown, owned, or too expensive.
+func buy_decoration(habitat_id: String, decoration_id: String) -> bool:
+	var item: Dictionary = rewards.decoration(decoration_id)
+	if item.is_empty() or has_decoration(habitat_id, decoration_id) or stars < int(item["price"]):
+		return false
+	var owned: Array = decorations.get(habitat_id, [])
+	owned.append(decoration_id)
+	decorations[habitat_id] = owned
+	add_stars(-int(item["price"]), "buy %s" % decoration_id)
+	return true
 
 
 ## Was the critter that starts at this spot already rescued?
@@ -310,6 +353,7 @@ func snapshot() -> Dictionary:
 		"care_visits": care_visits.duplicate(), "pen_repairs_shown": pen_repairs_shown.duplicate(),
 		"progress": engine.to_dict(), "grade": grade, "sidekick_id": sidekick_id,
 		"mode": mode, "explore_locked": explore_locked,
+		"stars": stars, "decorations": decorations.duplicate(true),
 	}
 
 
@@ -328,6 +372,9 @@ func _restore(data: Dictionary) -> void:
 	sidekick_id = data.sidekick_id
 	mode = data.mode
 	explore_locked = data.explore_locked
+	# Saves from before stars existed don't have these.
+	stars = int(data.get("stars", 0))
+	decorations = (data.get("decorations", {}) as Dictionary).duplicate(true)
 
 
 func save_progress() -> bool:

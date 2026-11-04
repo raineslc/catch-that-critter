@@ -84,6 +84,15 @@ static func valid(data: Variant) -> bool:
 		return false
 	if not data.get("rescues") is Array or not data.get("progress") is Dictionary:
 		return false
+	# Stars and decorations came later; older saves without them are still valid.
+	if data.has("stars") and not _whole(data.stars):
+		return false
+	if data.has("decorations"):
+		if not data.decorations is Dictionary:
+			return false
+		for owned: Variant in data.decorations.values():
+			if not owned is Array or owned.any(func(id: Variant) -> bool: return not id is String):
+				return false
 	for rescue: Variant in data.rescues:
 		if not rescue is Dictionary:
 			return false

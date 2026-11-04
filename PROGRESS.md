@@ -68,9 +68,12 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 
 - 2026-11-04 — Playtest 2 run and reviewed (10 min, 6 catches, no freezes; adaptive difficulty moved him from level 3 to 2). Fixes from Chris: 3 misses = the animal gets away, raccoon spelling cycles through 12 foods (10 new icons), gate bounce fixed. 240 tests passing.
 
+- 2026-11-04 — Phase 3, step 4: stars (catch 3 + 1 no-miss bonus, care 2, level-up 2), animal levels 1–5 per species from care visits, a small pen shop (4 decorations) and the Rescue Book (page per habitat, special slots). Logic in `Rewards` (`data/rewards.json`) and `GameState`; screens `ShopScreen`, `BookScreen`. 258 tests passing.
+- **Phase 3 (Rescue Center) complete.**
+
 ## Next
 - Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
-- Phase 3, step 4 (next): stars (from chases and care), animal levels 1–5 through care, collection book.
+- Phase 4, step 1 (next, after Chris confirms): Forest, Swamp, Desert, Mountains maps; habitat unlocking; all animal data. Needs art for the missing species (fox, rabbit, deer, turtle, tortoise, goat, snow leopard, eagle).
 - Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 
 ## Open issues

@@ -186,7 +186,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 - [x] Storm intro panels with narration. (Captions instead of spoken narration while the voice is off.)
 - [x] Rescue Center hub with enclosures and fence repair.
 - [x] Feeding via spelling, care notes, fact cards with read-aloud. (Read-aloud button appears when the voice is on; it's off for now.)
-- [ ] Stars, animal levels, collection book.
+- [x] Stars, animal levels, collection book. (Small pen shop with 4 decorations; animal accessories later.)
 
 ### Phase 4 — Full Map
 - [ ] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data.

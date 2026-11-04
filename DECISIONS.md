@@ -1,5 +1,12 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — Stars, levels, shop, and the Rescue Book (Phase 3 step 4, Chris's choices)
+- **Stars:** 3 per catch + 1 bonus for a chase with no misses; 2 per finished care visit; 2 more when an animal levels up. Misses never take stars away. All numbers in `data/rewards.json`.
+- **Animal levels 1–5, per species**, from finished care visits: level 2 at 1 visit, 3 at 3, 4 at 6, 5 at 10. Shown under the pen ("Raccoon level 2") and in the book.
+- **Small pen shop now** ("Decorate" next to "Care for..." at a pen with animals): flowers 5★, bush 8★, rock 8★, tree 15★, each once per pen, using the map's own nature art. Decorations don't block the animals. Animal accessories come later.
+- **Rescue Book** (Book button or B at the hub): one page per habitat with its 3 animals and a gold "special" slot; animals not rescued yet show "???". A rescued animal shows its level, how many are home, and the facts learned from care.
+- Stars and decorations are saved. They are optional fields, so saves from before this step still load (starting at 0 stars).
+
 ## 2026-11-04 — After Playtest 2 (Chris)
 - **Three misses and the animal gets away**, in Explore and Race mode alike (`misses_to_escape` in `data/chase.json`; misses count across the whole chase). This replaces "Explore mode has no way to lose" from 2026-10-21. The escape shows "Chase again" / "Back to the map", and nothing is lost. Henrito's hint still comes after the 2nd miss on a problem.
 - **Raccoon food words cycle through 12 foods** (Chris asked for at least 10, raccoon-appropriate and spellable): fish, corn, bugs, nuts, eggs, crab, clams, plums, worms, grapes, apples, shrimp — roughly easy to harder. A finished care visit moves to the next word; the whole list comes before any repeat. The pack only has fish and shrimp art, so the other 10 icons were drawn for the project (`tools/make_food_icons.py`).
