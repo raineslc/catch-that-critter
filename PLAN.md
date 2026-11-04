@@ -68,7 +68,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 
 - Every problem type in `skills.json` has a `standards` field for the parent report.
 - Habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked.
-- Rarity tiers: common / uncommon / rare / **special** (special = rare spawn, unique fact card, special enclosure decoration; species placeholders until Chris picks).
+- Rarity tiers: common / uncommon / rare / **special** (special = rare spawn, unique fact card, special enclosure decoration; Chris picked real rare animals on 2026-11-04: Meadow albino raccoon, Forest white deer, Swamp axolotl, Desert fennec fox, Mountains red panda).
 - Constant bright daytime; no day/night cycle.
 
 ### 3.5 Preschool Level (later, for the younger son)
@@ -190,7 +190,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 
 ### Phase 4 — Full Map
 - [ ] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data.
-- [ ] Special rarity tier (placeholders); helper animal bonuses; finale.
+- [ ] Special rarity tier (albino raccoon, white deer, axolotl, fennec fox, red panda); helper animal bonuses; finale.
 
 ### Phase 5 — Profiles, Sessions & Parent Area
 - [ ] Two profiles with per-profile sidekick, ranger customization, save/load.
@@ -223,4 +223,4 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 - **Free art consistency:** mixing packs can look messy; pick one pack family up front.
 - **Multi-AI drift:** different assistants may change style or decisions; CONVENTIONS.md, DECISIONS.md, and tests keep them in line.
 - **Design doc out of date:** the Google Doc still says 3D; update or mark it superseded.
-- Open: special rare animal species; tablet builds; custom art and recorded voices; cloud saves; Spanish.
+- Open: tablet builds; custom art and recorded voices; cloud saves; Spanish.

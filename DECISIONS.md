@@ -1,5 +1,13 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — Chris's answers: race timer, rare animals, voice, sounds
+- **Race mode: 30 seconds** per chase (was 45; `data/chase.json`). Chris: he answers fast, so shorter is more exciting. Sprint boost (+3s) unchanged.
+- **Special rare animals** (one per habitat): Meadow albino raccoon, Forest white deer, Swamp axolotl, Desert fennec fox, Mountains red panda. (Snow leopard stays a regular Mountains animal.) Art still to be found or made in Phase 4.
+- **Raccoon food words stay fish and shrimp.**
+- **Chase sounds:** all four are fine as they are.
+- **Voice stays off.** Revisit audio later, possibly with ElevenLabs voices recorded ahead of time and shipped as audio files (no network calls in the game).
+- **Order:** Playtest 2 first, then Phase 3 step 4 (stars, animal levels, collection book), shaped by what the playtest shows.
+
 ## 2026-10-23 — Review fixes authorized on a review branch
 Chris: "Go ahead and make the suggested changes. Create a new branch that claude can review and merge to main."
 Implement the review follow-up together on `codex/review-fixes`, leaving merge to Claude. Bring a single local save profile and session completion forward from Phase 5; keep multi-profile customization, timed wrap-up, and the parent area planned. Give the current full-loop playtest its own save so it cannot alter normal-game progress. Keep speech off; use a short food description and an optional reveal-and-hide word clue for unclear pictures. Preserve the frozen Playtest 1 worktree and shortcut.

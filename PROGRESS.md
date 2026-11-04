@@ -64,12 +64,13 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 - 2026-10-21 — Fixed a flaky test: `test_freeze_watch` waited for physics frames, which run in a catch-up burst after the deliberate stall before FreezeWatch's `_process` could log "recovered"; it now waits for process frames.
 - 2026-10-21 — Phase 3, step 3: care at the Rescue Center. Walk up to a pen with animals → "Care for the Raccoon" → `CareScreen` (`scripts/care/`): feed by spelling the food's name with letter tiles (K: first letter or picture match), a short care note with a choice, then the fact card (one new fact per visit). Logic in `CareCatalog` (`data/care.json`), `SpellingTask`, `CareChoice`, `CareVisit`; `GameState.grade` ("2") and `care_visits`. Henrito hints after 2 misses. Food art: fish, shrimp, honey. Details in DECISIONS.md. 213 tests passing.
 
+- 2026-11-04 — Codex review on GitHub: review guidelines added to AGENTS.md (PR #19). Chris's answers: Race mode 30 seconds, rare animals picked (albino raccoon, white deer, axolotl, fennec fox, red panda), fish/shrimp stay, chase sounds fine, voice stays off (maybe ElevenLabs later). See DECISIONS.md.
+
 ## Next
-- Claude: review `codex/review-fixes` using `docs/CLAUDE_REVIEW_HANDOFF.md` and its CI, then merge if satisfied.
-- Chris: run `tools/playtest_2_launch.cmd` in the review checkout and follow `docs/playtest_2.md`; the old desktop shortcut still launches Playtest 1.
-- Phase 3, step 4: stars (from chases and care), animal levels 1–5 through care, collection book.
-- Chris: try a care visit; are fish/shrimp OK as raccoon spelling words (shrimp is harder), and are the care notes/facts at the right reading level?
-- Chris: listen to the four chase sounds and say if any should change; try Race mode with the 7-year-old and tell me if 45 seconds feels right.
+- Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
+- Chris: run `tools/playtest_2_launch.cmd` in this checkout and follow `docs/playtest_2.md`; then review the log summary together.
+- Phase 3, step 4 (after Playtest 2): stars (from chases and care), animal levels 1–5 through care, collection book.
+- Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 
 ## Open issues
 - Special rare animal species still to be chosen by Chris.
