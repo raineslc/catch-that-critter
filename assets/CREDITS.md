@@ -38,4 +38,8 @@ List every third-party asset here: name, author, source URL, license.
 | `ui/food/shrimp.png` | `Items/Food/Shrimp.png` |
 | `ui/food/honey.png` | `Items/Food/Honey.png` |
 
+## Made for this project (CC0)
+
+`ui/food/` corn, bugs, nuts, eggs, crab, clams, plums, worms, grapes, apples: 16×16 pixel icons drawn for Catch That Critter in the pack's outlined style by `tools/make_food_icons.py` (edit the pixel grids there and rerun to change them).
+
 Thank you, Pixel-Boy and AAA! (Attribution isn't required by CC0 but they appreciate it; the game's credits screen should link the pack page.)

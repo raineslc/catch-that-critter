@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — After Playtest 2 (Chris)
+- **Three misses and the animal gets away**, in Explore and Race mode alike (`misses_to_escape` in `data/chase.json`; misses count across the whole chase). This replaces "Explore mode has no way to lose" from 2026-10-21. The escape shows "Chase again" / "Back to the map", and nothing is lost. Henrito's hint still comes after the 2nd miss on a problem.
+- **Raccoon food words cycle through 12 foods** (Chris asked for at least 10, raccoon-appropriate and spellable): fish, corn, bugs, nuts, eggs, crab, clams, plums, worms, grapes, apples, shrimp — roughly easy to harder. A finished care visit moves to the next word; the whole list comes before any repeat. The pack only has fish and shrimp art, so the other 10 icons were drawn for the project (`tools/make_food_icons.py`).
+- **Gate bounce fixed:** the gate you arrive through stays off until you walk about 3 tiles away, so holding the arrow key doesn't carry you straight back out.
+- The fast misses in the log were Chris testing wrong answers on purpose, not guessing.
+
 ## 2026-11-04 — Chris's answers: race timer, rare animals, voice, sounds
 - **Race mode: 30 seconds** per chase (was 45; `data/chase.json`). Chris: he answers fast, so shorter is more exciting. Sprint boost (+3s) unchanged.
 - **Special rare animals** (one per habitat): Meadow albino raccoon, Forest white deer, Swamp axolotl, Desert fennec fox, Mountains red panda. (Snow leopard stays a regular Mountains animal.) Art still to be found or made in Phase 4.

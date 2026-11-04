@@ -53,6 +53,13 @@ func test_each_animal_has_foods_notes_and_facts() -> void:
 			_check_kind(fact)
 
 
+func test_raccoon_has_at_least_ten_food_words() -> void:
+	assert_gte(catalog.foods_for("raccoon").size(), 10)
+	for food_id: String in catalog.foods_for("raccoon"):
+		assert_lte(str(catalog.food(food_id)["word"]).length(), 6, "%s: short enough for a 2nd grader" % food_id)
+		assert_ne(str(catalog.food(food_id).get("description", "")), "", "%s: has a clue" % food_id)
+
+
 func test_feeding_rules_per_grade() -> void:
 	assert_eq(catalog.grades(), ["K", "1", "2", "3"] as Array[String])
 	var k_modes: Array = catalog.feeding_rules("K")["modes"]

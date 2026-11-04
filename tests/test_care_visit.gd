@@ -40,6 +40,15 @@ func test_kindergarten_gets_first_letter_or_picture_match() -> void:
 	assert_eq(modes.size(), 2, "both K modes show up")
 
 
+func test_food_words_cycle_through_the_whole_list() -> void:
+	var foods: Array[String] = catalog.foods_for("raccoon")
+	var seen: Array[String] = []
+	for visits: int in foods.size():
+		seen.append(CareVisit.make(catalog, "raccoon", "2", visits, rng).food_id)
+	assert_eq(seen, foods, "every food once, in order, before any repeats")
+	assert_eq(CareVisit.make(catalog, "raccoon", "2", foods.size(), rng).food_id, foods[0], "then it starts over")
+
+
 func test_steps_in_order() -> void:
 	var visit: CareVisit = CareVisit.make(catalog, "raccoon", "2", 0, rng)
 	assert_eq(visit.step, CareVisit.Step.FEED)
