@@ -12,7 +12,7 @@ const SPEECH_POLL_SECONDS: float = 0.1
 const READ_ALOUD_DEFAULT: bool = false
 const WORLD_PATH: String = "res://data/maps/world.json"
 const FULL_PLAYTEST_PATH: String = "res://data/playtest_2.json"
-const PROFILE_PATH: String = "user://profiles/default.json"
+const PROFILES_PATH: String = "res://data/profiles.json"
 const PLAYTEST_PROFILE_PATH: String = "user://profiles/playtest_2.json"
 
 signal save_status_changed(message: String)
@@ -53,6 +53,13 @@ var arrival_gate: String = ""
 var world: Dictionary = {}
 ## The finale has been shown (it plays once).
 var finale_seen: bool = false
+## The player's name (typed once on the title screen) and ranger look (see RangerLook).
+var player_name: String = ""
+var look: Dictionary = {}
+## The profile slot being played (from data/profiles.json), or {}.
+var slot: Dictionary = {}
+## True in normal play: the title screen may read the profile slots' saves (never in tests or --no-save).
+var profile_access: bool = false
 ## Read questions and Henrito's lines aloud with text-to-speech. Off since 2026-10-21:
 ## Chris found the Windows voices sounded weird and some lines off (see DECISIONS.md).
 var read_aloud: bool = READ_ALOUD_DEFAULT
@@ -78,14 +85,14 @@ func _ready() -> void:
 	if Engine.is_editor_hint() or args.has("-s") or args.has("--script"):
 		return
 	var user_args: PackedStringArray = OS.get_cmdline_user_args()
+	profile_access = not user_args.has("--no-save")
 	if user_args.has("--playtest-full"):
 		enable_playtest(load_playtest_config(FULL_PLAYTEST_PATH))
 		if not user_args.has("--no-save"):
 			start_profile(PLAYTEST_PROFILE_PATH, "playtest-2")
 	elif user_args.has(PLAYTEST_FLAG):
 		enable_playtest()
-	elif not user_args.has("--no-save"):
-		start_profile(PROFILE_PATH)
+	# Normal play: the title screen picks a profile slot (start_slot).
 	get_tree().auto_accept_quit = false
 	add_child(SaveNotice.new())
 
@@ -123,6 +130,9 @@ func reset() -> void:
 	stars = 0
 	decorations.clear()
 	finale_seen = false
+	player_name = ""
+	look = {}
+	slot = {}
 	arrival_map = ""
 	arrival_gate = ""
 	world = load_world()
@@ -376,6 +386,34 @@ func _notification(what: int) -> void:
 		end_playtest_log()
 
 
+## The title screen's profile slots (data/profiles.json).
+static func profile_slots(path: String = PROFILES_PATH) -> Array:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	return parsed.get("slots", []) if parsed is Dictionary else []
+
+
+## A slot's saved game without loading it ({} if there is none yet or it can't be read).
+static func peek_slot(profile_slot: Dictionary) -> Dictionary:
+	var result: Dictionary = ProfileStore.read_profile(str(profile_slot["path"]))
+	return result.data if result.status in ["ok", "recovered"] else {}
+
+
+## Starts playing a profile slot: loads its save, or sets up a new one with the slot's
+## sidekick, grade, and Explore lock. Returns false if the save can't be used.
+func start_slot(profile_slot: Dictionary) -> bool:
+	var path: String = str(profile_slot["path"])
+	var is_new: bool = not FileAccess.file_exists(path) and not FileAccess.file_exists(path + ".bak")
+	reset()
+	slot = profile_slot
+	if not start_profile(path, str(profile_slot["id"])):
+		return false
+	if is_new:
+		sidekick_id = str(profile_slot.get("sidekick_id", sidekick_id))
+		grade = str(profile_slot.get("grade", grade))
+		explore_locked = bool(profile_slot.get("explore_locked", false))
+	return true
+
+
 ## Explicit paths let tests exercise saves without ever touching the real profile.
 func start_profile(path: String, id: String = "default") -> bool:
 	profile_path = path
@@ -405,6 +443,7 @@ func snapshot() -> Dictionary:
 		"progress": engine.to_dict(), "grade": grade, "sidekick_id": sidekick_id,
 		"mode": mode, "explore_locked": explore_locked,
 		"stars": stars, "decorations": decorations.duplicate(true), "finale_seen": finale_seen,
+		"name": player_name, "look": look.duplicate(),
 	}
 
 
@@ -427,6 +466,8 @@ func _restore(data: Dictionary) -> void:
 	stars = int(data.get("stars", 0))
 	decorations = (data.get("decorations", {}) as Dictionary).duplicate(true)
 	finale_seen = bool(data.get("finale_seen", false))
+	player_name = str(data.get("name", ""))
+	look = (data.get("look", {}) as Dictionary).duplicate()
 
 
 func save_progress() -> bool:

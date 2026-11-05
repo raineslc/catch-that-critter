@@ -1,0 +1,7 @@
+{
+  "description": "The two profile slots on the title screen (PLAN 3.2). Settings here are used only when a slot's save is first made.",
+  "slots": [
+    {"id": "default", "path": "user://profiles/default.json", "sidekick_id": "henrito", "grade": "2", "explore_locked": false},
+    {"id": "ranger_2", "path": "user://profiles/ranger_2.json", "sidekick_id": "loganator", "grade": "K", "explore_locked": true}
+  ]
+}

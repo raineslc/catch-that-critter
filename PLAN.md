@@ -193,7 +193,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 - [x] Special rarity tier: hidden snakes for the other habitats (all five done 2026-11-05); ~~helper animal bonuses~~ (dropped); finale (2026-11-05).
 
 ### Phase 5 — Profiles, Sessions & Parent Area
-- [ ] Two profiles with per-profile sidekick, ranger customization, save/load.
+- [x] Two profiles with per-profile sidekick, ranger customization, save/load. (2026-11-05: two big title buttons; name typed once; hair/skin/outfit swatches; second profile = Loganator, grade K, Explore locked.)
 - [ ] 10–15 minute session timer with wrap-up.
 - [ ] Parent lock, Common Core progress report, settings.
 

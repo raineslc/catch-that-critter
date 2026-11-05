@@ -40,7 +40,7 @@ func _ready() -> void:
 	collision_mask = PhysicsLayers.WORLD
 	sprite = AnimatedSprite2D.new()
 	sprite.name = "Sprite"
-	sprite.sprite_frames = build_frames(DEFAULT_SHEET)
+	sprite.sprite_frames = build_frames(RangerLook.sheet(GameState.look))
 	sprite.offset = Vector2(0, -FRAME_SIZE / 2.0)
 	add_child(sprite)
 	var shape: CollisionShape2D = CollisionShape2D.new()

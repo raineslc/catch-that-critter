@@ -82,10 +82,11 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 - 2026-11-05 — The **Mountains** (hub's northeast gate): mountain goats, snow leopards, eagles (multiply/divide) and the hidden king cobra. All five habitats are built. 292 tests passing.
 - 2026-11-05 — **Habitat unlocking** (Phase 4 step 1 done): the Meadow and Forest start open; each hidden snake opens the next habitat. 297 tests passing.
 - 2026-11-05 — Phase 4 done: helper animals dropped (Chris); the **finale** plays once when all five snakes and 6+ animals from each habitat are home. 303 tests passing.
+- 2026-11-05 — Phase 5 step 1: **two profiles** (big title buttons, name typed once), ranger hair/skin/outfit recolors, and **Loganator** for the second profile. 314 tests passing.
 
 ## Next
 - Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
-- Phase 5 (confirm with Chris first): profiles, session timer, parent area. See `docs/HANDOFF.md`.
+- Phase 5 step 2 (confirm with Chris first): 10–15 minute session timer with wrap-up. Then step 3: parent lock, progress report, settings.
 - Chris: playtest the new habitats (catch the ball python to open the Swamp).
 - Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 
