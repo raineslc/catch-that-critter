@@ -20,7 +20,11 @@ func _check_kind(text: String) -> void:
 
 
 func test_every_rescued_animal_can_be_cared_for() -> void:
-	for id: String in AnimalCatalog.new().ids():
+	var animals: AnimalCatalog = AnimalCatalog.new()
+	for id: String in animals.ids():
+		if bool(animals.get_animal(id).get("hides_under_rocks", false)):
+			assert_false(animals.get_animal(id).get("facts", []).is_empty(), "%s (hidden snake) has facts" % id)
+			continue
 		assert_true(catalog.has_animal(id), "%s has care data" % id)
 
 

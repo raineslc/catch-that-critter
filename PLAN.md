@@ -63,12 +63,12 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 | Meadow | Counting, number recognition, comparing to 20 | K | K.CC | Fox, raccoon, rabbit |
 | Forest | Add & subtract within 20, then 100 | 1–2 | 1.OA, 2.OA, 2.NBT.5 | Deer, bear, owl |
 | Swamp | Place value, comparing (<, >, =) | 2 | 1.NBT, 2.NBT.1–4 | Turtle, frog, alligator |
-| Desert | Telling time, counting money | 2–3 | 1.MD.3, 2.MD.7–8, 3.MD.1 | Lizard, tortoise, snake |
+| Desert | Telling time, counting money | 2–3 | 1.MD.3, 2.MD.7–8, 3.MD.1 | Lizard, tortoise, roadrunner |
 | Mountains | Multiplication & intro division | 3 | 3.OA | Mountain goat, snow leopard, eagle |
 
 - Every problem type in `skills.json` has a `standards` field for the parent report.
 - Habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked.
-- Rarity tiers: common / uncommon / rare / **special** (special = rare spawn, unique fact card, special enclosure decoration; Chris picked real rare animals on 2026-11-04: Meadow albino raccoon, Forest white deer, Swamp axolotl, Desert fennec fox, Mountains red panda).
+- Rarity tiers: common / uncommon / rare / **special**. **Special = each habitat's hidden snake** (Chris, 2026-11-04): Meadow green vine snake, Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. It hides under one of the habitat's rocks (a different one each visit) until caught; peek under rocks to find it (empty rocks hold a bug or worm; after 3 empty rocks the sidekick gives a direction clue). Catching it takes **one story (word) problem**, one level harder than the player's current add/subtract level; a miss and it slides under another rock to find again. It comes with its own fact card and lives in the pen.
 - Constant bright daytime; no day/night cycle.
 
 ### 3.5 Preschool Level (later, for the younger son)
@@ -190,7 +190,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 
 ### Phase 4 — Full Map
 - [ ] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data.
-- [ ] Special rarity tier (albino raccoon, white deer, axolotl, fennec fox, red panda); helper animal bonuses; finale.
+- [ ] Special rarity tier: hidden snakes for the other habitats (Meadow green vine snake done 2026-11-04); helper animal bonuses; finale.
 
 ### Phase 5 — Profiles, Sessions & Parent Area
 - [ ] Two profiles with per-profile sidekick, ranger customization, save/load.

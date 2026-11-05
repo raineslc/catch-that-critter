@@ -1,13 +1,19 @@
 {
   "defaults": {
-    "frame_size": [16, 16],
+    "frame_size": [
+      16,
+      16
+    ],
     "frames": 2,
     "faces": "right",
     "animation_fps": 6.0,
     "wander_speed": 22.0,
     "flee_speed": 90.0,
     "wander_radius_tiles": 4,
-    "idle_seconds": [1.0, 3.0],
+    "idle_seconds": [
+      1.0,
+      3.0
+    ],
     "startle_radius": 40.0,
     "startle_seconds": 0.6,
     "flee_seconds": 1.2,
@@ -22,6 +28,22 @@
       "rarity": "common",
       "sprite": "res://assets/sprites/animals/raccoon/sprite_sheet.png",
       "faceset": "res://assets/sprites/animals/raccoon/faceset.png"
+    },
+    {
+      "id": "green_vine_snake",
+      "name": "Green Vine Snake",
+      "habitat": "meadow",
+      "skill": "add_subtract",
+      "rarity": "special",
+      "hides_under_rocks": true,
+      "sprite": "res://assets/sprites/animals/green_vine_snake/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/green_vine_snake/faceset.png",
+      "facts": [
+        "A green vine snake is long and thin, just like a vine.",
+        "Its bright green color helps it hide in the leaves.",
+        "It has a long, pointy nose.",
+        "It likes to eat lizards and frogs."
+      ]
     }
   ]
 }

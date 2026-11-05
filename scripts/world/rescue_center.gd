@@ -332,10 +332,14 @@ func _place_decorations(pen: Dictionary) -> void:
 func _refresh_pen_levels() -> void:
 	for pen: Dictionary in pens:
 		var label: Label = pen["level_label"]
-		var residents: Array = pen["residents"]
-		label.visible = not residents.is_empty()
+		# Levels come from care, so name the first resident that can be cared for.
+		var id: String = ""
+		for resident: Critter in pen["residents"]:
+			if GameState.care_catalog.has_animal(str(resident.animal["id"])):
+				id = str(resident.animal["id"])
+				break
+		label.visible = id != ""
 		if label.visible:
-			var id: String = str((residents[0] as Critter).animal["id"])
 			label.text = PEN_LEVEL_TEXT % [catalog.get_animal(id).get("name", id), GameState.animal_level(id)]
 
 

@@ -74,9 +74,14 @@ static func home_count(animal_id: String) -> int:
 
 ## Shows the facts learned so far for a rescued animal.
 func show_animal(animal_id: String) -> void:
+	var animal: Dictionary = GameState.catalog.get_animal(animal_id)
+	var name: String = str(animal.get("name", animal_id))
+	if animal.has("facts"):
+		# Hidden snakes come with their whole fact card when caught.
+		facts_label.text = "\n".join(animal["facts"])
+		return
 	var facts: Array[String] = GameState.care_catalog.facts_for(animal_id)
 	var known: Array[String] = facts.slice(0, mini(GameState.care_visits_for(animal_id), facts.size()))
-	var name: String = str(GameState.catalog.get_animal(animal_id).get("name", animal_id))
 	facts_label.text = (NO_FACTS % name.to_lower()) if known.is_empty() else "\n".join(known)
 
 

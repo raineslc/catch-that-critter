@@ -33,6 +33,20 @@ const MODE_BUTTON_FONT_SIZE: int = 28
 ## A critter won't reappear while the ranger is this close to its spot (pixels).
 const RESPAWN_CLEARANCE: float = 80.0
 const RESPAWN_RETRY_SECONDS: float = 3.0
+## How close (pixels) the ranger must be to a rock to look under it.
+const LOOK_DISTANCE: float = 24.0
+const LOOK_BUTTON_SIZE: Vector2 = Vector2(420, 84)
+const LOOK_TEXT: String = "Look under the rock"
+const FOUND_SNAKE_TEXT: String = "Something wiggled!"
+const EMPTY_ROCK_TEXT: String = "Just %s! Try another rock."
+const SNAKE_CLUE_TEXT: String = "%s: I saw something wiggle to the %s!"
+const SNAKE_CAUGHT_TEXT: String = "The %s is safe at the Rescue Center!"
+const SNAKE_MOVED_TEXT: String = "It's hiding under another rock. Keep looking!"
+## Little things under the empty rocks: [what the banner says, picture].
+const ROCK_FINDS: Array = [["a worm", "res://assets/ui/food/worms.png"], ["some bugs", "res://assets/ui/food/bugs.png"],
+	["a beetle", "res://assets/ui/food/bugs.png"]]
+const FIND_SHOW_SECONDS: float = 1.2
+const SNAKE_REVEAL_SECONDS: float = 0.8
 const ELEMENT_TEXTURE: Texture2D = preload("res://assets/tilesets/element.png")
 ## Rail fence piece in element.png (3 tiles wide, 2 tall): closes locked gates, builds pens.
 const FENCE_REGION: Rect2 = Rect2(11 * 16, 2 * 16, 48, 32)
@@ -90,6 +104,16 @@ var _traveling: bool = false
 ## The gate just arrived through (ignored until the ranger walks away from it), or "".
 var arrived_gate: String = ""
 var _banner_token: int = 0
+## Rock cells in this habitat (where a snake can hide).
+var rock_cells: Array[Vector2i] = []
+## The habitat's hidden snake (animal data), or {} when there is none left to find.
+var hidden_snake: Dictionary = {}
+var snake_hunt: SnakeHunt
+var snake_screen: SnakeScreen
+var look_button: Button
+## The rock the Look button is offering, or (-1, -1).
+var look_target: Vector2i = Vector2i(-1, -1)
+var _snake_popup: AnimatedSprite2D
 
 
 func _ready() -> void:
@@ -117,6 +141,8 @@ func build() -> void:
 			var def: Dictionary = map.object_at(cell)
 			if not def.is_empty():
 				objects.add_child(_make_object(def, cell, rng))
+				if def.get("name", "") == "rock":
+					rock_cells.append(cell)
 	_add_edge_walls()
 	ranger = RANGER_SCENE.instantiate()
 	var arrive: String = GameState.take_arrival(map_id)
@@ -133,6 +159,7 @@ func build() -> void:
 	_spawn_critters(rng)
 	_make_banner()
 	_build_gates()
+	_setup_snake()
 
 
 func _spawn_critters(rng: RandomNumberGenerator) -> void:
@@ -362,6 +389,129 @@ func _physics_process(_delta: float) -> void:
 		var gate_feet: Vector2 = map.cell_to_feet(map.gate_cells()[arrived_gate])
 		if ranger.global_position.distance_to(gate_feet) >= GATE_REARM_DISTANCE:
 			arrived_gate = ""
+	_update_look_button()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if look_target.x >= 0 and event.is_action_pressed("ui_accept"):
+		get_viewport().set_input_as_handled()
+		peek_rock(look_target)
+
+
+## Hides this habitat's special snake under one of its rocks, until it has been caught.
+func _setup_snake() -> void:
+	for id: String in catalog.ids():
+		var animal: Dictionary = catalog.get_animal(id)
+		if bool(animal.get("hides_under_rocks", false)) and str(animal["habitat"]) == habitat and habitat != "":
+			if not GameState.rescued.has(id) and not rock_cells.is_empty():
+				hidden_snake = animal
+				snake_hunt = SnakeHunt.new(rock_cells, _rng)
+	look_button = Button.new()
+	look_button.name = "LookButton"
+	look_button.text = LOOK_TEXT
+	look_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	look_button.offset_left = -LOOK_BUTTON_SIZE.x / 2.0
+	look_button.offset_right = LOOK_BUTTON_SIZE.x / 2.0
+	look_button.offset_top = -LOOK_BUTTON_SIZE.y - 30
+	look_button.offset_bottom = -30
+	look_button.add_theme_font_size_override("font_size", MODE_BUTTON_FONT_SIZE + 6)
+	look_button.focus_mode = Control.FOCUS_NONE
+	look_button.visible = false
+	look_button.pressed.connect(func() -> void:
+		if look_target.x >= 0:
+			peek_rock(look_target), CONNECT_DEFERRED)
+	get_node("Hud").add_child(look_button)
+
+
+func _update_look_button() -> void:
+	look_target = Vector2i(-1, -1)
+	if snake_hunt != null and snake_screen == null and chase_target == null and ranger != null:
+		for cell: Vector2i in rock_cells:
+			if ranger.global_position.distance_to(map.cell_to_feet(cell)) <= LOOK_DISTANCE:
+				look_target = cell
+				break
+	if look_button != null:
+		look_button.visible = look_target.x >= 0
+
+
+## Looks under the rock at `cell`: the snake, or a little find (and maybe a clue).
+func peek_rock(cell: Vector2i) -> void:
+	if snake_hunt == null or snake_screen != null or chase_target != null:
+		return
+	if snake_hunt.peek(cell) == SnakeHunt.Peek.FOUND:
+		GameState.log_event("snake_found", {"animal": hidden_snake["id"], "empty_peeks": snake_hunt.peeked.size()})
+		objects.process_mode = Node.PROCESS_MODE_DISABLED
+		show_banner(FOUND_SNAKE_TEXT, SNAKE_REVEAL_SECONDS + 0.5)
+		_snake_popup = AnimatedSprite2D.new()
+		_snake_popup.sprite_frames = Critter.build_frames(hidden_snake)
+		_snake_popup.position = map.cell_to_feet(cell) + Vector2(0, -TILE)
+		_snake_popup.play("walk")
+		add_child(_snake_popup)
+		if auto_open_chase:
+			get_tree().create_timer(SNAKE_REVEAL_SECONDS).timeout.connect(open_snake)
+		else:
+			open_snake()
+		return
+	var find: Array = ROCK_FINDS[_rng.randi_range(0, ROCK_FINDS.size() - 1)]
+	_show_find(cell, load(str(find[1])))
+	GameState.log_event("rock_empty", {"animal": hidden_snake["id"], "empty_peeks": snake_hunt.peeked.size()})
+	if snake_hunt.wants_clue():
+		var direction: String = snake_hunt.direction_from(map.pixel_to_cell(ranger.global_position))
+		var helper: String = Sidekick.load_by_id(GameState.sidekick_id, GameState.rng).display_name()
+		show_banner(SNAKE_CLUE_TEXT % [helper, direction])
+	else:
+		show_banner(EMPTY_ROCK_TEXT % find[0])
+
+
+## A little picture pops up over the rock for a moment.
+func _show_find(cell: Vector2i, texture: Texture2D) -> void:
+	var sprite: Sprite2D = Sprite2D.new()
+	sprite.texture = texture
+	sprite.position = map.cell_to_feet(cell) + Vector2(0, -TILE * 1.5)
+	sprite.z_index = 5
+	add_child(sprite)
+	var tween: Tween = sprite.create_tween()
+	tween.tween_property(sprite, "position:y", sprite.position.y - TILE / 2.0, FIND_SHOW_SECONDS)
+	tween.tween_callback(sprite.queue_free)
+
+
+## The snake's story problem (one level harder than the player's current level).
+func open_snake() -> void:
+	if hidden_snake.is_empty() or snake_screen != null:
+		return
+	var skill: String = GameState.chase_skill_for(hidden_snake)
+	var level: int = WordProblem.snake_level(GameState.engine.level(skill), GameState.factory.level_count(skill))
+	var problem: MathProblem = WordProblem.new().make(GameState.factory, skill, level, str(hidden_snake["name"]), GameState.rng)
+	if problem == null:
+		# shortcut: only add/subtract kinds have stories; other skills fall back to plain add/subtract.
+		skill = "add_subtract"
+		level = WordProblem.snake_level(GameState.engine.level(skill), GameState.factory.level_count(skill))
+		problem = WordProblem.new().make(GameState.factory, skill, level, str(hidden_snake["name"]), GameState.rng)
+	banner.visible = false
+	snake_screen = SnakeScreen.new()
+	add_child(snake_screen)
+	snake_screen.finished.connect(_on_snake_finished)
+	snake_screen.start(hidden_snake, problem)
+
+
+func _on_snake_finished(caught: bool) -> void:
+	var id: String = str(hidden_snake["id"])
+	snake_screen.queue_free()
+	snake_screen = null
+	if _snake_popup != null:
+		_snake_popup.queue_free()
+		_snake_popup = null
+	objects.process_mode = Node.PROCESS_MODE_INHERIT
+	if caught:
+		GameState.record_rescue(id, habitat, map_id)
+		var earned: int = GameState.rewards.stars_for("snake")
+		GameState.add_stars(earned, "snake")
+		show_banner(SNAKE_CAUGHT_TEXT % hidden_snake["name"] + STARS_EARNED_TEXT % earned)
+		hidden_snake = {}
+		snake_hunt = null
+	else:
+		snake_hunt.move(_rng)
+		show_banner(SNAKE_MOVED_TEXT)
 
 
 ## Walks through a gate to the area it leads to.
