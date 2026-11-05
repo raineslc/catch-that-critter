@@ -1,5 +1,12 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — One pen per kind of animal (Chris; Playthrough fixes step 1)
+- Replaces one shared pen per habitat (and the first draft of step 1, a button per kind in a shared pen). Each kind gets its own pen, grouped in a row by habitat with the habitat's name above; the snake's special pen ends the row. Pens are laid out in `data/maps/rescue_center.json` (`"slots": 3` per habitat, so the Meadow has room for the fox and rabbit).
+- The Rescue Center map grows from 40×26 to 56×38 tiles to fit five rows of four pens.
+- Fence repair: each kind's pen has 4 sections, fixed in step with how many of that kind are home (all home = fully fixed), counted from the habitat maps.
+- Bought decorations stay per habitat and show up in every pen of that habitat.
+- Old saves: repairs already shown were tracked per habitat, so the first visit after this change replays the fence repairs once.
+
 ## 2026-11-05 — Playthrough fixes plan (Chris)
 A robot played the whole game (notes: `docs/playthrough_review_2026-11-05.md`). Chris picked:
 - **Fox and rabbit:** add them to the Meadow (find or make art); the confirmed animal list stays.

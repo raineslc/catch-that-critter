@@ -2,22 +2,19 @@ class_name RescueCenter
 extends HabitatMap
 ## The Wildlife Rescue Center hub (PLAN.md 3.1, 3.9). Everything from HabitatMap (ground, gates,
 ## ranger), plus:
-## - One pen per habitat (from data/maps/rescue_center.json). Its fence sections start knocked
-##   over by the storm; each animal rescued from that habitat fixes one section. Sections fixed
-##   since the last visit stand back up while you watch.
-## - Rescued animals live in their habitat's pen and wander around inside it.
+## - A row of pens per habitat (from data/maps/rescue_center.json): one pen per kind of animal,
+##   then the habitat's special (snake) pen. Fence sections start knocked over by the storm and
+##   are fixed as that kind comes home (all of them home = fully fixed). Sections fixed since the
+##   last visit stand back up while you watch.
+## - Rescued animals live in their own kind's pen and wander around inside it.
 ## - The sidekick stands in the plaza and says something helpful when you walk up.
-## - Walk up to a pen with animals in it and a care button appears for each kind of animal
-##   there ("Care for the Raccoon", or "Deer" / "Bear" / "Owl" with faces when there are several).
-##   Space/Enter cares for the kind cared for least. It opens the CareScreen (feed, care note,
-##   fact card) while the world waits.
+## - Walk up to a pen with animals in it and a "Care for the ..." button appears (Space/Enter
+##   works too): it opens the CareScreen (feed, care note, fact card) while the world waits.
 
 const MAX_RESIDENTS_PER_PEN: int = 8
 ## How close (pixels) to a pen's fence the ranger must be to care for its animals.
 const CARE_DISTANCE: float = 24.0
 const CARE_BUTTON_SIZE: Vector2 = Vector2(420, 84)
-## Width of each button when a pen has several kinds of animals.
-const CARE_KIND_BUTTON_WIDTH: float = 230.0
 const CARE_ICON_SIZE: int = 64
 ## Space between the care and Decorate buttons.
 const CARE_ROW_GAP: int = 24
@@ -25,7 +22,6 @@ const CARE_BUTTON_FONT_SIZE: int = 34
 const CARE_BUTTON_TEXT: String = "Care for the %s"
 const CARED_TEXT: String = "The %s is happy and full!"
 const LEVEL_UP_TEXT: String = " Level %d!"
-const PEN_LEVEL_TEXT: String = "%s level %d"
 const DECORATE_TEXT: String = "Decorate"
 const DECORATE_BUTTON_WIDTH: float = 240.0
 const BOOK_TEXT: String = "Book (B)"
@@ -44,15 +40,17 @@ const REPAIR_SECONDS: float = 0.45
 const REPAIR_STAGGER: float = 0.4
 const FENCE_COLLISION: Vector2 = Vector2(46, 6)
 const PEN_LABEL_FONT_SIZE: int = 10
-const PEN_LABEL_TEXT: String = "%s pen"
+## The habitat's name above its row of pens.
+const GROUP_LABEL_FONT_SIZE: int = 13
 const SPECIAL_LABEL: String = "Special"
-const SPECIAL_LEVEL_TEXT: String = "Level %d"
+const PEN_LEVEL_TEXT: String = "Level %d"
 const SPECIAL_LABEL_COLOR: Color = Color(1, 0.85, 0.3)
 const TALK_FONT_SIZE: int = 30
 const TALK_FACE_SIZE: float = 96.0
-const REPAIRED_TEXT: String = "You fixed %d fence%s! %s pen: %d of %d"
+const REPAIRED_TEXT: String = "You fixed %d fence%s at the %s pens!"
 
-## One entry per pen: {habitat, label, cell, pieces, depth, fences: Array[StaticBody2D], residents: Array[Critter]}.
+## One entry per pen: {habitat, kind ("" for a special pen), label, group_label, cell, pieces, depth,
+## spots, special, repair_key, fences: Array[StaticBody2D], residents: Array[Critter]}.
 var pens: Array[Dictionary] = []
 var sidekick: Sidekick
 var sidekick_sprite: AnimatedSprite2D
@@ -60,13 +58,11 @@ var talk_bubble: PanelContainer
 var talk_label: Label
 ## How many fence sections stood back up on this visit (for the banner and tests).
 var newly_repaired: int = 0
-## Bottom-center row: one care button per kind of animal in the nearby pen, then Decorate.
+## Bottom-center row: the care button, then Decorate.
 var care_row: HBoxContainer
-var care_buttons: Array[Button] = []
-## The kinds of animals the care buttons are offering (in order).
-var care_kinds: Array[String] = []
+var care_button: Button
 var care_screen: CareScreen
-## The animal id Space/Enter cares for (the kind cared for least), or "".
+## The animal id the care button is offering, or "".
 var care_target: String = ""
 var decorate_button: Button
 var book_button: Button
@@ -76,6 +72,8 @@ var finale_screen: FinaleScreen
 ## The pen the Decorate button is offering (its habitat), or "".
 var decorate_target: String = ""
 var rest_button: Button
+## kind_spots() results by habitat.
+static var _spots_cache: Dictionary = {}
 
 
 func build() -> void:
@@ -101,29 +99,63 @@ static func is_special_animal(animal_id: String) -> bool:
 	return bool(GameState.catalog.get_animal(animal_id).get("hides_under_rocks", false))
 
 
-## Rescues that live in this pen: the habitat's regular animals, or its snake for a special pen.
+## Rescues that live in this pen: its kind of animal, or the habitat's snake for a special pen.
 static func pen_rescues(pen: Dictionary) -> Array[String]:
 	var ids: Array[String] = []
 	for id: String in GameState.rescued_from(str(pen["habitat"])):
-		if is_special_animal(id) == bool(pen.get("special", false)):
+		var belongs: bool = is_special_animal(id) if bool(pen.get("special", false)) else id == str(pen.get("kind", ""))
+		if belongs:
 			ids.append(id)
 	return ids
 
 
-## How many of a pen's sections are fixed: one per regular rescue; catching the habitat's
-## snake fixes its whole special pen.
+## How many of a pen's sections are fixed. A kind's pen is fixed in step with how many of that
+## kind are home out of its `spots` in the wild (all home = fully fixed; one section per rescue
+## if spots is unknown). Catching the habitat's snake fixes its whole special pen.
 static func repaired_sections(pen: Dictionary) -> int:
 	var rescued: int = pen_rescues(pen).size()
+	var sections: int = pen_sections(pen)
 	if bool(pen.get("special", false)):
-		return pen_sections(pen) if rescued > 0 else 0
-	return mini(rescued, pen_sections(pen))
+		return sections if rescued > 0 else 0
+	var spots: int = int(pen.get("spots", 0))
+	if spots <= 0:
+		return mini(rescued, sections)
+	return mini(ceili(rescued * sections / float(spots)), sections)
 
 
-func pen_for(habitat_id: String) -> Dictionary:
+## A habitat's pen for one kind of animal (its first kind's pen if `kind` is ""), or {}.
+func pen_for(habitat_id: String, kind: String = "") -> Dictionary:
 	for pen: Dictionary in pens:
-		if pen["habitat"] == habitat_id:
+		if pen["habitat"] == habitat_id and not bool(pen.get("special", false)) and (kind == "" or pen["kind"] == kind):
 			return pen
 	return {}
+
+
+## The kinds of animals (not the hidden snake) that live in a habitat, in animals.json order.
+func habitat_kinds(habitat_id: String) -> Array[String]:
+	var kinds: Array[String] = []
+	for id: String in catalog.ids():
+		if str(catalog.get_animal(id).get("habitat", "")) == habitat_id and not is_special_animal(id):
+			kinds.append(id)
+	return kinds
+
+
+## How many of each kind of animal start out in a habitat's map: {animal_id: count}.
+## Read once per run (the hub is rebuilt every time you come back).
+static func kind_spots(habitat_id: String) -> Dictionary:
+	if _spots_cache.has(habitat_id):
+		return _spots_cache[habitat_id]
+	var counts: Dictionary = {}
+	var wild: MapData = MapData.load_map("res://data/maps/%s.txt" % habitat_id)
+	if wild == null:
+		return counts
+	for y: int in wild.height:
+		for x: int in wild.width:
+			var id: String = wild.critter_at(Vector2i(x, y))
+			if id != "":
+				counts[id] = int(counts.get(id, 0)) + 1
+	_spots_cache[habitat_id] = counts
+	return counts
 
 
 ## Is this fence section standing (fixed)?
@@ -139,7 +171,7 @@ func screen_open() -> bool:
 func _process(_delta: float) -> void:
 	if ranger == null or screen_open():
 		return
-	_update_care_buttons()
+	_update_care_button()
 	if sidekick_sprite == null:
 		return
 	var near: bool = ranger.global_position.distance_to(sidekick_sprite.global_position) <= TALK_DISTANCE
@@ -172,24 +204,14 @@ static func pen_rect(pen: Dictionary) -> Rect2:
 	return Rect2(Vector2(cell.x * TILE, cell.y * TILE), Vector2(int(pen["pieces"]) * 3 * TILE, int(pen["depth"]) * TILE))
 
 
-## The kinds of animals (with care data) in the pen within CARE_DISTANCE of a spot, each once,
-## in the order they moved in; [] if none.
-func care_kinds_near(point: Vector2) -> Array[String]:
-	var kinds: Array[String] = []
+## The animal to care for at a spot: who lives in the pen within CARE_DISTANCE (if it has care
+## data), or "".
+func care_animal_near(point: Vector2) -> String:
 	for resident: Critter in pen_near(point).get("residents", []):
 		var id: String = str(resident.animal.get("id", ""))
-		if GameState.care_catalog.has_animal(id) and not kinds.has(id):
-			kinds.append(id)
-	return kinds
-
-
-## The kind with the fewest care visits (the first one on a tie), or "".
-static func least_cared(kinds: Array[String]) -> String:
-	var best: String = ""
-	for id: String in kinds:
-		if best == "" or GameState.care_visits_for(id) < GameState.care_visits_for(best):
-			best = id
-	return best
+		if GameState.care_catalog.has_animal(id):
+			return id
+	return ""
 
 
 ## The closest pen within CARE_DISTANCE of a spot, or {}. (A habitat pen and its special pen
@@ -208,50 +230,30 @@ func pen_near(point: Vector2) -> Dictionary:
 	return best
 
 
-func _update_care_buttons() -> void:
-	var kinds: Array[String] = care_kinds_near(ranger.global_position)
+func _update_care_button() -> void:
+	var id: String = care_animal_near(ranger.global_position)
 	var near: Dictionary = pen_near(ranger.global_position)
 	# Regular pens can be decorated once someone lives there.
-	decorate_target = str(near.get("habitat", "")) if not kinds.is_empty() and not bool(near.get("special", false)) else ""
+	decorate_target = str(near.get("habitat", "")) if id != "" and not bool(near.get("special", false)) else ""
 	decorate_button.visible = decorate_target != ""
-	if kinds == care_kinds:
+	if id == care_target:
 		return
-	_show_care_kinds(kinds)
-
-
-## Replaces the care buttons with one per kind (none for []).
-func _show_care_kinds(kinds: Array[String]) -> void:
-	care_kinds = kinds
-	care_target = least_cared(kinds)
-	for button: Button in care_buttons:
-		button.queue_free()
-	care_buttons.clear()
-	for id: String in kinds:
+	care_target = id
+	care_button.visible = id != ""
+	if id != "":
 		var animal: Dictionary = catalog.get_animal(id)
-		var name_text: String = str(animal.get("name", id))
-		var button: Button = Button.new()
-		button.name = "Care_" + id
-		button.text = CARE_BUTTON_TEXT % name_text if kinds.size() == 1 else name_text
-		button.custom_minimum_size = Vector2(CARE_BUTTON_SIZE.x if kinds.size() == 1 else CARE_KIND_BUTTON_WIDTH, CARE_BUTTON_SIZE.y)
-		if animal.has("faceset"):
-			button.icon = load(str(animal["faceset"]))
-			button.expand_icon = true
-			button.add_theme_constant_override("icon_max_width", CARE_ICON_SIZE)
-		button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
-		button.focus_mode = Control.FOCUS_NONE
-		button.pressed.connect(open_care.bind(id), CONNECT_DEFERRED)
-		care_row.add_child(button)
-		care_row.move_child(button, care_buttons.size())
-		care_buttons.append(button)
+		care_button.text = CARE_BUTTON_TEXT % animal.get("name", id)
+		care_button.icon = load(str(animal["faceset"])) if animal.has("faceset") else null
 
 
 ## Freezes the world and hides the hub buttons while a screen is open (or brings them back).
 func _set_world_waiting(waiting: bool) -> void:
 	objects.process_mode = Node.PROCESS_MODE_DISABLED if waiting else Node.PROCESS_MODE_INHERIT
-	_show_care_kinds([])
+	care_button.visible = false
 	decorate_button.visible = false
 	rest_button.visible = not waiting
 	book_button.visible = not waiting
+	care_target = ""
 	decorate_target = ""
 	if waiting:
 		talk_bubble.visible = false
@@ -268,14 +270,16 @@ func open_shop(habitat_id: String) -> void:
 	shop_screen = ShopScreen.new()
 	add_child(shop_screen)
 	shop_screen.closed.connect(_on_shop_closed.bind(habitat_id))
-	shop_screen.start(habitat_id, str(pen_for(habitat_id).get("label", habitat_id)), map.objects)
+	shop_screen.start(habitat_id, str(pen_for(habitat_id).get("group_label", habitat_id)), map.objects)
 
 
 func _on_shop_closed(habitat_id: String) -> void:
 	shop_screen.queue_free()
 	shop_screen = null
 	_set_world_waiting(false)
-	_place_decorations(pen_for(habitat_id))
+	for pen: Dictionary in pens:
+		if pen["habitat"] == habitat_id:
+			_place_decorations(pen)
 
 
 func open_book() -> void:
@@ -356,7 +360,7 @@ func _show_happy(resident: Critter) -> void:
 	tween.tween_callback(resident.emote.hide)
 
 
-## The bottom-center row: care buttons (filled in by _show_care_kinds), then Decorate, centered together.
+## The bottom-center row: the care button, then Decorate, centered together.
 func _build_care_row() -> void:
 	care_row = HBoxContainer.new()
 	care_row.name = "CareRow"
@@ -369,6 +373,18 @@ func _build_care_row() -> void:
 	care_row.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	care_row.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	get_node("Hud").add_child(care_row)
+	care_button = Button.new()
+	care_button.name = "CareButton"
+	care_button.custom_minimum_size = CARE_BUTTON_SIZE
+	care_button.expand_icon = true
+	care_button.add_theme_constant_override("icon_max_width", CARE_ICON_SIZE)
+	care_button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
+	care_button.focus_mode = Control.FOCUS_NONE
+	care_button.visible = false
+	care_button.pressed.connect(func() -> void:
+		if care_target != "":
+			open_care(care_target), CONNECT_DEFERRED)
+	care_row.add_child(care_button)
 	decorate_button = Button.new()
 	decorate_button.name = "DecorateButton"
 	decorate_button.text = DECORATE_TEXT
@@ -395,7 +411,7 @@ func _build_book_button() -> void:
 	get_node("Hud").add_child(book_button)
 
 
-## Shows the pen's bought decorations (each once).
+## Shows the habitat's bought decorations in this pen (each once).
 func _place_decorations(pen: Dictionary) -> void:
 	if pen.is_empty() or bool(pen.get("special", false)):
 		return
@@ -410,25 +426,20 @@ func _place_decorations(pen: Dictionary) -> void:
 		var def: Dictionary = (map.objects[str(item["object"])] as Dictionary).duplicate()
 		def["blocks"] = false  # residents wander through and never get stuck
 		var node: Node2D = _make_object(def, cell + Vector2i(int(item["spot"][0]), int(item["spot"][1])), rng)
-		node.name = "Decoration_%s_%s" % [pen["habitat"], id]
+		node.name = "Decoration_%s_%s_%s" % [pen["habitat"], pen["kind"], id]
 		objects.add_child(node)
 		placed[id] = node
 	pen["decorations"] = placed
 
 
-## "Raccoon level 2" under each pen with animals in it.
+## "Level 2" under each pen with animals in it.
 func _refresh_pen_levels() -> void:
 	for pen: Dictionary in pens:
 		var label: Label = pen["level_label"]
-		# Levels come from care, so name the first resident that can be cared for.
-		var id: String = ""
-		for resident: Critter in pen["residents"]:
-			if GameState.care_catalog.has_animal(str(resident.animal["id"])):
-				id = str(resident.animal["id"])
-				break
-		label.visible = id != ""
+		var ids: Array[String] = pen_rescues(pen)
+		label.visible = not ids.is_empty()
 		if label.visible:
-			label.text = (SPECIAL_LEVEL_TEXT % GameState.animal_level(id)) if bool(pen.get("special", false)) 				else PEN_LEVEL_TEXT % [catalog.get_animal(id).get("name", id), GameState.animal_level(id)]
+			label.text = PEN_LEVEL_TEXT % GameState.animal_level(ids[0])
 
 
 ## What the sidekick says when you walk up: where to go at first, then how it's going.
@@ -438,17 +449,29 @@ func sidekick_line() -> String:
 	return sidekick.line(event).replace("{count}", str(count))
 
 
+## One row per habitat: a pen per kind of animal, then the snake's special pen at the end of the row.
 func _build_pens() -> void:
 	for def: Variant in map.meta.get("pens", []):
-		var habitat_pen: Dictionary = (def as Dictionary).duplicate()
-		habitat_pen["repair_key"] = habitat_pen["habitat"]
-		_build_pen(habitat_pen)
-		if int(def.get("special_pieces", 0)) > 0:
-			# The snake's pen sits right beside its habitat's pen, in the same fence line.
-			_build_pen({"habitat": def["habitat"], "label": SPECIAL_LABEL, "special": true,
-				"cell": [int(def["cell"][0]) + int(def["pieces"]) * 3, int(def["cell"][1])],
-				"pieces": int(def["special_pieces"]), "depth": def["depth"],
-				"repair_key": "%s_special" % def["habitat"]})
+		var row: Dictionary = def
+		var habitat_id: String = str(row["habitat"])
+		var cell: Vector2i = Vector2i(int(row["cell"][0]), int(row["cell"][1]))
+		var pieces: int = int(row["pieces"])
+		var slots: int = int(row["slots"])
+		var spots: Dictionary = kind_spots(habitat_id)
+		var kinds: Array[String] = habitat_kinds(habitat_id)
+		for i: int in mini(kinds.size(), slots):
+			_build_pen({"habitat": habitat_id, "kind": kinds[i], "group_label": row["label"],
+				"label": catalog.get_animal(kinds[i]).get("name", kinds[i]),
+				"cell": [cell.x + i * pieces * 3, cell.y], "pieces": pieces, "depth": row["depth"],
+				"spots": int(spots.get(kinds[i], 0)), "repair_key": "%s_%s" % [habitat_id, kinds[i]]})
+		var special_pieces: int = int(row.get("special_pieces", 0))
+		if special_pieces > 0:
+			_build_pen({"habitat": habitat_id, "kind": "", "group_label": row["label"], "label": SPECIAL_LABEL,
+				"special": true, "cell": [cell.x + slots * pieces * 3, cell.y], "pieces": special_pieces,
+				"depth": row["depth"], "repair_key": "%s_special" % habitat_id})
+		var title: Label = _add_pen_label(str(row["label"]), cell, slots * pieces + special_pieces)
+		title.position.y -= TILE
+		title.add_theme_font_size_override("font_size", GROUP_LABEL_FONT_SIZE)
 	_refresh_pen_levels()
 
 
@@ -463,9 +486,7 @@ func _build_pen(pen: Dictionary) -> void:
 			objects.add_child(fence)
 			fences.append(fence)
 	pen["fences"] = fences
-	# Special pens are narrow, so their labels stay short.
-	var title: String = SPECIAL_LABEL if bool(pen.get("special", false)) else PEN_LABEL_TEXT % str(pen.get("label", ""))
-	var name_label: Label = _add_pen_label(title, cell, pieces)
+	var name_label: Label = _add_pen_label(str(pen["label"]), cell, pieces)
 	if bool(pen.get("special", false)):
 		name_label.add_theme_color_override("font_color", SPECIAL_LABEL_COLOR)
 	pen["level_label"] = _add_pen_label("", cell, pieces)
@@ -518,7 +539,8 @@ func _fix_fence(fence: StaticBody2D, instant: bool, delay: float = 0.0) -> void:
 ## Fixes one section per rescue; the ones fixed since last time stand up while you watch.
 func _show_repairs() -> void:
 	newly_repaired = 0
-	var messages: Array[String] = []
+	# Fences fixed this visit per habitat row: {group_label: count}.
+	var fixed_by_row: Dictionary = {}
 	for pen: Dictionary in pens:
 		var key: String = str(pen["repair_key"])
 		var fixed: int = repaired_sections(pen)
@@ -529,9 +551,13 @@ func _show_repairs() -> void:
 		var new_now: int = fixed - seen
 		if new_now > 0:
 			newly_repaired += new_now
-			messages.append(REPAIRED_TEXT % [new_now, "" if new_now == 1 else "s", str(pen["label"]), fixed, pen_sections(pen)])
+			fixed_by_row[pen["group_label"]] = int(fixed_by_row.get(pen["group_label"], 0)) + new_now
 		GameState.pen_repairs_shown[key] = fixed
 	GameState.save_progress()
+	var messages: Array[String] = []
+	for row_label: Variant in fixed_by_row:
+		var count: int = fixed_by_row[row_label]
+		messages.append(REPAIRED_TEXT % [count, "" if count == 1 else "s", row_label])
 	if not messages.is_empty():
 		show_banner(" ".join(messages), BANNER_SECONDS + newly_repaired * REPAIR_STAGGER)
 
@@ -554,7 +580,7 @@ func _rest() -> void:
 		get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 
-## Rescued animals from this habitat, wandering inside the pen (they never get startled).
+## The pen's rescued animals, wandering inside it (they never get startled).
 func _add_residents(pen: Dictionary, cell: Vector2i, pieces: int, depth: int) -> Array[Critter]:
 	var residents: Array[Critter] = []
 	var inside: Rect2 = Rect2(
