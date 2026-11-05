@@ -1,5 +1,9 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — No helper animals; the finale (Chris)
+- Helper animal bonuses (PLAN 3.5) are dropped.
+- The finale plays once at the Rescue Center when all five snakes are caught **and** at least 6 other animals are home from each habitat (`"finale_critters_per_habitat": 6` in `data/maps/world.json`). Clear sky with a rainbow, sun and confetti, every rescued kind of animal hopping, the sidekick's thanks, and a "Hooray!" button. Saved as `finale_seen` (optional field, so older saves still load).
+
 ## 2026-11-05 — Habitat unlocking: the snake opens the next habitat (Chris)
 - Changes PLAN 3.4 ("habitats unlock as skills are mastered"): mastering a level takes 3 play days at 80%+, too slow. Instead the Meadow and Forest start open, and catching a habitat's hidden snake opens the next: Forest's ball python → Swamp, Swamp's green anaconda → Desert, Desert's rattlesnake → Mountains.
 - Set in `data/maps/world.json` as `"opens_after": "<habitat>"`. A closed gate is fenced with a sign "(find the Forest snake)" and the banner "Find the Forest's hidden snake to open the Swamp!". Catching the snake adds "The Swamp is open now!".

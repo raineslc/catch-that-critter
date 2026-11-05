@@ -51,6 +51,8 @@ var arrival_map: String = ""
 var arrival_gate: String = ""
 ## data/maps/world.json: which areas exist and their scenes.
 var world: Dictionary = {}
+## The finale has been shown (it plays once).
+var finale_seen: bool = false
 ## Read questions and Henrito's lines aloud with text-to-speech. Off since 2026-10-21:
 ## Chris found the Windows voices sounded weird and some lines off (see DECISIONS.md).
 var read_aloud: bool = READ_ALOUD_DEFAULT
@@ -120,6 +122,7 @@ func reset() -> void:
 	rewards = Rewards.new()
 	stars = 0
 	decorations.clear()
+	finale_seen = false
 	arrival_map = ""
 	arrival_gate = ""
 	world = load_world()
@@ -322,6 +325,25 @@ func area_opened_by(habitat_id: String) -> String:
 	return ""
 
 
+## How many of a habitat's regular animals (not its snake) are home.
+func critters_home(habitat_id: String) -> int:
+	var snake: String = hidden_snake_id(habitat_id)
+	return rescued_from(habitat_id).filter(func(id: String) -> bool: return id != snake).size()
+
+
+## The finale (Chris 2026-11-05): every habitat's snake is home, plus at least
+## "finale_critters_per_habitat" (world.json) of its other animals.
+func finale_ready() -> bool:
+	var needed: int = int(world.get("finale_critters_per_habitat", 6))
+	for map_id: Variant in world.get("maps", {}):
+		var snake: String = hidden_snake_id(str(map_id))
+		if snake == "":
+			continue
+		if not rescued.has(snake) or critters_home(str(map_id)) < needed:
+			return false
+	return true
+
+
 ## Get ready to enter `map_id` through `gate`. Returns the scene to change to ("" = not built yet or not open).
 func travel_to(map_id: String, gate: String) -> String:
 	var scene: String = scene_for(map_id)
@@ -382,7 +404,7 @@ func snapshot() -> Dictionary:
 		"care_visits": care_visits.duplicate(), "pen_repairs_shown": pen_repairs_shown.duplicate(),
 		"progress": engine.to_dict(), "grade": grade, "sidekick_id": sidekick_id,
 		"mode": mode, "explore_locked": explore_locked,
-		"stars": stars, "decorations": decorations.duplicate(true),
+		"stars": stars, "decorations": decorations.duplicate(true), "finale_seen": finale_seen,
 	}
 
 
@@ -404,6 +426,7 @@ func _restore(data: Dictionary) -> void:
 	# Saves from before stars existed don't have these.
 	stars = int(data.get("stars", 0))
 	decorations = (data.get("decorations", {}) as Dictionary).duplicate(true)
+	finale_seen = bool(data.get("finale_seen", false))
 
 
 func save_progress() -> bool:
