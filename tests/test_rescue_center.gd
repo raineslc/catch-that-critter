@@ -123,7 +123,9 @@ func test_walking_into_the_gate_uses_it() -> void:
 	assert_signal_emitted(hub, "gate_used")
 
 
-func test_every_habitat_gate_is_open() -> void:
+func test_every_habitat_gate_is_open_once_the_snakes_are_caught() -> void:
+	for snake: String in ["ball_python", "green_anaconda", "rattlesnake"]:
+		GameState.rescued.append(snake)
 	await _open_hub()
 	for gate: String in ["1", "2", "3", "4", "5"]:
 		assert_false(hub.gates[gate] is StaticBody2D, "gate %s is open" % gate)

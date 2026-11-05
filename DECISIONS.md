@@ -1,5 +1,10 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Habitat unlocking: the snake opens the next habitat (Chris)
+- Changes PLAN 3.4 ("habitats unlock as skills are mastered"): mastering a level takes 3 play days at 80%+, too slow. Instead the Meadow and Forest start open, and catching a habitat's hidden snake opens the next: Forest's ball python → Swamp, Swamp's green anaconda → Desert, Desert's rattlesnake → Mountains.
+- Set in `data/maps/world.json` as `"opens_after": "<habitat>"`. A closed gate is fenced with a sign "(find the Forest snake)" and the banner "Find the Forest's hidden snake to open the Swamp!". Catching the snake adds "The Swamp is open now!".
+- His saves (normal and Playtest 2) haven't caught the ball python yet, so the Swamp, Desert, and Mountains start closed for him.
+
 ## 2026-11-05 — The Mountains (last habitat of Phase 4 step 1; Chris: merge the Desert and continue)
 - The hub's northeast gate opens to the Mountains: mountain goats (3), snow leopards (2, fast), eagles (2), and the hidden king cobra under one of 10 rocks, with pine groves and a lake and a cool ground tint. Mountain animals practice **multiplying and dividing**; the cobra's story stays add/subtract.
 - All five habitat gates are open now; the "opens soon" fence stays in the code for habitat unlocking.
