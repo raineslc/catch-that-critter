@@ -12,6 +12,9 @@ const SPEECH_POLL_SECONDS: float = 0.1
 const READ_ALOUD_DEFAULT: bool = false
 const WORLD_PATH: String = "res://data/maps/world.json"
 const FULL_PLAYTEST_PATH: String = "res://data/playtest_2.json"
+## Playtest 3: the real game (profile buttons, real saves, each habitat's own math), logged.
+const PLAYTEST_3_PATH: String = "res://data/playtest_3.json"
+const PLAYTEST_3_FLAG: String = "--playtest-3"
 const PROFILES_PATH: String = "res://data/profiles.json"
 const PLAYTEST_PROFILE_PATH: String = "user://profiles/playtest_2.json"
 
@@ -90,6 +93,8 @@ func _ready() -> void:
 		enable_playtest(load_playtest_config(FULL_PLAYTEST_PATH))
 		if not user_args.has("--no-save"):
 			start_profile(PLAYTEST_PROFILE_PATH, "playtest-2")
+	elif user_args.has(PLAYTEST_3_FLAG):
+		enable_playtest(load_playtest_config(PLAYTEST_3_PATH))
 	elif user_args.has(PLAYTEST_FLAG):
 		enable_playtest()
 	# Normal play: the title screen picks a profile slot (start_slot).
@@ -403,7 +408,16 @@ static func peek_slot(profile_slot: Dictionary) -> Dictionary:
 func start_slot(profile_slot: Dictionary) -> bool:
 	var path: String = str(profile_slot["path"])
 	var is_new: bool = not FileAccess.file_exists(path) and not FileAccess.file_exists(path + ".bak")
+	# A playtest that uses the profile buttons (Playtest 3) keeps its log open across profiles.
+	var keep_playtest: Dictionary = playtest
+	var keep_log: PlaytestLog = playtest_log
+	var keep_watch: FreezeWatch = freeze_watch
+	playtest_log = null
+	freeze_watch = null
 	reset()
+	playtest = keep_playtest
+	playtest_log = keep_log
+	freeze_watch = keep_watch
 	slot = profile_slot
 	if not start_profile(path, str(profile_slot["id"])):
 		return false
@@ -411,7 +425,14 @@ func start_slot(profile_slot: Dictionary) -> bool:
 		sidekick_id = str(profile_slot.get("sidekick_id", sidekick_id))
 		grade = str(profile_slot.get("grade", grade))
 		explore_locked = bool(profile_slot.get("explore_locked", false))
+	log_event("profile", {"slot": str(profile_slot["id"]), "name": player_name, "new": is_new, "grade": grade,
+		"rescued": rescued.size(), "stars": stars})
 	return true
+
+
+## Does this playtest use the title's profile buttons and the real saves?
+func playtest_uses_profiles() -> bool:
+	return bool(playtest.get("profiles", false))
 
 
 ## Explicit paths let tests exercise saves without ever touching the real profile.

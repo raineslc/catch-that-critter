@@ -45,6 +45,7 @@ Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTION
 - Codex review: `AGENTS.md` has review guidelines; Chris still needs to switch on Codex code review at chatgpt.com/codex → Settings → Code review.
 
 ## Playtest
+- **Playtest 3** (`playtest-3-profiles`, current): `tools/playtest_3_launch.cmd`, the real game with the profile buttons and real saves, logged. Checklist `docs/playtest_3.md`.
 - **Playtest 2.1** (`playtest-2.1-snake`): double-click `tools/playtest_2_launch.cmd` in this checkout; separate save; caught raccoons come back after 25 s. Checklist `docs/playtest_2.md`. Summarize: `python tools/summarize_playtest.py` (includes the snake hunt and stars).
 - Results so far: Playtest 2 (level 3 → adapted to 2; subtraction is his weak spot). Playtest 2.1: found the snake after 3 empty rocks and caught it on the one try; loved it; bought a rock; didn't open the book. Forest playtest: 9/9 subtraction right, up to level 3; added instead of subtracting on the python's story ("18 leaves, 1 went away"), so it got away; quit spelling "lizards" for the vine snake after 2 misses.
 - The old desktop shortcut still runs the frozen Playtest 1 (`C:\Users\raine\CatchACritter-playtest`).

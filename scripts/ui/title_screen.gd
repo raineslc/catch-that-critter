@@ -12,6 +12,7 @@ const SMALL_FONT_SIZE: int = 26
 const NEW_RANGER: String = "New ranger"
 const WITH_TEXT: String = "with %s"
 const TITLE_RAISE: float = 230.0
+const PLAYTEST_HINT: String = "Playtest 3: pick your ranger"
 
 ## Tests point this at their own slots so they never read the real saves.
 var slots: Array = []
@@ -22,11 +23,12 @@ var auto_change_scene: bool = true
 
 
 func _ready() -> void:
-	if GameState.is_playtest():
+	if GameState.is_playtest() and not GameState.playtest_uses_profiles():
 		$StartHint.text = "Press any key to continue" if GameState.intro_seen else "Press any key to start"
 		$StartHint.text += "\nPlaytest 2: rescue and care" if GameState.playtest.get("version", "").begins_with("playtest-2") else "\nChase playtest"
 		return
-	$StartHint.visible = false
+	$StartHint.visible = GameState.is_playtest()
+	$StartHint.text = PLAYTEST_HINT
 	$Title.position.y -= TITLE_RAISE
 	if slots.is_empty() and GameState.profile_access:
 		slots = GameState.profile_slots()
@@ -47,7 +49,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not GameState.is_playtest():
+	if not GameState.is_playtest() or GameState.playtest_uses_profiles():
 		return
 	var is_start: bool = (event is InputEventKey or event is InputEventMouseButton or event is InputEventScreenTouch) \
 		and event.is_pressed() and not event.is_echo()

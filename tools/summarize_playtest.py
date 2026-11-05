@@ -52,10 +52,18 @@ def summarize(events: list[dict]) -> str:
         out.append(f"Version: {start['version']} (voice available: {start.get('tts')})")
     if not any(e["event"] == "session_end" for e in events):
         out.append("NOTE: no session_end - the game did not close normally (crash, freeze, or force-quit).")
+    for e in events:
+        if e["event"] == "profile":
+            who = e.get("name") or "(no name yet)"
+            status = "new profile" if e.get("new") else f"{e.get('rescued', 0)} animals home, {e.get('stars', 0)} stars"
+            out.append(f"Profile at {e['t'] / 60:.1f} min: {who} ({e['slot']}, grade {e.get('grade')}), {status}")
+    places = [e["to"] for e in events if e["event"] == "travel"]
+    if places:
+        out.append("Places: " + " -> ".join(places))
     respawns = [e for e in events if e["event"] == "respawn"]
     if respawns:
         during = sum(1 for e in respawns if e.get("during_chase"))
-        out.append(f"Raccoons came back {len(respawns)} times ({during} during a chase).")
+        out.append(f"Animals came back {len(respawns)} times ({during} during a chase).")
     for e in events:
         if e["event"] == "freeze":
             out.append("")
@@ -65,20 +73,20 @@ def summarize(events: list[dict]) -> str:
             out.append(f"  ...recovered after {e['stuck_ms'] / 1000:.1f}s")
 
     out.append("")
-    out.append("By level (first tries):")
+    out.append("By skill and level (first tries):")
     by_level = defaultdict(list)
     for e in first:
-        by_level[e["level"]].append(e)
-    for level in sorted(by_level):
-        rows = by_level[level]
+        by_level[(e.get("skill", ""), e["level"])].append(e)
+    for skill, level in sorted(by_level):
+        rows = by_level[(skill, level)]
         right = sum(1 for e in rows if e["correct"])
         avg = sum(e["seconds"] for e in rows) / len(rows)
-        out.append(f"  Level {level}: {right}/{len(rows)} right, avg {avg:.1f}s")
+        out.append(f"  {skill} level {level}: {right}/{len(rows)} right, avg {avg:.1f}s")
 
     changes = [e for e in events if e["event"] == "level_change"]
     if changes:
         out.append("")
-        out.append("Level changes: " + ", ".join(f"{e['direction']} to {e['to']} at {e['t'] / 60:.1f} min" for e in changes))
+        out.append("Level changes: " + ", ".join(f"{e.get('skill', '')} {e['direction']} to {e['to']} at {e['t'] / 60:.1f} min" for e in changes))
 
     missed = [e for e in first if not e["correct"]]
     if missed:
@@ -101,6 +109,16 @@ def summarize(events: list[dict]) -> str:
         for e in problems:
             out.append(f"  Story (level {e['level']}): {e['prompt']}  (answer {e['answer']})")
         out.append(f"  Empty rocks looked under: {sum(1 for e in snake if e['event'] == 'rock_empty')}")
+    cares = [e for e in events if e["event"] == "care_end"]
+    if cares:
+        out.append("")
+        done = [e for e in cares if e.get("completed")]
+        out.append(f"Care visits: {len(done)} finished, {len(cares) - len(done)} stopped early.")
+        for e in cares:
+            out.append(f"  {e['animal']}: {'done' if e.get('completed') else 'stopped'}, {e.get('feed_misses', 0)} spelling misses, {e.get('note_misses', 0)} note misses")
+    if any(e["event"] == "finale" for e in events):
+        out.append("")
+        out.append("FINALE played!")
     stars = [e for e in events if e["event"] == "stars"]
     if stars:
         out.append("")
