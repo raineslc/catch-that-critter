@@ -4,6 +4,8 @@ extends RefCounted
 ## good snapshot to .bak. Never overwrite an unreadable or newer profile silently.
 
 const VERSION: int = 1
+## Longest player name a save may hold.
+const MAX_NAME_LENGTH: int = 20
 
 static func read_profile(path: String) -> Dictionary:
 	var primary: Dictionary = _read(path)
@@ -89,6 +91,14 @@ static func valid(data: Variant) -> bool:
 		return false
 	if data.has("finale_seen") and not data.finale_seen is bool:
 		return false
+	if data.has("name") and (not data.name is String or data.name.length() > MAX_NAME_LENGTH):
+		return false
+	if data.has("look"):
+		if not data.look is Dictionary:
+			return false
+		for part: Variant in data.look:
+			if not part is String or not data.look[part] is String:
+				return false
 	if data.has("decorations"):
 		if not data.decorations is Dictionary:
 			return false

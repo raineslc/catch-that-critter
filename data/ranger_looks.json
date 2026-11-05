@@ -1,0 +1,29 @@
+{
+  "description": "Ranger recolors (PLAN 3.2). 'base' lists the art's own colors for each part; each option lists the colors that replace them, in the same order. Skin's second color is its shadow (the art shares it with the hair, so only red pixels touching skin are skin shadow).",
+  "base": {
+    "hair": [[209, 75, 52], [143, 62, 86]],
+    "skin": [[239, 145, 79], [209, 75, 52]],
+    "outfit": [[84, 135, 137], [74, 82, 112], [121, 184, 206]]
+  },
+  "options": {
+    "hair": {
+      "red": [[209, 75, 52], [143, 62, 86]],
+      "brown": [[130, 82, 48], [84, 52, 34]],
+      "blonde": [[232, 194, 96], [184, 142, 64]],
+      "black": [[64, 60, 66], [36, 34, 44]]
+    },
+    "skin": {
+      "peach": [[239, 145, 79], [209, 75, 52]],
+      "light": [[246, 198, 160], [214, 150, 120]],
+      "tan": [[204, 140, 92], [160, 100, 64]],
+      "deep": [[130, 84, 56], [96, 60, 40]]
+    },
+    "outfit": {
+      "teal": [[84, 135, 137], [74, 82, 112], [121, 184, 206]],
+      "green": [[86, 150, 72], [54, 92, 58], [150, 204, 120]],
+      "blue": [[72, 110, 196], [48, 58, 124], [140, 176, 236]],
+      "red": [[196, 64, 64], [112, 40, 52], [236, 140, 128]]
+    }
+  },
+  "default": {"hair": "red", "skin": "peach", "outfit": "teal"}
+}

@@ -22,6 +22,7 @@ List every third-party asset here: name, author, source URL, license.
 | `ui/emotes/happy.png` | `Ui/Emote/emote27.png` |
 | `sprites/sidekicks/henrito/sprite_sheet.png` | `Actor/Character/Boy/SpriteSheet.png` |
 | `sprites/sidekicks/henrito/faceset.png` | `Actor/Character/Boy/Faceset.png` |
+| `sprites/sidekicks/loganator/sprite_sheet.png`, `faceset.png` | `Actor/Character/Boy/` recolored by `tools/make_loganator_art.py` |
 | `ui/icon.png`, `ui/icon.ico` | made from `Actor/Animal/Racoon/Faceset.png` (scaled 6×) |
 | `sprites/animals/frog/*` | `Actor/Animal/Frog/SpriteSheet.png`, `Faceset.png` |
 | `sprites/animals/owl/*` | `Actor/Monster/Owl/Owl.png`, `Faceset.png` |

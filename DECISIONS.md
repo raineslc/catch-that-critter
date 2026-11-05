@@ -1,5 +1,12 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Two profiles and ranger looks (Phase 5 step 1, Chris)
+- Title screen shows **two big buttons**, one per boy: his ranger's face, his sidekick's face, his name (typed once), "with Henrito/Loganator". Slots live in `data/profiles.json`.
+- Slot 1 is his existing save (`user://profiles/default.json`, Henrito, grade 2) — nothing to migrate; the first time he picks it, he names his ranger and keeps all his progress. Slot 2 is new (`ranger_2.json`): Loganator, grade **K**, Explore locked, until the preschool level exists (Phase 7).
+- **Ranger look:** pick hair (red, brown, blonde, black), skin (4 tones), and outfit (teal, green, blue, red) by tapping swatches with a live preview. Done by recoloring the pack's ranger in code (`RangerLook`, colors in `data/ranger_looks.json`); the art shares one red for hair and skin shadow, so red pixels touching skin count as skin shadow.
+- **Loganator** (the big brother) is Henrito's pack art recolored (brown hair, green ranger shirt) by `tools/make_loganator_art.py`, with Henrito's lines for now.
+- New save fields `name` and `look` are optional (older saves still load). Tests and `--no-save` never read the real saves.
+
 ## 2026-11-05 — No helper animals; the finale (Chris)
 - Helper animal bonuses (PLAN 3.5) are dropped.
 - The finale plays once at the Rescue Center when all five snakes are caught **and** at least 6 other animals are home from each habitat (`"finale_critters_per_habitat": 6` in `data/maps/world.json`). Clear sky with a rainbow, sun and confetti, every rescued kind of animal hopping, the sidekick's thanks, and a "Hooray!" button. Saved as `finale_seen` (optional field, so older saves still load).
