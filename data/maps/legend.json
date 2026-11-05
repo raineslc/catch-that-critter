@@ -17,18 +17,114 @@
     "2": "path",
     "3": "path",
     "4": "path",
-    "5": "path"
+    "5": "path",
+    "d": "grass",
+    "e": "grass",
+    "o": "grass"
   },
   "objects": {
-    ",": {"name": "tuft", "atlas": [3, 10], "size": [1, 1], "blocks": false},
-    "f": {"name": "flower", "atlas": [[0, 11], [1, 11], [3, 11], [6, 11]], "size": [1, 1], "blocks": false},
-    "b": {"name": "bush", "atlas": [[0, 10], [1, 10], [2, 10]], "size": [1, 1], "blocks": true},
-    "r": {"name": "rock", "atlas": [4, 13], "size": [1, 1], "blocks": true},
-    "T": {"name": "tree", "atlas": [0, 0], "size": [2, 2], "blocks": true},
-    "P": {"name": "pine", "atlas": [2, 0], "size": [2, 2], "blocks": true}
+    ",": {
+      "name": "tuft",
+      "atlas": [
+        3,
+        10
+      ],
+      "size": [
+        1,
+        1
+      ],
+      "blocks": false
+    },
+    "f": {
+      "name": "flower",
+      "atlas": [
+        [
+          0,
+          11
+        ],
+        [
+          1,
+          11
+        ],
+        [
+          3,
+          11
+        ],
+        [
+          6,
+          11
+        ]
+      ],
+      "size": [
+        1,
+        1
+      ],
+      "blocks": false
+    },
+    "b": {
+      "name": "bush",
+      "atlas": [
+        [
+          0,
+          10
+        ],
+        [
+          1,
+          10
+        ],
+        [
+          2,
+          10
+        ]
+      ],
+      "size": [
+        1,
+        1
+      ],
+      "blocks": true
+    },
+    "r": {
+      "name": "rock",
+      "atlas": [
+        4,
+        13
+      ],
+      "size": [
+        1,
+        1
+      ],
+      "blocks": true
+    },
+    "T": {
+      "name": "tree",
+      "atlas": [
+        0,
+        0
+      ],
+      "size": [
+        2,
+        2
+      ],
+      "blocks": true
+    },
+    "P": {
+      "name": "pine",
+      "atlas": [
+        2,
+        0
+      ],
+      "size": [
+        2,
+        2
+      ],
+      "blocks": true
+    }
   },
   "critters": {
-    "a": "raccoon"
+    "a": "raccoon",
+    "d": "deer",
+    "e": "bear",
+    "o": "owl"
   },
   "spawn": "S",
   "sidekick_spot": "H",

@@ -1,6 +1,6 @@
-"""Draws the hidden snakes' art (CC0, made for this project): a 2-frame 16x16 slither strip for
+"""Draws animal art the pack doesn't have (CC0, made for this project): a 2-frame 16x16 strip for
 the map and pen, and a 38x38 portrait (19x19 drawn at 2x) like the pack's facesets.
-Run: python tools/make_snake_art.py  -> writes assets/sprites/animals/<snake>/sprite_sheet.png, faceset.png"""
+Run: python tools/make_animal_art.py  -> writes assets/sprites/animals/<animal>/sprite_sheet.png, faceset.png"""
 import sys
 from pathlib import Path
 
@@ -13,7 +13,16 @@ VINE = dict(PALETTE, **{
     "e": (40, 30, 20), "r": (220, 64, 52), "D": (22, 26, 24),
 })
 
-SNAKES = {
+PYTHON = dict(VINE, **{"G": (176, 132, 72), "g": (92, 62, 36), "L": (236, 214, 160)})
+DEER = dict(PALETTE, **{"D": (22, 26, 24)})
+
+
+def mirrored(halves: list[str]) -> list[str]:
+    """Left halves (center column last) -> symmetric rows."""
+    return [h + h[:-1][::-1] for h in halves]
+
+
+ANIMALS = {
     "green_vine_snake": {
         "palette": VINE,
         "frames": [
@@ -77,11 +86,74 @@ SNAKES = {
         ],
     },
 }
+ANIMALS["ball_python"] = dict(ANIMALS["green_vine_snake"], palette=PYTHON)
+ANIMALS["deer"] = {
+    "palette": DEER,
+    "frames": [
+        [
+            "................",
+            "...........k.k..",
+            "..........kKkKk.",
+            "...........kcck.",
+            "..........kcbcck",
+            "..........kccckk",
+            "..kkkkkkkkkcck..",
+            ".kWcccccccccck..",
+            ".kccWcccWcccck..",
+            "..kcccccccccck..",
+            "..kcckkkkkkcck..",
+            "..kck.....kck...",
+            "..kck.....kck...",
+            "..kk.......kk...",
+            "................",
+            "................",
+        ],
+        [
+            "................",
+            "...........k.k..",
+            "..........kKkKk.",
+            "...........kcck.",
+            "..........kcbcck",
+            "..........kccckk",
+            "..kkkkkkkkkcck..",
+            ".kWcccccccccck..",
+            ".kccWcccWcccck..",
+            "..kcccccccccck..",
+            "..kcckkkkkkcck..",
+            "...kck...kck....",
+            "...kck...kck....",
+            "...kk.....kk....",
+            "................",
+            "................",
+        ],
+    ],
+    "face": mirrored([
+        "DDDDDDDDDD",
+        "DkkkDDDDDD",
+        "kcKckDDDDD",
+        "kcKcckDDDD",
+        "Dkccckkkkk",
+        "DDkcccCCCC",
+        "DDkcCCCCCC",
+        "DDkCCbbCCC",
+        "DDkCCbHCCC",
+        "DDkCCCCCCC",
+        "DDDkCCCCCC",
+        "DDDkCCCWWW",
+        "DDDDkCWWWW",
+        "DDDDkWWWkk",
+        "DDDDDkWWkk",
+        "DDDDDDkkkk",
+        "DDDDDDDDDD",
+        "DDDDDDDDDD",
+        "DDDDDDDDDD",
+    ]),
+}
 
 
 if __name__ == "__main__":
     root = Path(sys.argv[1] if len(sys.argv) > 1 else "assets/sprites/animals")
-    for name, art in SNAKES.items():
+    for name, art in ANIMALS.items():
         out = root / name
         out.mkdir(parents=True, exist_ok=True)
         strip = [a + b for a, b in zip(*art["frames"])]

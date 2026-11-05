@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — The Forest (Phase 4 step 1 begins; Chris: one habitat per PR, Forest first)
+- The hub's top gate opens to the Forest: deer (3), bears (2), owls (2), and the hidden ball python under one of 6 rocks. Forest animals use the add/subtract skill (Forest's skill in PLAN 3.4).
+- Bear and owl use the pack's 4×4 sheets (`"layout": "grid"`, right-facing column). The deer, ball python (the vine snake's shape in python colors), and food icons leaves, clover, berries, rats, gerbils are drawn in code (`tools/make_animal_art.py`, `tools/make_food_icons.py`). "Acorns" reuse the nut picture.
+- Care foods: deer leaves/clover/acorns/apples/corn/berries; bear fish/honey/berries/nuts/apples/bugs; owl mice/crickets/worms/bugs/lizards; ball python mice/rats/gerbils (grade-up care like every snake).
+- Habitat unlocking (PLAN 3.4) waits until the Swamp exists; for now every built habitat's gate is open.
+
 ## 2026-11-04 — Snakes get special pens and harder care (after Playtest 2.1, Chris)
 - Each habitat pen is now 2 rail sections wide with a 1-section **special pen** right beside it (gold "Special" label). Its fence stays knocked over until that habitat's snake is caught, then the whole special pen is fixed; snakes don't fix the regular pen's fences. Regular pens: 4 sections now (was 6). Decorations are for regular pens only.
 - **Snake care works like raccoon care, one grade harder** (`CareCatalog.harder_grade`: K→1, 1→2, 2→3, 3 stays 3): spell 3rd-grade food words (lizards, geckos, tadpoles, crickets, mice — not frogs, since frogs are rescue animals here) with 2 extra letters, then a longer care note, then its fact card, one fact per visit (snake facts moved from `animals.json` to `care.json`). Snakes level up from care like other animals.

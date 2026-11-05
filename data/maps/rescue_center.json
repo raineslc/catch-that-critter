@@ -4,7 +4,7 @@
   "habitat": "",
   "gates": {
     "1": {"to": "meadow", "arrive": "1", "label": "Meadow"},
-    "2": {"to": "forest", "label": "Forest", "locked": true},
+    "2": {"to": "forest", "arrive": "1", "label": "Forest"},
     "5": {"to": "mountains", "label": "Mountains", "locked": true},
     "3": {"to": "swamp", "label": "Swamp", "locked": true},
     "4": {"to": "desert", "label": "Desert", "locked": true}
