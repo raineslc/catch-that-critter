@@ -54,6 +54,26 @@ func test_new_slot_uses_its_sidekick_grade_and_explore_lock() -> void:
 	assert_eq(GameState.profile_id, "ranger_2")
 
 
+func test_new_slot_starts_skills_at_its_grade() -> void:
+	assert_true(GameState.start_slot(slots[0]))
+	assert_eq(GameState.engine.level("add_subtract"), 3, "grade 2: add and subtract within 20")
+	assert_eq(GameState.engine.level("counting"), 4)
+	GameState.start_slot(slots[1])
+	assert_eq(GameState.engine.level("add_subtract"), 1, "grade K: level 1")
+
+
+func test_existing_save_keeps_practiced_levels_and_starts_new_skills_at_its_grade() -> void:
+	GameState.start_slot(slots[0])
+	GameState.engine.set_level("add_subtract", 1)
+	GameState.engine.record_answer("add_subtract", true, 3.0)
+	GameState.engine.load_dict({"time_money": {"level": 1}})  # an older save, before grade starts
+	GameState.save_progress()
+	GameState.reset()
+	assert_true(GameState.start_slot(slots[0]))
+	assert_eq(GameState.engine.level("add_subtract"), 1, "practiced: his level is kept")
+	assert_eq(GameState.engine.level("time_money"), 2, "never practiced: grade 2 start")
+
+
 func test_name_and_look_are_saved_and_loaded() -> void:
 	GameState.start_slot(slots[1])
 	GameState.player_name = "Sam"

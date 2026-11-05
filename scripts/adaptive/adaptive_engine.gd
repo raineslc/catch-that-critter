@@ -65,6 +65,21 @@ func set_level(skill_id: String, new_level: int) -> void:
 	progress.window.clear()
 
 
+## Starting levels for a grade ("K", "1", "2", "3") from data/adaptive.json: {skill_id: level}.
+## Skills left out (and unknown grades) start at level 1.
+static func starting_levels(grade: String, path: String = CONFIG_PATH) -> Dictionary:
+	return (load_config(path).get("starting_levels", {}) as Dictionary).get(grade, {})
+
+
+## Sets each skill in `levels` ({skill_id: level}) that has never been answered; practiced
+## skills keep their level. Unknown skills are skipped.
+func start_unpracticed_at(levels: Dictionary) -> void:
+	for skill_id: Variant in levels:
+		var id: String = str(skill_id)
+		if has_skill(id) and _progress(id).total_answers == 0:
+			set_level(id, int(levels[skill_id]))
+
+
 ## Records the first try at one problem and returns whether the level changed.
 func record_answer(skill_id: String, correct: bool, seconds: float) -> Change:
 	if not _require_skill(skill_id):

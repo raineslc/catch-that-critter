@@ -1,6 +1,6 @@
 {
-  "window_size": 10,
-  "min_answers_to_level_up": 10,
+  "window_size": 6,
+  "min_answers_to_level_up": 6,
   "min_answers_to_level_down": 6,
   "level_up_accuracy": 0.8,
   "level_down_accuracy": 0.5,
@@ -13,5 +13,12 @@
   "mastery_sessions": 3,
   "min_answers_per_mastery_session": 5,
   "misses_before_hint": 2,
-  "misses_before_hint_with_extra_help": 1
+  "misses_before_hint_with_extra_help": 1,
+  "starting_levels_note": "Level each skill starts at for a new profile (or a skill it has never practiced), by the profile's grade. Skills left out start at level 1. Level names are in data/skills.json.",
+  "starting_levels": {
+    "K": {},
+    "1": {"counting": 3},
+    "2": {"counting": 4, "add_subtract": 3, "place_value": 1, "time_money": 2, "multiply_divide": 1},
+    "3": {"counting": 5, "add_subtract": 4, "place_value": 3, "time_money": 4, "multiply_divide": 2}
+  }
 }

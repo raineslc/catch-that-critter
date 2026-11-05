@@ -411,6 +411,8 @@ func start_slot(profile_slot: Dictionary) -> bool:
 		sidekick_id = str(profile_slot.get("sidekick_id", sidekick_id))
 		grade = str(profile_slot.get("grade", grade))
 		explore_locked = bool(profile_slot.get("explore_locked", false))
+	# Skills this profile has never practiced start at its grade's level (PLAN 3.11).
+	engine.start_unpracticed_at(AdaptiveEngine.starting_levels(grade))
 	return true
 
 
