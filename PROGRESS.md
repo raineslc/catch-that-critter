@@ -82,6 +82,7 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 - 2026-11-05 — The **Mountains** (hub's northeast gate): mountain goats, snow leopards, eagles (multiply/divide) and the hidden king cobra. All five habitats are built. 292 tests passing.
 - 2026-11-05 — **Habitat unlocking** (Phase 4 step 1 done): the Meadow and Forest start open; each hidden snake opens the next habitat. 297 tests passing.
 - 2026-11-05 — Phase 4 done: helper animals dropped (Chris); the **finale** plays once when all five snakes and 6+ animals from each habitat are home. 303 tests passing.
+- 2026-11-05 — **Playtest 3** set up (`tools/playtest_3_launch.cmd`, `docs/playtest_3.md`): the real game with profile buttons and real saves, logged. Found the Playtest 2 save rewritten at 11:58 by an older build (snake and stars lost).
 - 2026-11-05 — Phase 5 step 1: **two profiles** (big title buttons, name typed once), ranger hair/skin/outfit recolors, and **Loganator** for the second profile. 314 tests passing.
 
 ## Next

@@ -6,6 +6,7 @@ setlocal
 set "PROJECT=%~dp0.."
 set "PLAYTEST_FLAG=--playtest"
 if "%~1"=="--playtest-full" set "PLAYTEST_FLAG=--playtest-full"
+if "%~1"=="--playtest-3" set "PLAYTEST_FLAG=--playtest-3"
 set "GODOT="
 for /d %%D in ("%LOCALAPPDATA%\Microsoft\WinGet\Packages\GodotEngine.GodotEngine*") do (
   if exist "%%D\Godot_v4.7.2-stable_win64.exe" set "GODOT=%%D\Godot_v4.7.2-stable_win64.exe"

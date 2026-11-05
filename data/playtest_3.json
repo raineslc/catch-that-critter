@@ -1,0 +1,7 @@
+{
+  "description": "Playtest 3: the real game. Title profile buttons with the real saves, each habitat's own math, no respawns (caught animals stay home). Logged like Playtest 2; voice off.",
+  "version": "playtest-3-profiles",
+  "profiles": true,
+  "log": true,
+  "freeze_after_ms": 5000
+}
