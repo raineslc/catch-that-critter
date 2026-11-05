@@ -1,6 +1,7 @@
 {
   "description": "Every area you can walk into. Gates in data/maps/<id>.json point at these ids. Habitats without an entry here are 'coming soon' (their gates stay locked). \"opens_after\" = the habitat whose hidden snake must be caught before this one opens.",
   "start": "rescue_center",
+  "finale_critters_per_habitat": 6,
   "maps": {
     "rescue_center": {
       "scene": "res://scenes/world/rescue_center.tscn"

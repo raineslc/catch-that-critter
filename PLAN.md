@@ -43,7 +43,7 @@ Not a commercial product: no pricing, store listings, ads, or school licensing.
 - Short intro (a few illustrated panels with TTS narration): thunderstorm, fences fall, animals scatter.
 - The sidekick brother greets the ranger and explains the mission: bring every animal home.
 - Each capture repairs a section of fence at the Rescue Center.
-- Finale when all animals are home: clear sky and a celebration.
+- Finale when all animals are home: clear sky and a celebration. **(Chris 2026-11-05: all five snakes caught and at least 6 other animals home from each habitat; plays once.)**
 
 ### 3.2 Profiles
 - Two profiles now (allow up to 4).
@@ -100,7 +100,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 - Feed: spell the food's name with letter tiles (K: picture-match or first letter; Preschool: picture-match).
 - Care notes: short sentences, then a simple choice.
 - Fact cards per animal: 3–4 facts at K–3 reading level, TTS read-aloud button.
-- Helper animals: well-cared-for animals give chase bonuses (e.g., owl shows the runaway's path).
+- ~~Helper animals: well-cared-for animals give chase bonuses.~~ Dropped by Chris 2026-11-05.
 
 ### 3.10 Rewards & Progression
 - Stars from chases and care; spend on enclosure decorations and animal accessories.
@@ -190,7 +190,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 
 ### Phase 4 — Full Map
 - [x] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data. (Forest and Swamp 2026-11-04; Desert, Mountains, unlocking 2026-11-05. Unlocking: each habitat's hidden snake opens the next.)
-- [ ] Special rarity tier: hidden snakes for the other habitats (all five done 2026-11-05); helper animal bonuses; finale.
+- [x] Special rarity tier: hidden snakes for the other habitats (all five done 2026-11-05); ~~helper animal bonuses~~ (dropped); finale (2026-11-05).
 
 ### Phase 5 — Profiles, Sessions & Parent Area
 - [ ] Two profiles with per-profile sidekick, ranger customization, save/load.

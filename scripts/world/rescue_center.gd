@@ -61,6 +61,7 @@ var decorate_button: Button
 var book_button: Button
 var shop_screen: ShopScreen
 var book_screen: BookScreen
+var finale_screen: FinaleScreen
 ## The pen the Decorate button is offering (its habitat), or "".
 var decorate_target: String = ""
 var rest_button: Button
@@ -76,6 +77,7 @@ func build() -> void:
 	_show_repairs()
 	_build_rest_button()
 	_build_book_button()
+	show_finale_if_ready.call_deferred()
 
 
 ## Fence sections in a pen: one rail piece per column, top and bottom rows.
@@ -120,7 +122,7 @@ static func is_fixed(fence: StaticBody2D) -> bool:
 
 ## A care, shop, or book screen is open (the world waits).
 func screen_open() -> bool:
-	return care_screen != null or shop_screen != null or book_screen != null
+	return care_screen != null or shop_screen != null or book_screen != null or finale_screen != null
 
 
 func _process(_delta: float) -> void:
@@ -242,6 +244,25 @@ func open_book() -> void:
 	book_screen = BookScreen.new()
 	add_child(book_screen)
 	book_screen.closed.connect(_on_book_closed)
+
+
+## Plays the finale once, the first time the player is at the hub with everyone home.
+func show_finale_if_ready() -> void:
+	if screen_open() or GameState.finale_seen or not GameState.finale_ready():
+		return
+	_set_world_waiting(true)
+	GameState.log_event("finale", {"rescued": GameState.rescued_count()})
+	finale_screen = FinaleScreen.new()
+	add_child(finale_screen)
+	finale_screen.closed.connect(_on_finale_closed)
+
+
+func _on_finale_closed() -> void:
+	GameState.finale_seen = true
+	GameState.save_progress()
+	finale_screen.queue_free()
+	finale_screen = null
+	_set_world_waiting(false)
 
 
 func _on_book_closed() -> void:

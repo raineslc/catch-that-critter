@@ -87,6 +87,8 @@ static func valid(data: Variant) -> bool:
 	# Stars and decorations came later; older saves without them are still valid.
 	if data.has("stars") and not _whole(data.stars):
 		return false
+	if data.has("finale_seen") and not data.finale_seen is bool:
+		return false
 	if data.has("decorations"):
 		if not data.decorations is Dictionary:
 			return false
