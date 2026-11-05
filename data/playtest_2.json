@@ -1,8 +1,8 @@
 {
   "description": "Playtest 2: current story, hub, rescue and care loop. Separate local save; voice off. Start at mixed addition/subtraction within 20, then adapt.",
-  "version": "playtest-2.0-review",
+  "version": "playtest-2.1-snake",
   "starting_level": 3,
-  "respawn_seconds": 0.0,
+  "respawn_seconds": 25.0,
   "log": true,
   "freeze_after_ms": 5000,
   "skill": {
