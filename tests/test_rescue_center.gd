@@ -126,7 +126,7 @@ func test_walking_into_the_gate_uses_it() -> void:
 func test_unbuilt_habitats_are_locked_and_say_so() -> void:
 	await _open_hub()
 	watch_signals(hub)
-	for gate: String in ["4", "5"]:
+	for gate: String in ["5"]:
 		assert_true(hub.gates[gate] is StaticBody2D, "gate %s is fenced off" % gate)
 		hub.use_gate(gate)
 	assert_signal_not_emitted(hub, "gate_used")

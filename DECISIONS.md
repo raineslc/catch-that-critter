@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — The Desert (Phase 4 step 1; Chris: merge the Swamp and continue)
+- The hub's south gate opens to the Desert: lizards (3), tortoises (2), roadrunners (2, fast), and the hidden rattlesnake under one of 8 rocks, with a small oasis. Desert animals practice **time and money** (clocks and coins); the rattlesnake's story stays add/subtract.
+- The art pack has no sand, so a map's info file can set `"ground_tint"`; the Desert tints its grass sandy (the oasis water picks up a slight tint too).
+- Lizard art is the pack's (4×4 grid). Tortoise (turtle shape, desert colors), roadrunner, rattlesnake, and a cactus food icon are drawn in code.
+- Care foods: lizard crickets/bugs/worms/flies/berries; tortoise cactus/clover/leaves/berries/apples/corn; roadrunner lizards/crickets/bugs/mice/eggs; rattlesnake mice/rats/lizards.
+
 ## 2026-11-04 — The Swamp (Phase 4 step 1, after the Forest playtest; Chris: "move to the next phase")
 - The hub's east gate opens to the Swamp: turtles (3), frogs (3), alligators (2), and the hidden green anaconda under one of 7 rocks. Swamp animals practice **place value** (PLAN 3.4's Swamp skill); the anaconda's story problem stays add/subtract like every snake.
 - Playtest 2 still forces add/subtract for every chase (its playtest skill overrides the animal's), so place value only shows in normal play.

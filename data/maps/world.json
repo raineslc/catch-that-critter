@@ -13,6 +13,9 @@
     },
     "swamp": {
       "scene": "res://scenes/world/swamp.tscn"
+    },
+    "desert": {
+      "scene": "res://scenes/world/desert.tscn"
     }
   }
 }

@@ -119,6 +119,47 @@
       "hides_under_rocks": true,
       "sprite": "res://assets/sprites/animals/green_anaconda/sprite_sheet.png",
       "faceset": "res://assets/sprites/animals/green_anaconda/faceset.png"
+    },
+    {
+      "id": "lizard",
+      "name": "Lizard",
+      "habitat": "desert",
+      "skill": "time_money",
+      "rarity": "common",
+      "layout": "grid",
+      "frames": 4,
+      "sprite": "res://assets/sprites/animals/lizard/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/lizard/faceset.png"
+    },
+    {
+      "id": "tortoise",
+      "name": "Tortoise",
+      "habitat": "desert",
+      "skill": "time_money",
+      "rarity": "common",
+      "flee_speed": 55.0,
+      "sprite": "res://assets/sprites/animals/tortoise/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/tortoise/faceset.png"
+    },
+    {
+      "id": "roadrunner",
+      "name": "Roadrunner",
+      "habitat": "desert",
+      "skill": "time_money",
+      "rarity": "uncommon",
+      "flee_speed": 105.0,
+      "sprite": "res://assets/sprites/animals/roadrunner/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/roadrunner/faceset.png"
+    },
+    {
+      "id": "rattlesnake",
+      "name": "Rattlesnake",
+      "habitat": "desert",
+      "skill": "add_subtract",
+      "rarity": "special",
+      "hides_under_rocks": true,
+      "sprite": "res://assets/sprites/animals/rattlesnake/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/rattlesnake/faceset.png"
     }
   ]
 }

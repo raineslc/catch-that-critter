@@ -17,6 +17,8 @@ PYTHON = dict(VINE, **{"G": (176, 132, 72), "g": (92, 62, 36), "L": (236, 214, 1
 DEER = dict(PALETTE, **{"D": (22, 26, 24)})
 ANACONDA = dict(VINE, **{"G": (104, 128, 52), "g": (36, 46, 28), "L": (214, 200, 104)})
 GATOR = dict(DEER, **{"G": (84, 120, 60), "g": (52, 78, 40)})
+TORTOISE = dict(DEER, **{"C": (176, 140, 84), "c": (120, 90, 54), "G": (158, 140, 106)})
+RATTLER = dict(VINE, **{"G": (200, 164, 100), "g": (104, 68, 38), "L": (236, 214, 166)})
 
 
 def mirrored(halves: list[str]) -> list[str]:
@@ -274,6 +276,70 @@ ANIMALS["alligator"] = {
         "DDDDDkkkkk",
         "DDDDDDDDDD",
         "DDDDDDDDDD",
+    ]),
+}
+ANIMALS["tortoise"] = dict(ANIMALS["turtle"], palette=TORTOISE)
+ANIMALS["rattlesnake"] = dict(ANIMALS["green_vine_snake"], palette=RATTLER)
+ANIMALS["roadrunner"] = {
+    "palette": DEER,
+    "frames": [
+        [
+            "................",
+            "................",
+            "..........kkk...",
+            ".........kBBBk..",
+            "kk.......kBHbaak",
+            "kBk......kBBBkk.",
+            ".kBk....kBBBk...",
+            "..kBkkkkBwBBk...",
+            "...kBwBwBBBk....",
+            "....kBBwBBk.....",
+            ".....kkkkk......",
+            "......k..k......",
+            "......a..a......",
+            ".....aa.aa......",
+            "................",
+            "................",
+        ],
+        [
+            "................",
+            "................",
+            "..........kkk...",
+            ".........kBBBk..",
+            "kk.......kBHbaak",
+            "kBk......kBBBkk.",
+            ".kBk....kBBBk...",
+            "..kBkkkkBwBBk...",
+            "...kBwBwBBBk....",
+            "....kBBwBBk.....",
+            ".....kkkkk......",
+            "......k.k.......",
+            ".....a...a......",
+            "....aa....aa....",
+            "................",
+            "................",
+        ],
+    ],
+    "face": mirrored([
+        "DDDDDDDDDD",
+        "DDDDDDkkDk",
+        "DDDDDkBBkB",
+        "DDDDkBbBBB",
+        "DDDkBBBBBB",
+        "DDkBBkkkBB",
+        "DDkBkHHbkB",
+        "DDkBkHbbkB",
+        "DkBBBkkkBB",
+        "DkBwBBBBBa",
+        "DkBBwBBBaa",
+        "DkBBBwBBaa",
+        "DDkBBBBkaa",
+        "DDDkBBBBka",
+        "DDDDkwBBBk",
+        "DDDDkBwBBB",
+        "DDDkBBBwBB",
+        "DDkBBBBBBB",
+        "DDkBwBBBwB",
     ]),
 }
 

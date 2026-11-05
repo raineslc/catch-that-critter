@@ -159,6 +159,11 @@
       "word": "snails",
       "description": "They are slow and carry a shell on their back.",
       "picture": "res://assets/ui/food/snails.png"
+    },
+    "cactus": {
+      "word": "cactus",
+      "description": "It is a spiky desert plant that holds water.",
+      "picture": "res://assets/ui/food/cactus.png"
     }
   },
   "animals": {
@@ -776,6 +781,249 @@
         "They live in swamps and rivers in South America.",
         "Their eyes sit on top of their heads to see above water.",
         "Baby anacondas are born live, not from eggs."
+      ]
+    },
+    "lizard": {
+      "foods": [
+        "crickets",
+        "bugs",
+        "worms",
+        "flies",
+        "berries"
+      ],
+      "care_notes": [
+        {
+          "text": "The lizard warms up in the sun.",
+          "question": "What can we add?",
+          "good": "A warm, flat rock",
+          "others": [
+            "A bucket of ice"
+          ],
+          "older_others": [
+            "A dark blanket"
+          ]
+        },
+        {
+          "text": "The lizard likes to hide when scared.",
+          "question": "What does it need?",
+          "good": "A little rock cave",
+          "others": [
+            "A loud drum"
+          ],
+          "older_others": [
+            "An open, bare floor"
+          ]
+        },
+        {
+          "text": "The lizard is thirsty.",
+          "question": "What should we give it?",
+          "good": "A shallow water dish",
+          "others": [
+            "A cup of soda"
+          ],
+          "older_others": [
+            "A deep pool"
+          ]
+        },
+        {
+          "text": "The lizard runs fast and climbs.",
+          "question": "What can we put in its pen?",
+          "good": "Rocks and branches",
+          "others": [
+            "A pillow"
+          ],
+          "older_others": [
+            "A paper bag"
+          ]
+        }
+      ],
+      "facts": [
+        "Some lizards can drop their tail to get away.",
+        "Lizards lie in the sun to warm up.",
+        "A lizard's skin is covered in tiny scales.",
+        "Many lizards hatch from eggs."
+      ]
+    },
+    "tortoise": {
+      "foods": [
+        "cactus",
+        "clover",
+        "leaves",
+        "berries",
+        "apples",
+        "corn"
+      ],
+      "care_notes": [
+        {
+          "text": "The tortoise digs a burrow to stay cool.",
+          "question": "What does it need?",
+          "good": "Soft dirt to dig in",
+          "others": [
+            "A hard floor"
+          ],
+          "older_others": [
+            "A puddle of mud"
+          ]
+        },
+        {
+          "text": "The tortoise walks very slowly.",
+          "question": "How should we act?",
+          "good": "Be patient",
+          "others": [
+            "Push it along"
+          ],
+          "older_others": [
+            "Carry it everywhere"
+          ]
+        },
+        {
+          "text": "The tortoise is getting too hot.",
+          "question": "What will help?",
+          "good": "A shady spot",
+          "others": [
+            "A heat lamp"
+          ],
+          "older_others": [
+            "A wool blanket"
+          ]
+        },
+        {
+          "text": "The tortoise needs a drink.",
+          "question": "What should we give it?",
+          "good": "A shallow water dish",
+          "others": [
+            "A tall glass"
+          ],
+          "older_others": [
+            "A cup of milk"
+          ]
+        }
+      ],
+      "facts": [
+        "Tortoises live on land, not in water.",
+        "A desert tortoise can live more than 50 years.",
+        "Tortoises dig burrows to hide from the heat.",
+        "A tortoise gets much of its water from plants."
+      ]
+    },
+    "roadrunner": {
+      "foods": [
+        "lizards",
+        "crickets",
+        "bugs",
+        "mice",
+        "eggs"
+      ],
+      "care_notes": [
+        {
+          "text": "The roadrunner loves to run.",
+          "question": "What does it need?",
+          "good": "Lots of room to run",
+          "others": [
+            "A tiny cage"
+          ],
+          "older_others": [
+            "A tall ladder"
+          ]
+        },
+        {
+          "text": "The roadrunner warms up in the morning sun.",
+          "question": "What can we add?",
+          "good": "A sunny spot",
+          "others": [
+            "A cold fan"
+          ],
+          "older_others": [
+            "A dark box"
+          ]
+        },
+        {
+          "text": "The roadrunner wants a safe place to rest.",
+          "question": "What can we add?",
+          "good": "A thick bush",
+          "others": [
+            "A loud speaker"
+          ],
+          "older_others": [
+            "A bare rock"
+          ]
+        },
+        {
+          "text": "The roadrunner is thirsty after running.",
+          "question": "What should we give it?",
+          "good": "Fresh water",
+          "others": [
+            "A cup of juice"
+          ],
+          "older_others": [
+            "A bowl of sand"
+          ]
+        }
+      ],
+      "facts": [
+        "Roadrunners would rather run than fly.",
+        "A roadrunner can run about 20 miles an hour.",
+        "Roadrunners are fast enough to catch lizards.",
+        "They are part of the cuckoo bird family."
+      ]
+    },
+    "rattlesnake": {
+      "foods": [
+        "mice",
+        "rats",
+        "lizards"
+      ],
+      "care_notes": [
+        {
+          "text": "The rattlesnake shakes its tail when it is scared.",
+          "question": "What should we do?",
+          "good": "Step back and give it space",
+          "others": [
+            "Poke it"
+          ],
+          "older_others": [
+            "Grab its tail"
+          ]
+        },
+        {
+          "text": "The rattlesnake likes to rest in the shade.",
+          "question": "What can we add?",
+          "good": "A shady rock cave",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "A bare sunny floor"
+          ]
+        },
+        {
+          "text": "Rattlesnakes are venomous.",
+          "question": "Who should handle it?",
+          "good": "Only trained grown-ups",
+          "others": [
+            "Any kid"
+          ],
+          "older_others": [
+            "Nobody ever feeds it"
+          ]
+        },
+        {
+          "text": "The rattlesnake needs a drink.",
+          "question": "What should we give it?",
+          "good": "A water bowl",
+          "others": [
+            "A cup of milk"
+          ],
+          "older_others": [
+            "A wet sponge"
+          ]
+        }
+      ],
+      "facts": [
+        "A rattlesnake's rattle is made of the same stuff as your nails.",
+        "Rattlesnakes rattle their tails to warn others away.",
+        "Rattlesnakes can sense the warmth of animals nearby.",
+        "Baby rattlesnakes are born live, not from eggs."
       ]
     }
   }
