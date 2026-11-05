@@ -129,6 +129,9 @@ func build() -> void:
 	ground = TileMapLayer.new()
 	ground.name = "Ground"
 	ground.tile_set = _make_tile_set()
+	# Optional "ground_tint": [r, g, b] in the map's info file, e.g. sandy grass for the Desert.
+	var tint: Array = map.meta.get("ground_tint", [1.0, 1.0, 1.0])
+	ground.modulate = Color(float(tint[0]), float(tint[1]), float(tint[2]))
 	add_child(ground)
 	objects = Node2D.new()
 	objects.name = "Objects"

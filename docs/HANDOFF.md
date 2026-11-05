@@ -4,12 +4,12 @@ Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTION
 
 ## Where things stand
 - **Repo:** GitHub `raineslc/catch-that-critter` (private) is the source of truth. Work in `C:\Users\raine\Projects\catch-that-critter`; start every task by fetching and branching from the latest `origin/main`. (The older checkout `C:\Users\raine\CatchACritter` is out of date — don't use it.)
-- **282 GUT tests pass** locally and in CI. Last merged: Phase 4 step 1 started — the **Forest** (PR after #25).
+- **287 GUT tests pass** locally and in CI. Last merged: Phase 4 step 1 started — the **Forest** (PR after #25).
 - **Done:** Phases 0–3 (setup, math core, Meadow + chases, storm intro, Rescue Center hub, care, stars/levels/shop/Rescue Book), Playtest 2 and 2.1 with their fixes, the hidden snakes (Meadow and Forest), and the Forest habitat.
-- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python), east gate = **Swamp** (turtles, frogs, alligators practicing place value; hidden green anaconda). Desert and Mountains gates show "opens soon".
+- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python), east gate = **Swamp** (turtles, frogs, alligators practicing place value; hidden green anaconda), south gate = **Desert** (lizards, tortoises, roadrunners practicing time and money; hidden rattlesnake). The Mountains gate shows "opens soon".
 
 ## Next steps (in order)
-1. **Phase 4, step 1 continued — one habitat per PR, checked with Chris before the next:** Desert (lizard, tortoise, roadrunner + hidden rattlesnake; time & money skill), Mountains (mountain goat, snow leopard, eagle + hidden king cobra; multiply/divide skill). Follow the Forest's pattern (below). Lizard art exists (4×4 grid) in `assets/sprites/animals/`; tortoise, roadrunner, goat, snow leopard, eagle, rattlesnake, and king cobra must be drawn (`tools/make_animal_art.py`) unless Chris provides art.
+1. **Phase 4, step 1 continued — one habitat per PR, checked with Chris before the next:** Mountains (mountain goat, snow leopard, eagle + hidden king cobra; multiply/divide skill) is the last one. Follow the Forest's pattern (below); a map can set `"ground_tint"` in its info file (the Desert does). Goat, snow leopard, eagle, and king cobra must be drawn (`tools/make_animal_art.py`) unless Chris provides art.
 2. **Habitat unlocking** (PLAN 3.4): habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked. Not built yet — today every built habitat's gate is simply open. The Swamp now exists, so this can come any time.
 3. Phase 4, step 2: helper animal bonuses, finale. Then Phase 5 (profiles, session timer, parent area).
 

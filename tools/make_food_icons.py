@@ -374,6 +374,24 @@ ICONS = {
         "................",
         "................",
     ],
+    "cactus": [
+        "................",
+        ".......kkk......",
+        "......kGgGk.....",
+        "......kGgGk.kk..",
+        "..kk..kGgGk.kGk.",
+        ".kGk..kGgGk.kGk.",
+        ".kGk..kGgGkkkGk.",
+        ".kGkkkkGgGGGGGk.",
+        ".kGGGGGGgGkkkk..",
+        "..kkkkkGgGk.....",
+        "......kGgGk.....",
+        "......kGgGk.....",
+        "....kkkkkkkkk...",
+        "....kNNNNNNNk...",
+        ".....kkkkkkk....",
+        "................",
+    ],
 }
 # Rats and gerbils: the mouse drawing in other colors.
 ICONS["rats"] = [row.replace("S", "A").replace("s", "a") for row in ICONS["mice"]]

@@ -7,7 +7,7 @@
     "2": {"to": "forest", "arrive": "1", "label": "Forest"},
     "5": {"to": "mountains", "label": "Mountains", "locked": true},
     "3": {"to": "swamp", "arrive": "1", "label": "Swamp"},
-    "4": {"to": "desert", "label": "Desert", "locked": true}
+    "4": {"to": "desert", "arrive": "1", "label": "Desert"}
   },
   "pens": [
     {"habitat": "meadow", "label": "Meadow", "cell": [2, 6], "pieces": 2, "depth": 5, "special_pieces": 1},
