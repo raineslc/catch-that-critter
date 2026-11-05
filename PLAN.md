@@ -189,7 +189,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 - [x] Stars, animal levels, collection book. (Small pen shop with 4 decorations; animal accessories later.)
 
 ### Phase 4 — Full Map
-- [ ] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data. (Forest and Swamp done 2026-11-04, Desert 2026-11-05; Mountains and unlocking next.)
+- [ ] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data. (Forest and Swamp done 2026-11-04, Desert and Mountains 2026-11-05; habitat unlocking next.)
 - [ ] Special rarity tier: hidden snakes for the other habitats (Meadow green vine snake done 2026-11-04); helper animal bonuses; finale.
 
 ### Phase 5 — Profiles, Sessions & Parent Area

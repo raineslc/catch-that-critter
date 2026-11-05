@@ -1,7 +1,7 @@
 extends GutTest
 ## Checks the text map files are well-formed and fully explorable.
 
-const MAPS: Array[String] = ["res://data/maps/meadow.txt", "res://data/maps/rescue_center.txt", "res://data/maps/forest.txt", "res://data/maps/swamp.txt", "res://data/maps/desert.txt"]
+const MAPS: Array[String] = ["res://data/maps/meadow.txt", "res://data/maps/rescue_center.txt", "res://data/maps/forest.txt", "res://data/maps/swamp.txt", "res://data/maps/desert.txt", "res://data/maps/mountains.txt"]
 
 
 func test_maps_are_rectangular_and_use_known_characters() -> void:

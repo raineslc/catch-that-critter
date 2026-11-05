@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — The Mountains (last habitat of Phase 4 step 1; Chris: merge the Desert and continue)
+- The hub's northeast gate opens to the Mountains: mountain goats (3), snow leopards (2, fast), eagles (2), and the hidden king cobra under one of 10 rocks, with pine groves and a lake and a cool ground tint. Mountain animals practice **multiplying and dividing**; the cobra's story stays add/subtract.
+- All five habitat gates are open now; the "opens soon" fence stays in the code for habitat unlocking.
+- Drawn in code: mountain goat, snow leopard, eagle, king cobra, and grass and meat food icons.
+- Care foods: goat grass/clover/leaves/apples/corn/berries; snow leopard meat/mice/rats/eggs/fish; eagle fish/mice/rats/lizards/meat; king cobra mice/lizards/eggs.
+
 ## 2026-11-05 — The Desert (Phase 4 step 1; Chris: merge the Swamp and continue)
 - The hub's south gate opens to the Desert: lizards (3), tortoises (2), roadrunners (2, fast), and the hidden rattlesnake under one of 8 rocks, with a small oasis. Desert animals practice **time and money** (clocks and coins); the rattlesnake's story stays add/subtract.
 - The art pack has no sand, so a map's info file can set `"ground_tint"`; the Desert tints its grass sandy (the oasis water picks up a slight tint too).
