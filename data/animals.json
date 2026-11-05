@@ -37,13 +37,7 @@
       "rarity": "special",
       "hides_under_rocks": true,
       "sprite": "res://assets/sprites/animals/green_vine_snake/sprite_sheet.png",
-      "faceset": "res://assets/sprites/animals/green_vine_snake/faceset.png",
-      "facts": [
-        "A green vine snake is long and thin, just like a vine.",
-        "Its bright green color helps it hide in the leaves.",
-        "It has a long, pointy nose.",
-        "It likes to eat lizards and frogs."
-      ]
+      "faceset": "res://assets/sprites/animals/green_vine_snake/faceset.png"
     }
   ]
 }

@@ -77,7 +77,7 @@ func test_decorations_use_real_map_objects_and_fit_in_the_pen() -> void:
 	for item: Dictionary in Rewards.new().decorations():
 		assert_true(legend["objects"].has(item["object"]), "%s uses a map object" % item["id"])
 		assert_gt(int(item["price"]), 0)
-		assert_between(int(item["spot"][0]), 1, 7, "%s inside the pen (x)" % item["id"])
+		assert_between(int(item["spot"][0]), 0, 5, "%s inside the 6-wide habitat pen (x)" % item["id"])
 		assert_between(int(item["spot"][1]), 2, 4, "%s inside the pen (y)" % item["id"])
 
 

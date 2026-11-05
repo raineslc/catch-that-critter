@@ -10,10 +10,10 @@
     "4": {"to": "desert", "label": "Desert", "locked": true}
   },
   "pens": [
-    {"habitat": "meadow", "label": "Meadow", "cell": [2, 6], "pieces": 3, "depth": 5},
-    {"habitat": "forest", "label": "Forest", "cell": [14, 4], "pieces": 3, "depth": 5},
-    {"habitat": "mountains", "label": "Mountains", "cell": [29, 4], "pieces": 3, "depth": 5},
-    {"habitat": "swamp", "label": "Swamp", "cell": [24, 17], "pieces": 3, "depth": 5},
-    {"habitat": "desert", "label": "Desert", "cell": [5, 17], "pieces": 3, "depth": 5}
+    {"habitat": "meadow", "label": "Meadow", "cell": [2, 6], "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "forest", "label": "Forest", "cell": [14, 4], "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "mountains", "label": "Mountains", "cell": [29, 4], "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "swamp", "label": "Swamp", "cell": [24, 17], "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "desert", "label": "Desert", "cell": [5, 17], "pieces": 2, "depth": 5, "special_pieces": 1}
   ]
 }

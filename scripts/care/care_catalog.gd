@@ -67,6 +67,13 @@ func feeding_rules(grade: String) -> Dictionary:
 	return grades.get(grade, grades.get(DEFAULT_GRADE, {"modes": [CareVisit.SPELL]}))
 
 
+## One grade harder than `grade` ("K" → "1", "1" → "2", "2" → "3"; "3" stays "3").
+static func harder_grade(grade: String) -> String:
+	var order: Array[String] = ["K", "1", "2", "3"]
+	var i: int = order.find(grade)
+	return order[mini(i + 1, order.size() - 1)] if i >= 0 else DEFAULT_GRADE
+
+
 func grades() -> Array[String]:
 	var out: Array[String] = []
 	for grade: Variant in _data.get("feeding", {}).get("grades", {}):

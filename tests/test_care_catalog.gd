@@ -5,7 +5,8 @@ extends GutTest
 const UNKIND_WORDS: Array[String] = ["wrong", "bad", "fail", "stupid", "dead", "die"]
 ## Short enough for a 2nd grader to read on one line.
 const MAX_FACT_WORDS: int = 14
-const MAX_NOTE_WORDS: int = 10
+## Snake notes are written one grade up, so a little longer.
+const MAX_NOTE_WORDS: int = 12
 
 var catalog: CareCatalog
 
@@ -20,11 +21,7 @@ func _check_kind(text: String) -> void:
 
 
 func test_every_rescued_animal_can_be_cared_for() -> void:
-	var animals: AnimalCatalog = AnimalCatalog.new()
-	for id: String in animals.ids():
-		if bool(animals.get_animal(id).get("hides_under_rocks", false)):
-			assert_false(animals.get_animal(id).get("facts", []).is_empty(), "%s (hidden snake) has facts" % id)
-			continue
+	for id: String in AnimalCatalog.new().ids():
 		assert_true(catalog.has_animal(id), "%s has care data" % id)
 
 

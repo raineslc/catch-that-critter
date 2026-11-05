@@ -1,59 +1,186 @@
 {
   "feeding": {
     "grades": {
-      "K": {"modes": ["picture_match", "first_letter"], "choices": 3},
-      "1": {"modes": ["spell"], "extra_letters": 0},
-      "2": {"modes": ["spell"], "extra_letters": 1},
-      "3": {"modes": ["spell"], "extra_letters": 2}
+      "K": {
+        "modes": [
+          "picture_match",
+          "first_letter"
+        ],
+        "choices": 3
+      },
+      "1": {
+        "modes": [
+          "spell"
+        ],
+        "extra_letters": 0
+      },
+      "2": {
+        "modes": [
+          "spell"
+        ],
+        "extra_letters": 1
+      },
+      "3": {
+        "modes": [
+          "spell"
+        ],
+        "extra_letters": 2
+      }
     },
     "hint_after_misses": 2
   },
   "foods": {
-    "fish": {"word": "fish", "description": "It swims using fins.", "picture": "res://assets/ui/food/fish.png"},
-    "corn": {"word": "corn", "description": "It grows on a tall plant and has yellow kernels.", "picture": "res://assets/ui/food/corn.png"},
-    "bugs": {"word": "bugs", "description": "They are small and crawl on six legs.", "picture": "res://assets/ui/food/bugs.png"},
-    "nuts": {"word": "nuts", "description": "They have a hard shell and fall from trees.", "picture": "res://assets/ui/food/nuts.png"},
-    "eggs": {"word": "eggs", "description": "Birds lay these.", "picture": "res://assets/ui/food/eggs.png"},
-    "crab": {"word": "crab", "description": "It walks sideways and has big claws.", "picture": "res://assets/ui/food/crab.png"},
-    "clams": {"word": "clams", "description": "They live in a shell that opens and shuts.", "picture": "res://assets/ui/food/clams.png"},
-    "plums": {"word": "plums", "description": "They are sweet purple fruits.", "picture": "res://assets/ui/food/plums.png"},
-    "worms": {"word": "worms", "description": "They wiggle in the dirt after rain.", "picture": "res://assets/ui/food/worms.png"},
-    "grapes": {"word": "grapes", "description": "They grow in bunches on a vine.", "picture": "res://assets/ui/food/grapes.png"},
-    "apples": {"word": "apples", "description": "They are crunchy fruits that grow on trees.", "picture": "res://assets/ui/food/apples.png"},
-    "shrimp": {"word": "shrimp", "description": "It has a curled body and long feelers.", "picture": "res://assets/ui/food/shrimp.png"},
-    "honey": {"word": "honey", "description": "Bees make this sweet food.", "picture": "res://assets/ui/food/honey.png"}
+    "fish": {
+      "word": "fish",
+      "description": "It swims using fins.",
+      "picture": "res://assets/ui/food/fish.png"
+    },
+    "corn": {
+      "word": "corn",
+      "description": "It grows on a tall plant and has yellow kernels.",
+      "picture": "res://assets/ui/food/corn.png"
+    },
+    "bugs": {
+      "word": "bugs",
+      "description": "They are small and crawl on six legs.",
+      "picture": "res://assets/ui/food/bugs.png"
+    },
+    "nuts": {
+      "word": "nuts",
+      "description": "They have a hard shell and fall from trees.",
+      "picture": "res://assets/ui/food/nuts.png"
+    },
+    "eggs": {
+      "word": "eggs",
+      "description": "Birds lay these.",
+      "picture": "res://assets/ui/food/eggs.png"
+    },
+    "crab": {
+      "word": "crab",
+      "description": "It walks sideways and has big claws.",
+      "picture": "res://assets/ui/food/crab.png"
+    },
+    "clams": {
+      "word": "clams",
+      "description": "They live in a shell that opens and shuts.",
+      "picture": "res://assets/ui/food/clams.png"
+    },
+    "plums": {
+      "word": "plums",
+      "description": "They are sweet purple fruits.",
+      "picture": "res://assets/ui/food/plums.png"
+    },
+    "worms": {
+      "word": "worms",
+      "description": "They wiggle in the dirt after rain.",
+      "picture": "res://assets/ui/food/worms.png"
+    },
+    "grapes": {
+      "word": "grapes",
+      "description": "They grow in bunches on a vine.",
+      "picture": "res://assets/ui/food/grapes.png"
+    },
+    "apples": {
+      "word": "apples",
+      "description": "They are crunchy fruits that grow on trees.",
+      "picture": "res://assets/ui/food/apples.png"
+    },
+    "shrimp": {
+      "word": "shrimp",
+      "description": "It has a curled body and long feelers.",
+      "picture": "res://assets/ui/food/shrimp.png"
+    },
+    "lizards": {
+      "word": "lizards",
+      "description": "They are small reptiles with four legs and a long tail.",
+      "picture": "res://assets/ui/food/lizards.png"
+    },
+    "geckos": {
+      "word": "geckos",
+      "description": "They are little lizards with sticky toes.",
+      "picture": "res://assets/ui/food/geckos.png"
+    },
+    "tadpoles": {
+      "word": "tadpoles",
+      "description": "They are baby frogs that swim with their tails.",
+      "picture": "res://assets/ui/food/tadpoles.png"
+    },
+    "crickets": {
+      "word": "crickets",
+      "description": "They are insects that chirp at night.",
+      "picture": "res://assets/ui/food/crickets.png"
+    },
+    "mice": {
+      "word": "mice",
+      "description": "They are tiny animals with long tails and round ears.",
+      "picture": "res://assets/ui/food/mice.png"
+    },
+    "honey": {
+      "word": "honey",
+      "description": "Bees make this sweet food.",
+      "picture": "res://assets/ui/food/honey.png"
+    }
   },
   "animals": {
     "raccoon": {
-      "foods": ["fish", "corn", "bugs", "nuts", "eggs", "crab", "clams", "plums", "worms", "grapes", "apples", "shrimp"],
+      "foods": [
+        "fish",
+        "corn",
+        "bugs",
+        "nuts",
+        "eggs",
+        "crab",
+        "clams",
+        "plums",
+        "worms",
+        "grapes",
+        "apples",
+        "shrimp"
+      ],
       "care_notes": [
         {
           "text": "The raccoon got muddy in the storm.",
           "question": "What will help?",
           "good": "A warm bath",
-          "others": ["A big hat"],
-          "older_others": ["A drink of water"]
+          "others": [
+            "A big hat"
+          ],
+          "older_others": [
+            "A drink of water"
+          ]
         },
         {
           "text": "The raccoon is thirsty after its long run.",
           "question": "What does it need?",
           "good": "Fresh water",
-          "others": ["A toy car"],
-          "older_others": ["A log to climb"]
+          "others": [
+            "A toy car"
+          ],
+          "older_others": [
+            "A log to climb"
+          ]
         },
         {
           "text": "The raccoon loves to climb.",
           "question": "What can we put in its pen?",
           "good": "A log to climb",
-          "others": ["A pillow"],
-          "older_others": ["A bowl of water"]
+          "others": [
+            "A pillow"
+          ],
+          "older_others": [
+            "A bowl of water"
+          ]
         },
         {
           "text": "The raccoon sleeps in the day.",
           "question": "What should we do at nap time?",
           "good": "Be very quiet",
-          "others": ["Sing a loud song"],
-          "older_others": ["Play beside its bed"]
+          "others": [
+            "Sing a loud song"
+          ],
+          "older_others": [
+            "Play beside its bed"
+          ]
         }
       ],
       "facts": [
@@ -61,6 +188,67 @@
         "Raccoons use their front paws like little hands.",
         "Raccoons sleep in the day and look for food at night.",
         "A baby raccoon is called a kit."
+      ]
+    },
+    "green_vine_snake": {
+      "foods": [
+        "lizards",
+        "geckos",
+        "tadpoles",
+        "crickets",
+        "mice"
+      ],
+      "care_notes": [
+        {
+          "text": "Snakes cannot make their own heat, so they rest in warm places.",
+          "question": "What should we put in the snake's pen?",
+          "good": "A warm, flat rock",
+          "others": [
+            "A bucket of ice"
+          ],
+          "older_others": [
+            "A fan that blows cold air"
+          ]
+        },
+        {
+          "text": "The vine snake is shedding its old skin so it can grow.",
+          "question": "What will help it shed?",
+          "good": "A rough branch to rub on",
+          "others": [
+            "A soft pillow"
+          ],
+          "older_others": [
+            "A bowl of sand"
+          ]
+        },
+        {
+          "text": "Vine snakes like to climb and hide among the leaves.",
+          "question": "What does its pen need?",
+          "good": "Tall plants and branches",
+          "others": [
+            "A toy car"
+          ],
+          "older_others": [
+            "A flat, empty floor"
+          ]
+        },
+        {
+          "text": "The snake is hiding quietly after eating a big meal.",
+          "question": "What should we do now?",
+          "good": "Let it rest",
+          "others": [
+            "Sing a loud song"
+          ],
+          "older_others": [
+            "Feed it again right away"
+          ]
+        }
+      ],
+      "facts": [
+        "A green vine snake is long and thin, just like a vine.",
+        "Its bright green color helps it hide in the leaves.",
+        "It has a long, pointy nose.",
+        "It likes to eat lizards and frogs."
       ]
     }
   }

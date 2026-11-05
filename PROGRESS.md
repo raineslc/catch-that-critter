@@ -73,9 +73,10 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 
 - 2026-11-04 — Hidden snakes (Chris's idea, replaces the rare-animal list): the Meadow's green vine snake hides under one of its rocks; "Look under the rock" to find it (finds and a Henrito clue after 3 empty rocks), then one story problem one level harder catches it (5 stars) or it slides under another rock. `SnakeHunt`, `WordProblem` (`data/word_problems.json`), `SnakeScreen`; art from `tools/make_snake_art.py`. 269 tests passing.
 
+- 2026-11-04 — Playtest 2.1 (7 min, no freezes): found the snake after 3 empty rocks and caught it on the one try; 12 stars earned, bought a rock. Then, per Chris: snakes get a special pen beside their habitat's pen and are cared for one grade harder (5 new snake food words). 272 tests passing.
+
 ## Next
 - Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
-- Chris: try finding the green vine snake in the Meadow.
 - Phase 4, step 1 (next, after Chris confirms): Forest, Swamp, Desert, Mountains maps; habitat unlocking; all animal data. Needs art for the missing species (fox, rabbit, deer, turtle, tortoise, goat, snow leopard, eagle).
 - Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 
