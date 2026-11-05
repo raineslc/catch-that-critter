@@ -38,6 +38,9 @@ const REPAIR_STAGGER: float = 0.4
 const FENCE_COLLISION: Vector2 = Vector2(46, 6)
 const PEN_LABEL_FONT_SIZE: int = 10
 const PEN_LABEL_TEXT: String = "%s pen"
+const SPECIAL_LABEL: String = "Special"
+const SPECIAL_LEVEL_TEXT: String = "Level %d"
+const SPECIAL_LABEL_COLOR: Color = Color(1, 0.85, 0.3)
 const TALK_FONT_SIZE: int = 30
 const TALK_FACE_SIZE: float = 96.0
 const REPAIRED_TEXT: String = "You fixed %d fence%s! %s pen: %d of %d"
@@ -80,9 +83,27 @@ static func pen_sections(pen: Dictionary) -> int:
 	return int(pen["pieces"]) * 2
 
 
-## How many of a pen's sections are fixed (one per rescue from its habitat).
+## Is this animal one of the hidden snakes (they live in the special pens)?
+static func is_special_animal(animal_id: String) -> bool:
+	return bool(GameState.catalog.get_animal(animal_id).get("hides_under_rocks", false))
+
+
+## Rescues that live in this pen: the habitat's regular animals, or its snake for a special pen.
+static func pen_rescues(pen: Dictionary) -> Array[String]:
+	var ids: Array[String] = []
+	for id: String in GameState.rescued_from(str(pen["habitat"])):
+		if is_special_animal(id) == bool(pen.get("special", false)):
+			ids.append(id)
+	return ids
+
+
+## How many of a pen's sections are fixed: one per regular rescue; catching the habitat's
+## snake fixes its whole special pen.
 static func repaired_sections(pen: Dictionary) -> int:
-	return mini(GameState.rescued_count(str(pen["habitat"])), pen_sections(pen))
+	var rescued: int = pen_rescues(pen).size()
+	if bool(pen.get("special", false)):
+		return pen_sections(pen) if rescued > 0 else 0
+	return mini(rescued, pen_sections(pen))
 
 
 func pen_for(habitat_id: String) -> Dictionary:
@@ -149,18 +170,28 @@ func care_animal_near(point: Vector2) -> String:
 	return ""
 
 
-## The pen within CARE_DISTANCE of a spot, or {}.
+## The closest pen within CARE_DISTANCE of a spot, or {}. (A habitat pen and its special pen
+## touch, so the nearer one wins.)
 func pen_near(point: Vector2) -> Dictionary:
+	var best: Dictionary = {}
+	var best_distance: float = INF
 	for pen: Dictionary in pens:
-		if pen_rect(pen).grow(CARE_DISTANCE).has_point(point):
-			return pen
-	return {}
+		var rect: Rect2 = pen_rect(pen)
+		if not rect.grow(CARE_DISTANCE).has_point(point):
+			continue
+		var distance: float = point.distance_to(point.clamp(rect.position, rect.end))
+		if distance < best_distance:
+			best = pen
+			best_distance = distance
+	return best
 
 
 func _update_care_button() -> void:
 	var id: String = care_animal_near(ranger.global_position)
 	# Pens can be decorated once someone lives there.
-	decorate_target = str(pen_near(ranger.global_position).get("habitat", "")) if id != "" else ""
+	var near: Dictionary = pen_near(ranger.global_position)
+	# Regular pens can be decorated once someone lives there.
+	decorate_target = str(near.get("habitat", "")) if id != "" and not bool(near.get("special", false)) else ""
 	decorate_button.visible = decorate_target != ""
 	if id == care_target:
 		return
@@ -224,7 +255,9 @@ func open_care(animal_id: String) -> void:
 	if screen_open() or not catalog.has_animal(animal_id):
 		return
 	_set_world_waiting(true)
-	var visit: CareVisit = CareVisit.make(GameState.care_catalog, animal_id, GameState.grade,
+	# Snakes are cared for one grade up (a little harder to read and spell).
+	var grade: String = CareCatalog.harder_grade(GameState.grade) if is_special_animal(animal_id) else GameState.grade
+	var visit: CareVisit = CareVisit.make(GameState.care_catalog, animal_id, grade,
 		GameState.care_visits_for(animal_id), GameState.rng)
 	care_screen = CareScreen.new()
 	add_child(care_screen)
@@ -309,7 +342,7 @@ func _build_book_button() -> void:
 
 ## Shows the pen's bought decorations (each once).
 func _place_decorations(pen: Dictionary) -> void:
-	if pen.is_empty():
+	if pen.is_empty() or bool(pen.get("special", false)):
 		return
 	var cell: Vector2i = Vector2i(int(pen["cell"][0]), int(pen["cell"][1]))
 	var placed: Dictionary = pen.get("decorations", {})
@@ -340,7 +373,7 @@ func _refresh_pen_levels() -> void:
 				break
 		label.visible = id != ""
 		if label.visible:
-			label.text = PEN_LEVEL_TEXT % [catalog.get_animal(id).get("name", id), GameState.animal_level(id)]
+			label.text = (SPECIAL_LEVEL_TEXT % GameState.animal_level(id)) if bool(pen.get("special", false)) 				else PEN_LEVEL_TEXT % [catalog.get_animal(id).get("name", id), GameState.animal_level(id)]
 
 
 ## What the sidekick says when you walk up: where to go at first, then how it's going.
@@ -352,24 +385,39 @@ func sidekick_line() -> String:
 
 func _build_pens() -> void:
 	for def: Variant in map.meta.get("pens", []):
-		var pen: Dictionary = (def as Dictionary).duplicate()
-		var cell: Vector2i = Vector2i(int(pen["cell"][0]), int(pen["cell"][1]))
-		var pieces: int = int(pen["pieces"])
-		var depth: int = int(pen["depth"])
-		var fences: Array[StaticBody2D] = []
-		for row_y: int in [cell.y, cell.y + depth]:
-			for i: int in pieces:
-				var fence: StaticBody2D = _make_fence(Vector2i(cell.x + i * 3 + 1, row_y), fences.size())
-				objects.add_child(fence)
-				fences.append(fence)
-		pen["fences"] = fences
-		_add_pen_label(PEN_LABEL_TEXT % str(pen.get("label", "")), cell, pieces)
-		pen["level_label"] = _add_pen_label("", cell, pieces)
-		(pen["level_label"] as Label).position.y += PEN_LABEL_FONT_SIZE + 2
-		pen["residents"] = _add_residents(str(pen["habitat"]), cell, pieces, depth)
-		pens.append(pen)
-		_place_decorations(pen)
+		var habitat_pen: Dictionary = (def as Dictionary).duplicate()
+		habitat_pen["repair_key"] = habitat_pen["habitat"]
+		_build_pen(habitat_pen)
+		if int(def.get("special_pieces", 0)) > 0:
+			# The snake's pen sits right beside its habitat's pen, in the same fence line.
+			_build_pen({"habitat": def["habitat"], "label": SPECIAL_LABEL, "special": true,
+				"cell": [int(def["cell"][0]) + int(def["pieces"]) * 3, int(def["cell"][1])],
+				"pieces": int(def["special_pieces"]), "depth": def["depth"],
+				"repair_key": "%s_special" % def["habitat"]})
 	_refresh_pen_levels()
+
+
+func _build_pen(pen: Dictionary) -> void:
+	var cell: Vector2i = Vector2i(int(pen["cell"][0]), int(pen["cell"][1]))
+	var pieces: int = int(pen["pieces"])
+	var depth: int = int(pen["depth"])
+	var fences: Array[StaticBody2D] = []
+	for row_y: int in [cell.y, cell.y + depth]:
+		for i: int in pieces:
+			var fence: StaticBody2D = _make_fence(Vector2i(cell.x + i * 3 + 1, row_y), fences.size())
+			objects.add_child(fence)
+			fences.append(fence)
+	pen["fences"] = fences
+	# Special pens are narrow, so their labels stay short.
+	var title: String = SPECIAL_LABEL if bool(pen.get("special", false)) else PEN_LABEL_TEXT % str(pen.get("label", ""))
+	var name_label: Label = _add_pen_label(title, cell, pieces)
+	if bool(pen.get("special", false)):
+		name_label.add_theme_color_override("font_color", SPECIAL_LABEL_COLOR)
+	pen["level_label"] = _add_pen_label("", cell, pieces)
+	(pen["level_label"] as Label).position.y += PEN_LABEL_FONT_SIZE + 2
+	pen["residents"] = _add_residents(pen, cell, pieces, depth)
+	pens.append(pen)
+	_place_decorations(pen)
 
 
 ## One rail section, starting knocked over (no collision).
@@ -417,9 +465,9 @@ func _show_repairs() -> void:
 	newly_repaired = 0
 	var messages: Array[String] = []
 	for pen: Dictionary in pens:
-		var habitat_id: String = str(pen["habitat"])
+		var key: String = str(pen["repair_key"])
 		var fixed: int = repaired_sections(pen)
-		var seen: int = mini(int(GameState.pen_repairs_shown.get(habitat_id, 0)), fixed)
+		var seen: int = mini(int(GameState.pen_repairs_shown.get(key, 0)), fixed)
 		var fences: Array[StaticBody2D] = pen["fences"]
 		for k: int in fixed:
 			_fix_fence(fences[k], k < seen, (k - seen) * REPAIR_STAGGER + 0.5)
@@ -427,7 +475,7 @@ func _show_repairs() -> void:
 		if new_now > 0:
 			newly_repaired += new_now
 			messages.append(REPAIRED_TEXT % [new_now, "" if new_now == 1 else "s", str(pen["label"]), fixed, pen_sections(pen)])
-		GameState.pen_repairs_shown[habitat_id] = fixed
+		GameState.pen_repairs_shown[key] = fixed
 	GameState.save_progress()
 	if not messages.is_empty():
 		show_banner(" ".join(messages), BANNER_SECONDS + newly_repaired * REPAIR_STAGGER)
@@ -452,13 +500,13 @@ func _rest() -> void:
 
 
 ## Rescued animals from this habitat, wandering inside the pen (they never get startled).
-func _add_residents(habitat_id: String, cell: Vector2i, pieces: int, depth: int) -> Array[Critter]:
+func _add_residents(pen: Dictionary, cell: Vector2i, pieces: int, depth: int) -> Array[Critter]:
 	var residents: Array[Critter] = []
 	var inside: Rect2 = Rect2(
 		Vector2(cell.x * TILE + 6, (cell.y + 1) * TILE + 4),
 		Vector2(pieces * 3 * TILE - 12, (depth - 1) * TILE - 18))
 	var is_open: Callable = func(point: Vector2) -> bool: return inside.has_point(point)
-	var ids: Array[String] = GameState.rescued_from(habitat_id)
+	var ids: Array[String] = pen_rescues(pen)
 	for i: int in mini(ids.size(), MAX_RESIDENTS_PER_PEN):
 		if not catalog.has_animal(ids[i]):
 			continue

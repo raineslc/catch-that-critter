@@ -30,7 +30,8 @@ func test_one_pen_per_habitat_all_broken_at_the_start() -> void:
 	await _open_hub()
 	var names: Array[String] = []
 	for pen: Dictionary in hub.pens:
-		names.append(str(pen["habitat"]))
+		if not bool(pen.get("special", false)):
+			names.append(str(pen["habitat"]))
 		for fence: StaticBody2D in pen["fences"]:
 			assert_false(RescueCenter.is_fixed(fence), "%s fence starts knocked over" % pen["habitat"])
 		assert_eq(pen["residents"].size(), 0)
@@ -48,7 +49,7 @@ func test_each_rescue_fixes_one_section_of_its_pen() -> void:
 			fixed += 1
 	assert_eq(fixed, 2)
 	assert_eq(hub.newly_repaired, 2, "both repairs happen while you watch")
-	assert_string_contains(hub.banner.text, "Meadow pen: 2 of 6")
+	assert_string_contains(hub.banner.text, "Meadow pen: 2 of 4")
 	for fence: StaticBody2D in hub.pen_for("forest")["fences"]:
 		assert_false(RescueCenter.is_fixed(fence), "other pens stay broken")
 
@@ -238,6 +239,53 @@ func test_book_opens_and_closes() -> void:
 	hub.book_screen.close()
 	assert_null(hub.book_screen)
 	assert_true(hub.book_button.visible)
+
+
+func _special_pen(habitat_id: String) -> Dictionary:
+	for pen: Dictionary in hub.pens:
+		if pen["habitat"] == habitat_id and bool(pen.get("special", false)):
+			return pen
+	return {}
+
+
+func test_every_habitat_pen_has_a_special_pen_beside_it() -> void:
+	await _open_hub()
+	for habitat_id: String in HABITATS:
+		var pen: Dictionary = hub.pen_for(habitat_id)
+		var special: Dictionary = _special_pen(habitat_id)
+		assert_false(special.is_empty(), "%s has a special pen" % habitat_id)
+		assert_eq(RescueCenter.pen_rect(pen).end.x, RescueCenter.pen_rect(special).position.x, "right beside it")
+		assert_eq(RescueCenter.repaired_sections(special), 0, "broken until its snake is caught")
+
+
+func test_caught_snake_fixes_its_special_pen_and_lives_there() -> void:
+	_rescue(1)
+	GameState.record_rescue("green_vine_snake", "meadow", "meadow")
+	await _open_hub()
+	var special: Dictionary = _special_pen("meadow")
+	assert_eq(RescueCenter.repaired_sections(special), RescueCenter.pen_sections(special))
+	assert_eq(RescueCenter.repaired_sections(hub.pen_for("meadow")), 1, "the snake doesn't fix a raccoon fence")
+	assert_eq(special["residents"].size(), 1)
+	assert_eq(str(special["residents"][0].animal["id"]), "green_vine_snake")
+	for resident: Critter in hub.pen_for("meadow")["residents"]:
+		assert_eq(str(resident.animal["id"]), "raccoon")
+	assert_string_contains(hub.banner.text, "Special pen")
+
+
+func test_caring_for_the_snake_is_one_grade_harder() -> void:
+	GameState.record_rescue("green_vine_snake", "meadow", "meadow")
+	await _open_hub()
+	var rect: Rect2 = RescueCenter.pen_rect(_special_pen("meadow"))
+	hub.ranger.global_position = Vector2(rect.get_center().x, rect.end.y + 10)
+	await wait_frames(2)
+	assert_eq(hub.care_button.text, "Care for the Green Vine Snake")
+	assert_false(hub.decorate_button.visible, "special pens aren't decorated")
+	hub.open_care(hub.care_target)
+	var visit: CareVisit = hub.care_screen.visit
+	assert_eq(visit.spelling.tiles.size(), visit.food_word.length() + 2, "grade 3: two extra letters")
+	assert_true(GameState.care_catalog.foods_for("green_vine_snake").has(visit.food_id))
+	hub.care_screen.finish(true)
+	assert_eq(GameState.care_visits_for("green_vine_snake"), 1)
 
 
 func test_leaving_care_early_does_not_count() -> void:

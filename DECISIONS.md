@@ -1,5 +1,10 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — Snakes get special pens and harder care (after Playtest 2.1, Chris)
+- Each habitat pen is now 2 rail sections wide with a 1-section **special pen** right beside it (gold "Special" label). Its fence stays knocked over until that habitat's snake is caught, then the whole special pen is fixed; snakes don't fix the regular pen's fences. Regular pens: 4 sections now (was 6). Decorations are for regular pens only.
+- **Snake care works like raccoon care, one grade harder** (`CareCatalog.harder_grade`: K→1, 1→2, 2→3, 3 stays 3): spell 3rd-grade food words (lizards, geckos, tadpoles, crickets, mice — not frogs, since frogs are rescue animals here) with 2 extra letters, then a longer care note, then its fact card, one fact per visit (snake facts moved from `animals.json` to `care.json`). Snakes level up from care like other animals.
+- Playtest 2.1: he loved finding the snake (caught it on the one try after 3 empty rocks).
+
 ## 2026-11-04 — Special animals are hidden snakes (Chris; replaces the rare-animal list from earlier today)
 - One hidden snake per habitat: **Meadow green vine snake** (built first), Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. The Desert's regular "snake" becomes a **roadrunner**.
 - **Finding:** it hides under one of the habitat's rocks, a different one each visit, every visit until caught. "Look under the rock" when next to one. Empty rocks show a worm, bugs, or a beetle with "Try another rock!"; after every 3 different empty rocks Henrito says which way it is (up/down/left/right).
