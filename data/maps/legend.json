@@ -20,7 +20,10 @@
     "5": "path",
     "d": "grass",
     "e": "grass",
-    "o": "grass"
+    "o": "grass",
+    "t": "grass",
+    "g": "grass",
+    "l": "grass"
   },
   "objects": {
     ",": {
@@ -124,7 +127,10 @@
     "a": "raccoon",
     "d": "deer",
     "e": "bear",
-    "o": "owl"
+    "o": "owl",
+    "t": "turtle",
+    "g": "frog",
+    "l": "alligator"
   },
   "spawn": "S",
   "sidekick_spot": "H",

@@ -4,13 +4,13 @@ Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTION
 
 ## Where things stand
 - **Repo:** GitHub `raineslc/catch-that-critter` (private) is the source of truth. Work in `C:\Users\raine\Projects\catch-that-critter`; start every task by fetching and branching from the latest `origin/main`. (The older checkout `C:\Users\raine\CatchACritter` is out of date — don't use it.)
-- **277 GUT tests pass** locally and in CI. Last merged: Phase 4 step 1 started — the **Forest** (PR after #25).
+- **282 GUT tests pass** locally and in CI. Last merged: Phase 4 step 1 started — the **Forest** (PR after #25).
 - **Done:** Phases 0–3 (setup, math core, Meadow + chases, storm intro, Rescue Center hub, care, stars/levels/shop/Rescue Book), Playtest 2 and 2.1 with their fixes, the hidden snakes (Meadow and Forest), and the Forest habitat.
-- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python). Swamp, Desert, Mountains gates show "opens soon".
+- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python), east gate = **Swamp** (turtles, frogs, alligators practicing place value; hidden green anaconda). Desert and Mountains gates show "opens soon".
 
 ## Next steps (in order)
-1. **Phase 4, step 1 continued — one habitat per PR, checked with Chris before the next:** Swamp (turtle, frog, alligator + hidden green anaconda; place value skill), Desert (lizard, tortoise, roadrunner + hidden rattlesnake; time & money skill), Mountains (mountain goat, snow leopard, eagle + hidden king cobra; multiply/divide skill). Follow the Forest's pattern (below). Frog and lizard art exist in `assets/sprites/animals/`; turtle, alligator, tortoise, roadrunner, goat, snow leopard, eagle, and the three snakes must be drawn (`tools/make_animal_art.py`) unless Chris provides art.
-2. **Habitat unlocking** (PLAN 3.4): habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked. Not built yet — today every built habitat's gate is simply open. Do this when the Swamp exists.
+1. **Phase 4, step 1 continued — one habitat per PR, checked with Chris before the next:** Desert (lizard, tortoise, roadrunner + hidden rattlesnake; time & money skill), Mountains (mountain goat, snow leopard, eagle + hidden king cobra; multiply/divide skill). Follow the Forest's pattern (below). Lizard art exists (4×4 grid) in `assets/sprites/animals/`; tortoise, roadrunner, goat, snow leopard, eagle, rattlesnake, and king cobra must be drawn (`tools/make_animal_art.py`) unless Chris provides art.
+2. **Habitat unlocking** (PLAN 3.4): habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked. Not built yet — today every built habitat's gate is simply open. The Swamp now exists, so this can come any time.
 3. Phase 4, step 2: helper animal bonuses, finale. Then Phase 5 (profiles, session timer, parent area).
 
 ### How the Forest was added (copy this for each habitat)
@@ -44,7 +44,7 @@ Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTION
 
 ## Playtest
 - **Playtest 2.1** (`playtest-2.1-snake`): double-click `tools/playtest_2_launch.cmd` in this checkout; separate save; caught raccoons come back after 25 s. Checklist `docs/playtest_2.md`. Summarize: `python tools/summarize_playtest.py` (includes the snake hunt and stars).
-- Results so far: Playtest 2 (level 3 → adapted to 2; subtraction is his weak spot). Playtest 2.1: found the snake after 3 empty rocks and caught it on the one try; loved it; bought a rock; didn't open the book.
+- Results so far: Playtest 2 (level 3 → adapted to 2; subtraction is his weak spot). Playtest 2.1: found the snake after 3 empty rocks and caught it on the one try; loved it; bought a rock; didn't open the book. Forest playtest: 9/9 subtraction right, up to level 3; added instead of subtracting on the python's story ("18 leaves, 1 went away"), so it got away; quit spelling "lizards" for the vine snake after 2 misses.
 - The old desktop shortcut still runs the frozen Playtest 1 (`C:\Users\raine\CatchACritter-playtest`).
 - Next playtest idea: the Forest (new animals, the ball python), and whether he opens the Rescue Book.
 

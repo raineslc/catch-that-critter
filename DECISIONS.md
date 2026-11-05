@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — The Swamp (Phase 4 step 1, after the Forest playtest; Chris: "move to the next phase")
+- The hub's east gate opens to the Swamp: turtles (3), frogs (3), alligators (2), and the hidden green anaconda under one of 7 rocks. Swamp animals practice **place value** (PLAN 3.4's Swamp skill); the anaconda's story problem stays add/subtract like every snake.
+- Playtest 2 still forces add/subtract for every chase (its playtest skill overrides the animal's), so place value only shows in normal play.
+- Frog art is the pack's. Turtle, alligator, green anaconda (vine snake shape in olive), and food icons flies and snails are drawn in code.
+- Care foods: turtle worms/bugs/fish/leaves/berries/snails; frog flies/crickets/worms/bugs/snails; alligator fish/crab/shrimp/eggs/snails; anaconda fish/rats/eggs.
+
 ## 2026-11-04 — The Forest (Phase 4 step 1 begins; Chris: one habitat per PR, Forest first)
 - The hub's top gate opens to the Forest: deer (3), bears (2), owls (2), and the hidden ball python under one of 6 rocks. Forest animals use the add/subtract skill (Forest's skill in PLAN 3.4).
 - Bear and owl use the pack's 4×4 sheets (`"layout": "grid"`, right-facing column). The deer, ball python (the vine snake's shape in python colors), and food icons leaves, clover, berries, rats, gerbils are drawn in code (`tools/make_animal_art.py`, `tools/make_food_icons.py`). "Acorns" reuse the nut picture.

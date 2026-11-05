@@ -149,6 +149,16 @@
       "word": "gerbils",
       "description": "They are small, sandy brown animals that dig.",
       "picture": "res://assets/ui/food/gerbils.png"
+    },
+    "flies": {
+      "word": "flies",
+      "description": "They are small bugs that buzz and fly.",
+      "picture": "res://assets/ui/food/flies.png"
+    },
+    "snails": {
+      "word": "snails",
+      "description": "They are slow and carry a shell on their back.",
+      "picture": "res://assets/ui/food/snails.png"
     }
   },
   "animals": {
@@ -523,6 +533,249 @@
         "Ball pythons come from Africa.",
         "They are not venomous. They squeeze their food.",
         "A ball python can live for more than 30 years."
+      ]
+    },
+    "turtle": {
+      "foods": [
+        "worms",
+        "bugs",
+        "fish",
+        "leaves",
+        "berries",
+        "snails"
+      ],
+      "care_notes": [
+        {
+          "text": "The turtle likes to sit in the sun.",
+          "question": "What can we add?",
+          "good": "A warm, flat rock",
+          "others": [
+            "A cold ice cube"
+          ],
+          "older_others": [
+            "A dark box"
+          ]
+        },
+        {
+          "text": "The turtle swims and dives a lot.",
+          "question": "What does its pen need?",
+          "good": "A pond of clean water",
+          "others": [
+            "A sand pile only"
+          ],
+          "older_others": [
+            "A tall ladder"
+          ]
+        },
+        {
+          "text": "The turtle hides in its shell when scared.",
+          "question": "What should we do?",
+          "good": "Wait quietly",
+          "others": [
+            "Knock on its shell"
+          ],
+          "older_others": [
+            "Pick it up fast"
+          ]
+        },
+        {
+          "text": "The turtle's pond water looks dirty.",
+          "question": "What should we do?",
+          "good": "Change the water",
+          "others": [
+            "Add some juice"
+          ],
+          "older_others": [
+            "Leave it alone"
+          ]
+        }
+      ],
+      "facts": [
+        "A turtle can pull its head into its shell.",
+        "Turtles hatch from eggs laid in the sand.",
+        "A turtle's shell is part of its body.",
+        "Some turtles can live for more than 50 years."
+      ]
+    },
+    "frog": {
+      "foods": [
+        "flies",
+        "crickets",
+        "worms",
+        "bugs",
+        "snails"
+      ],
+      "care_notes": [
+        {
+          "text": "The frog's skin needs to stay wet.",
+          "question": "What does it need?",
+          "good": "A small pond",
+          "others": [
+            "A dry towel"
+          ],
+          "older_others": [
+            "A sunny desert"
+          ]
+        },
+        {
+          "text": "The frog loves to jump.",
+          "question": "What can we give it?",
+          "good": "Lily pads to hop on",
+          "others": [
+            "A heavy blanket"
+          ],
+          "older_others": [
+            "A tiny cup"
+          ]
+        },
+        {
+          "text": "The frog sings at night.",
+          "question": "How should we act?",
+          "good": "Listen quietly",
+          "others": [
+            "Cover its ears"
+          ],
+          "older_others": [
+            "Yell back at it"
+          ]
+        },
+        {
+          "text": "The frog is hiding from the hot sun.",
+          "question": "What will help?",
+          "good": "A shady plant",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "A hot rock"
+          ]
+        }
+      ],
+      "facts": [
+        "A frog starts life as a tadpole.",
+        "Frogs catch bugs with long, sticky tongues.",
+        "Frogs can breathe through their skin.",
+        "Some frogs can jump 20 times their length."
+      ]
+    },
+    "alligator": {
+      "foods": [
+        "fish",
+        "crab",
+        "shrimp",
+        "eggs",
+        "snails"
+      ],
+      "care_notes": [
+        {
+          "text": "The alligator likes to rest in warm sun.",
+          "question": "What can we add?",
+          "good": "A sunny mud bank",
+          "others": [
+            "A pile of snow"
+          ],
+          "older_others": [
+            "A fan"
+          ]
+        },
+        {
+          "text": "The alligator is a strong swimmer.",
+          "question": "What does its pen need?",
+          "good": "A big, deep pond",
+          "others": [
+            "A small bowl"
+          ],
+          "older_others": [
+            "A sandbox"
+          ]
+        },
+        {
+          "text": "The alligator has big, sharp teeth.",
+          "question": "How should we feed it?",
+          "good": "Toss food from far away",
+          "others": [
+            "Hand feed it close"
+          ],
+          "older_others": [
+            "Pet its nose"
+          ]
+        },
+        {
+          "text": "The alligator wants to cool off.",
+          "question": "What will help?",
+          "good": "A splash in the water",
+          "others": [
+            "A wool sweater"
+          ],
+          "older_others": [
+            "A hot rock"
+          ]
+        }
+      ],
+      "facts": [
+        "Alligators can hold their breath for a long time.",
+        "A baby alligator is called a hatchling.",
+        "Alligators lose teeth and grow new ones.",
+        "Alligator eyes and nose stay above the water."
+      ]
+    },
+    "green_anaconda": {
+      "foods": [
+        "fish",
+        "rats",
+        "eggs"
+      ],
+      "care_notes": [
+        {
+          "text": "Green anacondas spend lots of time in water.",
+          "question": "What does its pen need?",
+          "good": "A big, warm pool",
+          "others": [
+            "A dry sandbox"
+          ],
+          "older_others": [
+            "A tiny dish"
+          ]
+        },
+        {
+          "text": "The anaconda is very big and heavy.",
+          "question": "How should we move it?",
+          "good": "With grown-up helpers",
+          "others": [
+            "By its tail alone"
+          ],
+          "older_others": [
+            "Very fast"
+          ]
+        },
+        {
+          "text": "The anaconda likes to hide in tall plants.",
+          "question": "What can we add?",
+          "good": "Thick swamp grass",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "A bare floor"
+          ]
+        },
+        {
+          "text": "The anaconda just ate a big meal.",
+          "question": "What should we do?",
+          "good": "Let it rest",
+          "others": [
+            "Feed it again"
+          ],
+          "older_others": [
+            "Play tag with it"
+          ]
+        }
+      ],
+      "facts": [
+        "Green anacondas are the heaviest snakes in the world.",
+        "They live in swamps and rivers in South America.",
+        "Their eyes sit on top of their heads to see above water.",
+        "Baby anacondas are born live, not from eggs."
       ]
     }
   }
