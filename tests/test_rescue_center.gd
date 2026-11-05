@@ -164,21 +164,48 @@ func _stand_by_pen(habitat_id: String) -> void:
 	await wait_frames(2)
 
 
+## The care buttons showing right now (their text), left to right.
+func _care_texts() -> Array[String]:
+	var texts: Array[String] = []
+	for button: Button in hub.care_buttons:
+		if button.is_visible_in_tree():
+			texts.append(button.text)
+	return texts
+
+
 func test_no_care_button_by_an_empty_pen() -> void:
 	await _open_hub()
 	await _stand_by_pen("meadow")
-	assert_false(hub.care_button.visible)
+	assert_eq(_care_texts(), [] as Array[String])
 
 
 func test_care_button_by_a_pen_with_animals() -> void:
 	_rescue(1)
 	await _open_hub()
-	assert_false(hub.care_button.visible, "not while far away")
+	assert_eq(_care_texts(), [] as Array[String], "not while far away")
 	await _stand_by_pen("meadow")
-	assert_true(hub.care_button.visible)
-	assert_eq(hub.care_button.text, "Care for the Raccoon")
+	assert_eq(_care_texts(), ["Care for the Raccoon"] as Array[String], "one kind: one button, as before")
 	await _stand_by_pen("forest")
-	assert_false(hub.care_button.visible, "the forest pen is empty")
+	assert_eq(_care_texts(), [] as Array[String], "the forest pen is empty")
+
+
+func test_a_pen_with_three_kinds_offers_each_one() -> void:
+	for id: String in ["deer", "deer", "bear", "owl"]:
+		GameState.record_rescue(id, "forest", "forest")
+	GameState.care_visits = {"deer": 2, "bear": 0, "owl": 1}
+	await _open_hub()
+	await _stand_by_pen("forest")
+	assert_eq(_care_texts(), ["Deer", "Bear", "Owl"] as Array[String], "one button per kind, in rescue order")
+	assert_eq(hub.care_target, "bear", "Space/Enter picks the kind cared for least")
+	hub.care_buttons[2].pressed.emit()
+	await wait_frames(2)
+	assert_not_null(hub.care_screen)
+	assert_eq(str(hub.care_screen.animal["id"]), "owl", "the button you press is the one you care for")
+	assert_eq(_care_texts(), [] as Array[String], "buttons hide while caring")
+	hub.care_screen.finish(true)
+	assert_eq(GameState.care_visits_for("owl"), 2)
+	await wait_frames(2)
+	assert_eq(_care_texts().size(), 3, "buttons come back after")
 
 
 func test_finishing_care_counts_a_visit_and_makes_the_animal_happy() -> void:
@@ -188,7 +215,7 @@ func test_finishing_care_counts_a_visit_and_makes_the_animal_happy() -> void:
 	hub.open_care(hub.care_target)
 	assert_not_null(hub.care_screen)
 	assert_eq(hub.objects.process_mode, Node.PROCESS_MODE_DISABLED, "the world waits")
-	assert_false(hub.care_button.visible)
+	assert_eq(_care_texts(), [] as Array[String])
 	hub.care_screen.finish(true)
 	assert_null(hub.care_screen)
 	assert_eq(hub.objects.process_mode, Node.PROCESS_MODE_INHERIT)
@@ -279,7 +306,7 @@ func test_caring_for_the_snake_is_one_grade_harder() -> void:
 	var rect: Rect2 = RescueCenter.pen_rect(_special_pen("meadow"))
 	hub.ranger.global_position = Vector2(rect.get_center().x, rect.end.y + 10)
 	await wait_frames(2)
-	assert_eq(hub.care_button.text, "Care for the Green Vine Snake")
+	assert_eq(_care_texts(), ["Care for the Green Vine Snake"] as Array[String])
 	assert_false(hub.decorate_button.visible, "special pens aren't decorated")
 	hub.open_care(hub.care_target)
 	var visit: CareVisit = hub.care_screen.visit
@@ -297,7 +324,7 @@ func test_leaving_care_early_does_not_count() -> void:
 	hub.care_screen.finish(false)
 	assert_eq(GameState.care_visits_for("raccoon"), 0)
 	await wait_frames(2)
-	assert_true(hub.care_button.visible, "you can try again right away")
+	assert_eq(_care_texts().size(), 1, "you can try again right away")
 
 
 func test_meadow_has_a_gate_back_and_remembers_rescues() -> void:

@@ -7,13 +7,20 @@ extends HabitatMap
 ##   since the last visit stand back up while you watch.
 ## - Rescued animals live in their habitat's pen and wander around inside it.
 ## - The sidekick stands in the plaza and says something helpful when you walk up.
-## - Walk up to a pen with animals in it and a "Care for the ..." button appears (Space/Enter
-##   works too): it opens the CareScreen (feed, care note, fact card) while the world waits.
+## - Walk up to a pen with animals in it and a care button appears for each kind of animal
+##   there ("Care for the Raccoon", or "Deer" / "Bear" / "Owl" with faces when there are several).
+##   Space/Enter cares for the kind cared for least. It opens the CareScreen (feed, care note,
+##   fact card) while the world waits.
 
 const MAX_RESIDENTS_PER_PEN: int = 8
 ## How close (pixels) to a pen's fence the ranger must be to care for its animals.
 const CARE_DISTANCE: float = 24.0
 const CARE_BUTTON_SIZE: Vector2 = Vector2(420, 84)
+## Width of each button when a pen has several kinds of animals.
+const CARE_KIND_BUTTON_WIDTH: float = 230.0
+const CARE_ICON_SIZE: int = 64
+## Space between the care and Decorate buttons.
+const CARE_ROW_GAP: int = 24
 const CARE_BUTTON_FONT_SIZE: int = 34
 const CARE_BUTTON_TEXT: String = "Care for the %s"
 const CARED_TEXT: String = "The %s is happy and full!"
@@ -53,9 +60,13 @@ var talk_bubble: PanelContainer
 var talk_label: Label
 ## How many fence sections stood back up on this visit (for the banner and tests).
 var newly_repaired: int = 0
-var care_button: Button
+## Bottom-center row: one care button per kind of animal in the nearby pen, then Decorate.
+var care_row: HBoxContainer
+var care_buttons: Array[Button] = []
+## The kinds of animals the care buttons are offering (in order).
+var care_kinds: Array[String] = []
 var care_screen: CareScreen
-## The animal id the care button is offering, or "".
+## The animal id Space/Enter cares for (the kind cared for least), or "".
 var care_target: String = ""
 var decorate_button: Button
 var book_button: Button
@@ -73,7 +84,7 @@ func build() -> void:
 	_build_pens()
 	_place_sidekick()
 	_build_talk_bubble()
-	_build_care_button()
+	_build_care_row()
 	_show_repairs()
 	_build_rest_button()
 	_build_book_button()
@@ -128,7 +139,7 @@ func screen_open() -> bool:
 func _process(_delta: float) -> void:
 	if ranger == null or screen_open():
 		return
-	_update_care_button()
+	_update_care_buttons()
 	if sidekick_sprite == null:
 		return
 	var near: bool = ranger.global_position.distance_to(sidekick_sprite.global_position) <= TALK_DISTANCE
@@ -161,15 +172,24 @@ static func pen_rect(pen: Dictionary) -> Rect2:
 	return Rect2(Vector2(cell.x * TILE, cell.y * TILE), Vector2(int(pen["pieces"]) * 3 * TILE, int(pen["depth"]) * TILE))
 
 
-## The animal to care for at a spot: the first resident (with care data) of a pen within
-## CARE_DISTANCE, or "".
-func care_animal_near(point: Vector2) -> String:
-	var pen: Dictionary = pen_near(point)
-	for resident: Critter in pen.get("residents", []):
+## The kinds of animals (with care data) in the pen within CARE_DISTANCE of a spot, each once,
+## in the order they moved in; [] if none.
+func care_kinds_near(point: Vector2) -> Array[String]:
+	var kinds: Array[String] = []
+	for resident: Critter in pen_near(point).get("residents", []):
 		var id: String = str(resident.animal.get("id", ""))
-		if GameState.care_catalog.has_animal(id):
-			return id
-	return ""
+		if GameState.care_catalog.has_animal(id) and not kinds.has(id):
+			kinds.append(id)
+	return kinds
+
+
+## The kind with the fewest care visits (the first one on a tie), or "".
+static func least_cared(kinds: Array[String]) -> String:
+	var best: String = ""
+	for id: String in kinds:
+		if best == "" or GameState.care_visits_for(id) < GameState.care_visits_for(best):
+			best = id
+	return best
 
 
 ## The closest pen within CARE_DISTANCE of a spot, or {}. (A habitat pen and its special pen
@@ -188,29 +208,50 @@ func pen_near(point: Vector2) -> Dictionary:
 	return best
 
 
-func _update_care_button() -> void:
-	var id: String = care_animal_near(ranger.global_position)
-	# Pens can be decorated once someone lives there.
+func _update_care_buttons() -> void:
+	var kinds: Array[String] = care_kinds_near(ranger.global_position)
 	var near: Dictionary = pen_near(ranger.global_position)
 	# Regular pens can be decorated once someone lives there.
-	decorate_target = str(near.get("habitat", "")) if id != "" and not bool(near.get("special", false)) else ""
+	decorate_target = str(near.get("habitat", "")) if not kinds.is_empty() and not bool(near.get("special", false)) else ""
 	decorate_button.visible = decorate_target != ""
-	if id == care_target:
+	if kinds == care_kinds:
 		return
-	care_target = id
-	care_button.visible = id != ""
-	if id != "":
-		care_button.text = CARE_BUTTON_TEXT % catalog.get_animal(id).get("name", id)
+	_show_care_kinds(kinds)
+
+
+## Replaces the care buttons with one per kind (none for []).
+func _show_care_kinds(kinds: Array[String]) -> void:
+	care_kinds = kinds
+	care_target = least_cared(kinds)
+	for button: Button in care_buttons:
+		button.queue_free()
+	care_buttons.clear()
+	for id: String in kinds:
+		var animal: Dictionary = catalog.get_animal(id)
+		var name_text: String = str(animal.get("name", id))
+		var button: Button = Button.new()
+		button.name = "Care_" + id
+		button.text = CARE_BUTTON_TEXT % name_text if kinds.size() == 1 else name_text
+		button.custom_minimum_size = Vector2(CARE_BUTTON_SIZE.x if kinds.size() == 1 else CARE_KIND_BUTTON_WIDTH, CARE_BUTTON_SIZE.y)
+		if animal.has("faceset"):
+			button.icon = load(str(animal["faceset"]))
+			button.expand_icon = true
+			button.add_theme_constant_override("icon_max_width", CARE_ICON_SIZE)
+		button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
+		button.focus_mode = Control.FOCUS_NONE
+		button.pressed.connect(open_care.bind(id), CONNECT_DEFERRED)
+		care_row.add_child(button)
+		care_row.move_child(button, care_buttons.size())
+		care_buttons.append(button)
 
 
 ## Freezes the world and hides the hub buttons while a screen is open (or brings them back).
 func _set_world_waiting(waiting: bool) -> void:
 	objects.process_mode = Node.PROCESS_MODE_DISABLED if waiting else Node.PROCESS_MODE_INHERIT
-	care_button.visible = false
+	_show_care_kinds([])
 	decorate_button.visible = false
 	rest_button.visible = not waiting
 	book_button.visible = not waiting
-	care_target = ""
 	decorate_target = ""
 	if waiting:
 		talk_bubble.visible = false
@@ -315,37 +356,30 @@ func _show_happy(resident: Critter) -> void:
 	tween.tween_callback(resident.emote.hide)
 
 
-func _build_care_button() -> void:
-	care_button = Button.new()
-	care_button.name = "CareButton"
-	care_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	# Care on the left, Decorate on the right, centered together.
-	care_button.offset_left = -(CARE_BUTTON_SIZE.x + HUD_GAP + DECORATE_BUTTON_WIDTH) / 2.0
-	care_button.offset_right = care_button.offset_left + CARE_BUTTON_SIZE.x
-	care_button.offset_top = -CARE_BUTTON_SIZE.y - 30
-	care_button.offset_bottom = -30
-	care_button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
-	care_button.focus_mode = Control.FOCUS_NONE
-	care_button.visible = false
-	care_button.pressed.connect(func() -> void:
-		if care_target != "":
-			open_care(care_target), CONNECT_DEFERRED)
-	get_node("Hud").add_child(care_button)
+## The bottom-center row: care buttons (filled in by _show_care_kinds), then Decorate, centered together.
+func _build_care_row() -> void:
+	care_row = HBoxContainer.new()
+	care_row.name = "CareRow"
+	care_row.add_theme_constant_override("separation", CARE_ROW_GAP)
+	care_row.anchor_left = 0.5
+	care_row.anchor_right = 0.5
+	care_row.anchor_top = 1.0
+	care_row.anchor_bottom = 1.0
+	care_row.offset_bottom = -30
+	care_row.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	care_row.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	get_node("Hud").add_child(care_row)
 	decorate_button = Button.new()
 	decorate_button.name = "DecorateButton"
 	decorate_button.text = DECORATE_TEXT
-	decorate_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
-	decorate_button.offset_left = care_button.offset_right + HUD_GAP
-	decorate_button.offset_right = decorate_button.offset_left + DECORATE_BUTTON_WIDTH
-	decorate_button.offset_top = care_button.offset_top
-	decorate_button.offset_bottom = care_button.offset_bottom
+	decorate_button.custom_minimum_size = Vector2(DECORATE_BUTTON_WIDTH, CARE_BUTTON_SIZE.y)
 	decorate_button.add_theme_font_size_override("font_size", CARE_BUTTON_FONT_SIZE)
 	decorate_button.focus_mode = Control.FOCUS_NONE
 	decorate_button.visible = false
 	decorate_button.pressed.connect(func() -> void:
 		if decorate_target != "":
 			open_shop(decorate_target), CONNECT_DEFERRED)
-	get_node("Hud").add_child(decorate_button)
+	care_row.add_child(decorate_button)
 
 
 func _build_book_button() -> void:
