@@ -76,10 +76,12 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 - 2026-11-04 — Playtest 2.1 (7 min, no freezes): found the snake after 3 empty rocks and caught it on the one try; 12 stars earned, bought a rock. Then, per Chris: snakes get a special pen beside their habitat's pen and are cared for one grade harder (5 new snake food words). 272 tests passing.
 
 - 2026-11-04 — Phase 4 step 1 begins: the **Forest** (hub's top gate): deer, bears, owls to chase and care for, and the hidden ball python. Grid-sheet animals supported in `Critter`. Art tools renamed/extended (`tools/make_animal_art.py`). 277 tests passing. Handoff for the next session: `docs/HANDOFF.md`.
+- 2026-11-04 — Forest playtest: 9/9 first tries right (all subtraction, avg 1.7 s), moved up to level 3; found the ball python after 2 empty rocks but answered 19 for 18 − 1 (added instead of subtracting), so it slid away; fed the bear; quit the vine snake's "lizards" spelling after 2 misses.
+- 2026-11-04 — The **Swamp** (hub's east gate): turtles, frogs, alligators (place value) and the hidden green anaconda. 282 tests passing.
 
 ## Next
 - Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
-- Phase 4, step 1 continued (one habitat per PR, confirm with Chris first): Swamp, then Desert, then Mountains; then habitat unlocking. See `docs/HANDOFF.md` for the Forest recipe.
+- Phase 4, step 1 continued (one habitat per PR, confirm with Chris first): Desert, then Mountains; then habitat unlocking. See `docs/HANDOFF.md` for the Forest recipe.
 - Chris: try the Forest with his son.
 - Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 

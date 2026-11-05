@@ -10,6 +10,9 @@
     },
     "forest": {
       "scene": "res://scenes/world/forest.tscn"
+    },
+    "swamp": {
+      "scene": "res://scenes/world/swamp.tscn"
     }
   }
 }

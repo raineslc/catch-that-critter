@@ -80,6 +80,45 @@
       "hides_under_rocks": true,
       "sprite": "res://assets/sprites/animals/ball_python/sprite_sheet.png",
       "faceset": "res://assets/sprites/animals/ball_python/faceset.png"
+    },
+    {
+      "id": "turtle",
+      "name": "Turtle",
+      "habitat": "swamp",
+      "skill": "place_value",
+      "rarity": "common",
+      "flee_speed": 60.0,
+      "sprite": "res://assets/sprites/animals/turtle/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/turtle/faceset.png"
+    },
+    {
+      "id": "frog",
+      "name": "Frog",
+      "habitat": "swamp",
+      "skill": "place_value",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/frog/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/frog/faceset.png"
+    },
+    {
+      "id": "alligator",
+      "name": "Alligator",
+      "habitat": "swamp",
+      "skill": "place_value",
+      "rarity": "uncommon",
+      "flee_speed": 80.0,
+      "sprite": "res://assets/sprites/animals/alligator/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/alligator/faceset.png"
+    },
+    {
+      "id": "green_anaconda",
+      "name": "Green Anaconda",
+      "habitat": "swamp",
+      "skill": "add_subtract",
+      "rarity": "special",
+      "hides_under_rocks": true,
+      "sprite": "res://assets/sprites/animals/green_anaconda/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/green_anaconda/faceset.png"
     }
   ]
 }
