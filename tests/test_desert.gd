@@ -9,6 +9,9 @@ var desert: HabitatMap
 
 func before_each() -> void:
 	GameState.reset()
+	# Earlier habitats' snakes open the way here.
+	GameState.rescued.append("ball_python")
+	GameState.rescued.append("green_anaconda")
 
 
 func _open_desert() -> HabitatMap:

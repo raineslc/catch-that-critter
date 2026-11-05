@@ -67,7 +67,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 | Mountains | Multiplication & intro division | 3 | 3.OA | Mountain goat, snow leopard, eagle |
 
 - Every problem type in `skills.json` has a `standards` field for the parent report.
-- Habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked.
+- Habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked. **Changed 2026-11-05 (Chris):** catching a habitat's hidden snake opens the next habitat (Forest → Swamp → Desert → Mountains); mastery took too long (3 play days per level).
 - Rarity tiers: common / uncommon / rare / **special**. **Special = each habitat's hidden snake** (Chris, 2026-11-04): Meadow green vine snake, Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. It hides under one of the habitat's rocks (a different one each visit) until caught; peek under rocks to find it (empty rocks hold a bug or worm; after 3 empty rocks the sidekick gives a direction clue). Catching it takes **one story (word) problem**, one level harder than the player's current add/subtract level; a miss and it slides under another rock to find again. It comes with its own fact card and lives in the pen.
 - Constant bright daytime; no day/night cycle.
 
@@ -189,8 +189,8 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 - [x] Stars, animal levels, collection book. (Small pen shop with 4 decorations; animal accessories later.)
 
 ### Phase 4 — Full Map
-- [ ] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data. (Forest and Swamp done 2026-11-04, Desert and Mountains 2026-11-05; habitat unlocking next.)
-- [ ] Special rarity tier: hidden snakes for the other habitats (Meadow green vine snake done 2026-11-04); helper animal bonuses; finale.
+- [x] Forest, Swamp, Desert, Mountains; habitat unlocking; all animal data. (Forest and Swamp 2026-11-04; Desert, Mountains, unlocking 2026-11-05. Unlocking: each habitat's hidden snake opens the next.)
+- [ ] Special rarity tier: hidden snakes for the other habitats (all five done 2026-11-05); helper animal bonuses; finale.
 
 ### Phase 5 — Profiles, Sessions & Parent Area
 - [ ] Two profiles with per-profile sidekick, ranger customization, save/load.

@@ -293,10 +293,39 @@ func scene_for(map_id: String) -> String:
 	return str(world.get("maps", {}).get(map_id, {}).get("scene", ""))
 
 
-## Get ready to enter `map_id` through `gate`. Returns the scene to change to ("" = not built yet).
+## The habitat whose hidden snake must be caught before `map_id` opens ("" = open from the start).
+## Set as "opens_after" in data/maps/world.json.
+func opens_after(map_id: String) -> String:
+	return str(world.get("maps", {}).get(map_id, {}).get("opens_after", ""))
+
+
+## Is this area open to walk into? An area with "opens_after" opens once that habitat's snake is rescued.
+func is_area_open(map_id: String) -> bool:
+	var after: String = opens_after(map_id)
+	return after == "" or rescued.has(hidden_snake_id(after))
+
+
+## The id of the snake hiding in a habitat ("" if none).
+func hidden_snake_id(habitat_id: String) -> String:
+	for id: String in catalog.ids():
+		var animal: Dictionary = catalog.get_animal(id)
+		if str(animal.get("habitat", "")) == habitat_id and bool(animal.get("hides_under_rocks", false)):
+			return id
+	return ""
+
+
+## The area that catching `habitat_id`'s snake opens ("" if none).
+func area_opened_by(habitat_id: String) -> String:
+	for map_id: Variant in world.get("maps", {}):
+		if opens_after(str(map_id)) == habitat_id:
+			return str(map_id)
+	return ""
+
+
+## Get ready to enter `map_id` through `gate`. Returns the scene to change to ("" = not built yet or not open).
 func travel_to(map_id: String, gate: String) -> String:
 	var scene: String = scene_for(map_id)
-	if scene == "":
+	if scene == "" or not is_area_open(map_id):
 		return ""
 	arrival_map = map_id
 	arrival_gate = gate

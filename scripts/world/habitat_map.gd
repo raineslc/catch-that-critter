@@ -63,6 +63,9 @@ const STARS_EARNED_TEXT: String = " +%d stars"
 const STARS_TEXT: String = "★ %d"
 const STARS_FONT_SIZE: int = 36
 const LOCKED_TEXT: String = "The %s opens soon!"
+const SNAKE_LOCKED_TEXT: String = "Find the %s's hidden snake to open the %s!"
+const SNAKE_LOCKED_SIGN: String = "\n(find the %s snake)"
+const AREA_OPENED_TEXT: String = " The %s is open now!"
 
 ## A critter got startled: a chase is about to start.
 signal chase_requested(critter: Critter)
@@ -340,8 +343,14 @@ func _build_gates() -> void:
 		var info: Dictionary = map.gate_info(gate)
 		var label: String = str(info.get("label", "?"))
 		var feet: Vector2 = map.cell_to_feet(cell)
-		var locked: bool = bool(info.get("locked", false)) or GameState.scene_for(str(info.get("to", ""))) == ""
-		_add_sign(SIGN_TEXT % label + ("\n(coming soon)" if locked else ""), cell)
+		var to: String = str(info.get("to", ""))
+		var locked: bool = bool(info.get("locked", false)) or GameState.scene_for(to) == ""
+		var snake_locked: bool = not locked and not GameState.is_area_open(to)
+		var after: String = GameState.opens_after(to).capitalize()
+		var locked_text: String = (SNAKE_LOCKED_TEXT % [after, label]) if snake_locked else (LOCKED_TEXT % label)
+		var note: String = "\n(coming soon)" if locked else (SNAKE_LOCKED_SIGN % after if snake_locked else "")
+		_add_sign(SIGN_TEXT % label + note, cell)
+		locked = locked or snake_locked
 		if locked:
 			var body: StaticBody2D = StaticBody2D.new()
 			body.name = "LockedGate_%s" % gate
@@ -363,7 +372,7 @@ func _build_gates() -> void:
 			body.add_child(fence)
 			objects.add_child(body)
 			gates[gate] = body
-			_add_gate_area(gate, cell, func() -> void: show_banner(LOCKED_TEXT % label), TILE * 2.5)
+			_add_gate_area(gate, cell, func() -> void: show_banner(locked_text), TILE * 2.5)
 		else:
 			gates[gate] = _add_gate_area(gate, cell, use_gate.bind(gate), TILE * 0.6)
 
@@ -509,7 +518,9 @@ func _on_snake_finished(caught: bool) -> void:
 		GameState.record_rescue(id, habitat, map_id)
 		var earned: int = GameState.rewards.stars_for("snake")
 		GameState.add_stars(earned, "snake")
-		show_banner(SNAKE_CAUGHT_TEXT % hidden_snake["name"] + STARS_EARNED_TEXT % earned)
+		var opened: String = GameState.area_opened_by(habitat)
+		var opened_text: String = (AREA_OPENED_TEXT % opened.capitalize()) if opened != "" else ""
+		show_banner(SNAKE_CAUGHT_TEXT % hidden_snake["name"] + STARS_EARNED_TEXT % earned + opened_text)
 		hidden_snake = {}
 		snake_hunt = null
 	else:

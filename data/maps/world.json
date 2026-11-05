@@ -1,5 +1,5 @@
 {
-  "description": "Every area you can walk into. Gates in data/maps/<id>.json point at these ids. Habitats without an entry here are 'coming soon' (their gates stay locked).",
+  "description": "Every area you can walk into. Gates in data/maps/<id>.json point at these ids. Habitats without an entry here are 'coming soon' (their gates stay locked). \"opens_after\" = the habitat whose hidden snake must be caught before this one opens.",
   "start": "rescue_center",
   "maps": {
     "rescue_center": {
@@ -12,13 +12,16 @@
       "scene": "res://scenes/world/forest.tscn"
     },
     "swamp": {
-      "scene": "res://scenes/world/swamp.tscn"
+      "scene": "res://scenes/world/swamp.tscn",
+      "opens_after": "forest"
     },
     "desert": {
-      "scene": "res://scenes/world/desert.tscn"
+      "scene": "res://scenes/world/desert.tscn",
+      "opens_after": "swamp"
     },
     "mountains": {
-      "scene": "res://scenes/world/mountains.tscn"
+      "scene": "res://scenes/world/mountains.tscn",
+      "opens_after": "desert"
     }
   }
 }
