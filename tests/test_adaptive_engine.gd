@@ -45,41 +45,41 @@ func test_set_level_clamps() -> void:
 	assert_eq(engine.level("counting"), 1)
 
 
-func test_ten_fast_correct_levels_up_and_clears_window() -> void:
-	assert_eq(_answer("counting", 9), AdaptiveEngine.Change.NONE, "needs a full window first")
+func test_six_fast_correct_levels_up_and_clears_window() -> void:
+	assert_eq(_answer("counting", 5), AdaptiveEngine.Change.NONE, "needs a full window first")
 	assert_eq(_answer("counting", 1), AdaptiveEngine.Change.LEVEL_UP)
 	assert_eq(engine.level("counting"), 2)
 	assert_eq(engine.window_count("counting"), 0)
 
 
-func test_eight_of_ten_is_enough() -> void:
-	_answer("counting", 2, 2)
-	# window becomes 2 right, 2 wrong, 6 right = 8/10 on the 10th answer
-	assert_eq(_answer("counting", 6), AdaptiveEngine.Change.LEVEL_UP)
+func test_five_of_six_is_enough() -> void:
+	_answer("counting", 0, 1)
+	# window becomes 1 wrong, 5 right = 5/6 on the 6th answer
+	assert_eq(_answer("counting", 5), AdaptiveEngine.Change.LEVEL_UP)
 	assert_eq(engine.level("counting"), 2)
 
 
-func test_seven_of_ten_is_not_enough() -> void:
-	_answer("counting", 0, 3)
-	assert_eq(_answer("counting", 7), AdaptiveEngine.Change.NONE)
+func test_four_of_six_is_not_enough() -> void:
+	_answer("counting", 0, 2)
+	assert_eq(_answer("counting", 4), AdaptiveEngine.Change.NONE)
 	assert_eq(engine.level("counting"), 1)
 
 
 func test_accurate_but_slow_stays() -> void:
-	_answer("counting", 10, 0, SLOW)
+	_answer("counting", 6, 0, SLOW)
 	assert_eq(engine.level("counting"), 1)
 
 
 func test_fast_threshold_can_differ_per_skill() -> void:
-	_answer("time_money", 10, 0, 11.0)
+	_answer("time_money", 6, 0, 11.0)
 	assert_eq(engine.level("time_money"), 2, "11s is fast enough for clocks")
-	_answer("counting", 10, 0, 11.0)
+	_answer("counting", 6, 0, 11.0)
 	assert_eq(engine.level("counting"), 1, "11s is slow for counting")
 
 
 func test_no_level_up_past_the_top() -> void:
 	engine.set_level("counting", 5)
-	assert_eq(_answer("counting", 10), AdaptiveEngine.Change.NONE)
+	assert_eq(_answer("counting", 6), AdaptiveEngine.Change.NONE)
 	assert_eq(engine.level("counting"), 5)
 
 
@@ -114,10 +114,10 @@ func test_extra_help_turns_off_after_recovering() -> void:
 
 func test_window_only_keeps_recent_answers() -> void:
 	engine.set_level("counting", 3)
-	_answer("counting", 0, 3)
-	_answer("counting", 7)
-	assert_eq(engine.level("counting"), 3, "7/10 so far")
-	assert_eq(_answer("counting", 1), AdaptiveEngine.Change.LEVEL_UP, "oldest miss dropped out: 8/10")
+	_answer("counting", 0, 2)
+	_answer("counting", 4)
+	assert_eq(engine.level("counting"), 3, "4/6 so far")
+	assert_eq(_answer("counting", 1), AdaptiveEngine.Change.LEVEL_UP, "oldest miss dropped out: 5/6")
 
 
 func test_three_good_sessions_master_a_level() -> void:
@@ -198,6 +198,25 @@ func test_load_ignores_unknown_skills_and_clamps_levels() -> void:
 	engine.load_dict({"juggling": {"level": 2}, "counting": {"level": 50}})
 	assert_false(engine.has_skill("juggling"))
 	assert_eq(engine.level("counting"), 5)
+
+
+func test_grade_picks_starting_levels() -> void:
+	var grade_2: Dictionary = AdaptiveEngine.starting_levels("2")
+	assert_eq(int(grade_2["counting"]), 4, "which number is more")
+	assert_eq(int(grade_2["add_subtract"]), 3, "add and subtract within 20")
+	assert_eq(int(grade_2["place_value"]), 1)
+	assert_eq(int(grade_2["time_money"]), 2, "time to the half hour")
+	assert_eq(int(grade_2["multiply_divide"]), 1)
+	assert_eq(AdaptiveEngine.starting_levels("K"), {}, "kindergarten starts everything at level 1")
+	assert_eq(AdaptiveEngine.starting_levels("not a grade"), {})
+
+
+func test_starting_levels_skip_skills_already_practiced() -> void:
+	_answer("counting", 2)
+	engine.start_unpracticed_at({"counting": 4, "time_money": 2, "juggling": 3})
+	assert_eq(engine.level("counting"), 1, "his progress is kept")
+	assert_eq(engine.level("time_money"), 2, "never practiced: starts at the grade's level")
+	assert_false(engine.has_skill("juggling"))
 
 
 func test_unknown_skill_is_reported() -> void:

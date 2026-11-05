@@ -1,5 +1,10 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Starting levels by grade; level up after 5 of 6 (Playthrough fixes step 2)
+- `data/adaptive.json` now looks at the last **6** answers (was 10): 5 of 6 right and fast moves up a level; fewer than 3 of 6 right moves down (as before, after at least 6 answers).
+- `starting_levels` in `data/adaptive.json` picks each skill's first level by the profile's grade. Grade 2: counting 4 (which number is more), add/subtract 3 (within 20), place value 1, time/money 2 (half hour), multiply/divide 1. Grade 1: counting 3. Grade 3: counting 5, add/subtract 4, place value 3, time/money 4, multiply/divide 2. K and anything not listed: level 1. Claude's picks from the Common Core grade of each level; tune after playtests.
+- Applied when a profile starts, only to skills it has never answered, so his practiced levels are kept.
+
 ## 2026-11-05 — One pen per kind of animal (Chris; Playthrough fixes step 1)
 - Replaces one shared pen per habitat (and the first draft of step 1, a button per kind in a shared pen). Each kind gets its own pen, grouped in a row by habitat with the habitat's name above; the snake's special pen ends the row. Pens are laid out in `data/maps/rescue_center.json` (`"slots": 3` per habitat, so the Meadow has room for the fox and rabbit).
 - The Rescue Center map grows from 40×26 to 56×38 tiles to fit five rows of four pens.
