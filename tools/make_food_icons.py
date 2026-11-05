@@ -196,20 +196,24 @@ ICONS = {
 }
 
 
-def png(rows: list[str]) -> bytes:
+def png(rows: list[str], scale: int = 1, palette: dict | None = None) -> bytes:
+    """Rows of palette letters (all the same width) -> PNG bytes, each pixel scaled up `scale` times."""
+    palette = palette or PALETTE
+    width = len(rows[0])
+    assert all(len(row) == width for row in rows), "rows must be the same width"
     raw = b""
     for row in rows:
-        assert len(row) == 16, row
-        raw += b"\x00" + b"".join(bytes(PALETTE[ch] + (255,)) if PALETTE[ch] else b"\x00" * 4 for ch in row)
-    assert len(rows) == 16
+        line = b"".join((bytes(palette[ch] + (255,)) if palette[ch] else b"\x00" * 4) * scale for ch in row)
+        raw += (b"\x00" + line) * scale
     def chunk(tag: bytes, data: bytes) -> bytes:
         return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
-    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 16, 16, 8, 6, 0, 0, 0))
-            + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
+    header = struct.pack(">IIBBBBB", width * scale, len(rows) * scale, 8, 6, 0, 0, 0)
+    return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b"")
 
 
 if __name__ == "__main__":
     out = Path(sys.argv[1] if len(sys.argv) > 1 else "assets/ui/food")
     for name, rows in ICONS.items():
+        assert len(rows) == 16 and len(rows[0]) == 16, name
         (out / f"{name}.png").write_bytes(png(rows))
         print("wrote", out / f"{name}.png")

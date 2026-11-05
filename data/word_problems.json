@@ -1,0 +1,37 @@
+{
+  "things": [
+    [
+      "frog",
+      "frogs"
+    ],
+    [
+      "bug",
+      "bugs"
+    ],
+    [
+      "leaf",
+      "leaves"
+    ],
+    [
+      "beetle",
+      "beetles"
+    ],
+    [
+      "cricket",
+      "crickets"
+    ]
+  ],
+  "templates": {
+    "add": [
+      "The {snake} saw {a_things} by a rock. Then {b} more came. How many {things} did it see in all?",
+      "There were {a_things} on a log and {b_things} in the grass. How many {things} were there in all?"
+    ],
+    "subtract": [
+      "The {snake} saw {a_things} by a rock. Then {b} went away. How many {things} are left?",
+      "There were {a_things} under a big leaf. {b} of them crawled off. How many {things} are still there?"
+    ],
+    "missing_addend": [
+      "The {snake} saw {a_things}. Then some more came. Now there are {total}. How many more {things} came?"
+    ]
+  }
+}

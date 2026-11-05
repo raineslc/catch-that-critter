@@ -1,5 +1,12 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-04 — Special animals are hidden snakes (Chris; replaces the rare-animal list from earlier today)
+- One hidden snake per habitat: **Meadow green vine snake** (built first), Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. The Desert's regular "snake" becomes a **roadrunner**.
+- **Finding:** it hides under one of the habitat's rocks, a different one each visit, every visit until caught. "Look under the rock" when next to one. Empty rocks show a worm, bugs, or a beetle with "Try another rock!"; after every 3 different empty rocks Henrito says which way it is (up/down/left/right).
+- **Catching:** one story problem (add/subtract) one level above the player's current level in the chase skill (plain add/subtract for skills without stories yet). A right answer catches it (5 stars); a miss: "slid away to hide under another rock," shows the answer kindly, and it moves to a different rock. Snake answers don't count toward adaptive difficulty (they're above level on purpose).
+- Snakes come with their whole fact card (in `data/animals.json`) and live in their habitat's pen; they aren't fed or cared for.
+- Art drawn for the project (`tools/make_snake_art.py`), since the pack zip is gone from Downloads.
+
 ## 2026-11-04 — Stars, levels, shop, and the Rescue Book (Phase 3 step 4, Chris's choices)
 - **Stars:** 3 per catch + 1 bonus for a chase with no misses; 2 per finished care visit; 2 more when an animal levels up. Misses never take stars away. All numbers in `data/rewards.json`.
 - **Animal levels 1–5, per species**, from finished care visits: level 2 at 1 visit, 3 at 3, 4 at 6, 5 at 10. Shown under the pen ("Raccoon level 2") and in the book.
