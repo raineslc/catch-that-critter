@@ -2,7 +2,7 @@
 
 > Handoff plan for AI coding assistants (Claude Code, ChatGPT/Codex, Gemini). Design reference: Google Doc "Kids Math Game – Design Doc (Pet Shelter Chase)" (note: the doc still describes 3D; this plan supersedes it).
 > Workflow (Chris's new-coding-project process): approve plan → set up git → build one small, tested step at a time with a commit per step → verify with tests and review → README, secrets in env vars, deployment.
-> **Status:** Approved by Chris on 2026-10-20. Building Phase 0.
+> **Status:** Approved by Chris on 2026-10-20. Next: Playthrough fixes (section 7, added 2026-11-05).
 
 ## 1. Goal & Success Criteria
 **Catch That Critter** is a personal **2D top-down** educational game Chris is building for his sons. Kids play as a customizable kid ranger, walk around one big map (classic Pokémon-style view), chase runaway wild animals by answering Common Core–aligned math problems, and bring them back to a Wildlife Rescue Center where they care for them through spelling/reading tasks and unlock kid-friendly animal fact cards.
@@ -68,7 +68,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 
 - Every problem type in `skills.json` has a `standards` field for the parent report.
 - Habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked. **Changed 2026-11-05 (Chris):** catching a habitat's hidden snake opens the next habitat (Forest → Swamp → Desert → Mountains); mastery took too long (3 play days per level).
-- Rarity tiers: common / uncommon / rare / **special**. **Special = each habitat's hidden snake** (Chris, 2026-11-04): Meadow green vine snake, Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. It hides under one of the habitat's rocks (a different one each visit) until caught; peek under rocks to find it (empty rocks hold a bug or worm; after 3 empty rocks the sidekick gives a direction clue). Catching it takes **one story (word) problem**, one level harder than the player's current add/subtract level; a miss and it slides under another rock to find again. It comes with its own fact card and lives in the pen.
+- Rarity tiers: common / uncommon / rare / **special**. **Special = each habitat's hidden snake** (Chris, 2026-11-04): Meadow green vine snake, Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. It hides under one of the habitat's rocks (a different one each visit) until caught; peek under rocks to find it (empty rocks hold a bug or worm; after 3 empty rocks the sidekick gives a direction clue). Catching it takes **one story (word) problem**, one level harder than the player's current add/subtract level (**changing 2026-11-05, Chris:** a story in the habitat's own skill, Playthrough fixes step 4); a miss and it slides under another rock to find again. It comes with its own fact card and lives in the pen.
 - Constant bright daytime; no day/night cycle.
 
 ### 3.5 Preschool Level (later, for the younger son)
@@ -110,7 +110,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 
 ### 3.11 Adaptive Difficulty
 - Per-skill accuracy and response time.
-- Rolling last 10 problems: ≥ 80% correct and fast → step up; < 50% → step down, more hints.
+- Rolling last 10 problems: ≥ 80% correct and fast → step up; < 50% → step down, more hints. **Changing (Chris 2026-11-05, Playthrough fixes step 2):** step up after 5 of the last 6; each skill's starting level comes from the profile's grade.
 - Mastery = 3 consecutive sessions above 80% at a level. A good session at a harder level also counts for the easier levels in that skill (otherwise fast learners level up before ever "mastering" anything); a poor session resets that level and harder ones. Sessions with fewer than 5 answers at a level don't count either way.
 - Only the first try at each problem counts; "fast" is the average time of correct answers (per-skill limits in `data/adaptive.json`, e.g. clocks get longer).
 
@@ -196,6 +196,19 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 - [x] Two profiles with per-profile sidekick, ranger customization, save/load. (2026-11-05: two big title buttons; name typed once; hair/skin/outfit swatches; second profile = Loganator, grade K, Explore locked.)
 - [ ] 10–15 minute session timer with wrap-up.
 - [ ] Parent lock, Common Core progress report, settings.
+
+### Playthrough fixes (added 2026-11-05, from `docs/playthrough_review_2026-11-05.md`)
+A robot played the whole game start to finish; these fix what it found. Chris chose gameplay fixes first, then looks. Do these before the rest of Phase 5. Steps 1–5 change logic/data; steps 6–10 change what screens look like and wait for Chris's merge.
+- [ ] **1. Care for any animal in a pen.** When a pen has more than one kind of animal, the kid picks which one (one button per kind, with its face). Today only the first kind can ever be cared for, so 8 of 15 species stay Level 1 and their facts never unlock.
+- [ ] **2. Starting level by grade, quicker level-ups.** The profile's grade picks each skill's starting level (table in `data/adaptive.json`; K = level 1 everywhere). Level up after 5 of the last 6 right and fast (was 8 of 10). Only new saves and skills he hasn't practiced yet use the grade start; his progress is kept.
+- [ ] **3. Hints before only one answer is left.** On 3-button problems the hint shows after 1 miss (2 misses on 4-button problems). Add a hint picture for "7 + 2"-style problems so the middle of the chase screen isn't empty.
+- [ ] **4. Snake stories for every skill.** Each habitat's snake asks a story in that habitat's skill (counting, add/subtract, place value, time/money, groups/sharing), a few templates each. Stories start at 2 or more ("saw 1 beetle" reads oddly). The Meadow snake stays at K level.
+- [ ] **5. Runaways come back.** After all of a habitat's animals are home, a few rescued animals slip out again after a while. Catching one gives stars and practice but isn't a new rescue (Book, fence, and finale counts don't change). Fence repair spreads across all of a pen's rescues instead of finishing at 4.
+- [ ] **6. Fox and rabbit in the Meadow.** Find (free, CC0, ask Chris before downloading) or make fox and rabbit art; add them to the Meadow map and data so the Book's two "???" slots can be filled.
+- [ ] **7. HUD and hub layout.** Banner below the HUD buttons; repair messages one at a time; pen labels clear of the HUD; Care and Decorate buttons apart; gate signs on screen; widen the walk to the Mountains gate; decorations off the fence line; finale uses the ranger's name.
+- [ ] **8. Habitats look different.** A ground look per habitat: swamp mud and reeds, desert sand and cacti, mountain rock and snow (from the Ninja Adventure pack where possible).
+- [ ] **9. Clearer animal art.** Gray raccoon with a black mask, snow leopard, bear, five snake faces that look different, and a default ranger that doesn't look like Henrito.
+- [ ] **10. More to buy.** More decorations, some unlocked as a pen's animals level up, so stars keep their value. Then re-run the robot playthrough and compare with the 2026-11-05 review.
 
 ### Phase 6 — Verify & Polish
 - [ ] Full test pass; code review for bugs and edge cases.
