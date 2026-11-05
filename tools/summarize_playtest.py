@@ -87,6 +87,27 @@ def summarize(events: list[dict]) -> str:
         for e in missed[:15]:
             out.append(f"  {e['prompt']}  answered {e['choice']} (answer {e['answer']}), {e['seconds']}s")
 
+    snake = [e for e in events if e["event"] in ("rock_empty", "snake_found", "snake_answer")]
+    if snake:
+        out.append("")
+        out.append("Snake hunt:")
+        for e in snake:
+            if e["event"] == "snake_found":
+                out.append(f"  {e['t'] / 60:.1f} min: found the {e['animal']} after {e['empty_peeks']} empty rocks")
+            elif e["event"] == "snake_answer":
+                result = "caught it" if e["correct"] else "missed, it moved to another rock"
+                out.append(f"  {e['t'] / 60:.1f} min: answered {e['choice']}, {result}")
+        problems = [e for e in events if e["event"] == "snake_problem"]
+        for e in problems:
+            out.append(f"  Story (level {e['level']}): {e['prompt']}  (answer {e['answer']})")
+        out.append(f"  Empty rocks looked under: {sum(1 for e in snake if e['event'] == 'rock_empty')}")
+    stars = [e for e in events if e["event"] == "stars"]
+    if stars:
+        out.append("")
+        earned = sum(e["change"] for e in stars if e["change"] > 0)
+        spent = -sum(e["change"] for e in stars if e["change"] < 0)
+        out.append(f"Stars: earned {earned}, spent {spent}, ended with {stars[-1]['total']}.")
+
     slow = sorted((e for e in first if e["correct"]), key=lambda e: -e["seconds"])[:5]
     if slow:
         out.append("")

@@ -178,7 +178,8 @@ func test_full_playtest_uses_separate_profile_and_preserves_start_level() -> voi
 	config.log = false
 	GameState.enable_playtest(config)
 	assert_eq(GameState.engine.level(GameState.playtest_skill()), 3)
-	assert_eq(GameState.respawn_seconds(), 0.0)
+	# Playtest 2.1: caught raccoons come back, since his saved game has rescued all six.
+	assert_gt(GameState.respawn_seconds(), 0.0)
 	assert_true(GameState.start_profile(directory.path_join("playtest.json"), "playtest-2"))
 	GameState.engine.set_level(GameState.playtest_skill(), 4)
 	GameState.record_care("raccoon")

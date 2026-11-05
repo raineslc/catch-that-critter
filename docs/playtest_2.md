@@ -1,5 +1,21 @@
 # Playtest 2 — Rescue, care, and saved progress
 
+## Playtest 2.1 — the hidden snake (2026-11-04)
+
+Same launcher (`tools/playtest_2_launch.cmd`, from `C:\Users\raine\Projects\catch-that-critter` on the latest `main`) and the same saved progress as before. New since the last session:
+
+- **The hidden green vine snake** is under one of the Meadow's rocks. Walk next to a rock and press **Look under the rock** (or Space/Enter). Empty rocks show a little bug or worm; after 3 empty rocks Henrito says which way to look. Finding it gives **one** story problem: right catches it, a miss sends it under another rock.
+- **Three misses in a chase and the animal gets away** ("Chase again" / "Back to the map").
+- **Stars** (top right): catches, care visits, level-ups, and the snake. Spend them with **Decorate** at a pen.
+- **Rescue Book**: **Book** button or **B** at the Rescue Center.
+- Spelling now goes through 12 raccoon foods.
+- For this session caught raccoons come back after 25 seconds, so there is always something to chase.
+
+Suggested: let him find the snake on his own first (only hint "Look under the rocks" if he's stuck for a few minutes). Then catch a raccoon, care for it, buy a decoration, and open the book to find the snake's page. Watch whether he reads the story problem all the way through before tapping.
+
+After the session: `python tools/summarize_playtest.py` shows the snake hunt and stars too.
+
+
 Version: `playtest-2.0-review` on `codex/review-fixes`. Intended player: the seven-year-old. Allow 10–15 minutes. A child playtest is still needed; automated checks do not replace it.
 
 ## Launch
