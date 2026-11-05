@@ -96,7 +96,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 - At the limit, the sidekick says it's "time to let the animals rest"; current chase/task finishes, then a summary (animals rescued, stars) and save.
 
 ### 3.9 Wildlife Rescue Center (Literacy Layer)
-- Top-down hub with **enclosures** that fill as animals come home.
+- Top-down hub with **enclosures** that fill as animals come home. **(Chris 2026-11-05: one pen per kind of animal, grouped by habitat, plus each habitat's snake pen.)**
 - Feed: spell the food's name with letter tiles (K: picture-match or first letter; Preschool: picture-match).
 - Care notes: short sentences, then a simple choice.
 - Fact cards per animal: 3–4 facts at K–3 reading level, TTS read-aloud button.
@@ -199,7 +199,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 
 ### Playthrough fixes (added 2026-11-05, from `docs/playthrough_review_2026-11-05.md`)
 A robot played the whole game start to finish; these fix what it found. Chris chose gameplay fixes first, then looks. Do these before the rest of Phase 5. Steps 1–5 change logic/data; steps 6–10 change what screens look like and wait for Chris's merge.
-- [ ] **1. Care for any animal in a pen.** When a pen has more than one kind of animal, the kid picks which one (one button per kind, with its face). Today only the first kind can ever be cared for, so 8 of 15 species stay Level 1 and their facts never unlock.
+- [x] **1. Every kind of animal gets its own pen.** (Changed by Chris 2026-11-05 from "pick which animal in a shared pen".) Each habitat has a row of pens, one per kind (deer, bear, owl...), plus its snake pen, under the habitat's name; the Rescue Center grows to fit. Walking up to a pen offers "Care for the Deer" with its face. Each rescue fixes part of its own kind's pen, so a pen is fully fixed when all of that kind are home. Today only the first kind in a shared pen can ever be cared for, so 8 of 15 species stay Level 1 and their facts never unlock. (Done 2026-11-05: hub 56×38 tiles, five rows of pens.)
 - [ ] **2. Starting level by grade, quicker level-ups.** The profile's grade picks each skill's starting level (table in `data/adaptive.json`; K = level 1 everywhere). Level up after 5 of the last 6 right and fast (was 8 of 10). Only new saves and skills he hasn't practiced yet use the grade start; his progress is kept.
 - [ ] **3. Hints before only one answer is left.** On 3-button problems the hint shows after 1 miss (2 misses on 4-button problems). Add a hint picture for "7 + 2"-style problems so the middle of the chase screen isn't empty.
 - [ ] **4. Snake stories for every skill.** Each habitat's snake asks a story in that habitat's skill (counting, add/subtract, place value, time/money, groups/sharing), a few templates each. Stories start at 2 or more ("saw 1 beetle" reads oddly). The Meadow snake stays at K level.

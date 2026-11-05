@@ -9,11 +9,12 @@
     "3": {"to": "swamp", "arrive": "1", "label": "Swamp"},
     "4": {"to": "desert", "arrive": "1", "label": "Desert"}
   },
+  "pens_note": "One row of pens per habitat, starting at \"cell\": up to \"slots\" pens, one per kind of animal (each \"pieces\" fence pieces wide, 3 tiles per piece), then the snake's special pen.",
   "pens": [
-    {"habitat": "meadow", "label": "Meadow", "cell": [2, 6], "pieces": 2, "depth": 5, "special_pieces": 1},
-    {"habitat": "forest", "label": "Forest", "cell": [14, 4], "pieces": 2, "depth": 5, "special_pieces": 1},
-    {"habitat": "mountains", "label": "Mountains", "cell": [29, 4], "pieces": 2, "depth": 5, "special_pieces": 1},
-    {"habitat": "swamp", "label": "Swamp", "cell": [24, 17], "pieces": 2, "depth": 5, "special_pieces": 1},
-    {"habitat": "desert", "label": "Desert", "cell": [5, 17], "pieces": 2, "depth": 5, "special_pieces": 1}
+    {"habitat": "meadow", "label": "Meadow", "cell": [3, 18], "slots": 3, "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "forest", "label": "Forest", "cell": [3, 6], "slots": 3, "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "mountains", "label": "Mountains", "cell": [29, 6], "slots": 3, "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "swamp", "label": "Swamp", "cell": [29, 18], "slots": 3, "pieces": 2, "depth": 5, "special_pieces": 1},
+    {"habitat": "desert", "label": "Desert", "cell": [3, 30], "slots": 3, "pieces": 2, "depth": 5, "special_pieces": 1}
   ]
 }
