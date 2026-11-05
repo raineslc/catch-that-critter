@@ -1,5 +1,13 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Playthrough fixes plan (Chris)
+A robot played the whole game (notes: `docs/playthrough_review_2026-11-05.md`). Chris picked:
+- **Fox and rabbit:** add them to the Meadow (find or make art); the confirmed animal list stays.
+- **Replay:** rescued animals slip out again once a habitat is cleared; catching them gives stars and practice, not new rescues.
+- **Difficulty:** the profile's grade picks each skill's starting level; level up after 5 of the last 6 (was 8 of 10). Changes PLAN 3.11.
+- **Snake stories:** each snake asks a story in its habitat's skill. Changes PLAN 3.4.
+- **Order:** gameplay fixes first, then HUD, habitat looks, and art. Done before the rest of Phase 5.
+
 ## 2026-11-05 — Two profiles and ranger looks (Phase 5 step 1, Chris)
 - Title screen shows **two big buttons**, one per boy: his ranger's face, his sidekick's face, his name (typed once), "with Henrito/Loganator". Slots live in `data/profiles.json`.
 - Slot 1 is his existing save (`user://profiles/default.json`, Henrito, grade 2) — nothing to migrate; the first time he picks it, he names his ranger and keeps all his progress. Slot 2 is new (`ranger_2.json`): Loganator, grade **K**, Explore locked, until the preschool level exists (Phase 7).
