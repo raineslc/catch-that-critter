@@ -20,3 +20,6 @@ desktop.ini
 
 # Throwaway screenshot helpers
 .tmp_shots/
+
+# Python bytecode from the art tools
+__pycache__/

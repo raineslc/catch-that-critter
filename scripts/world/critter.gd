@@ -10,6 +10,8 @@ signal startled(critter: Critter)
 enum State { IDLE, WANDER, STARTLED, FLEE }
 
 const STARTLED_EMOTE: Texture2D = preload("res://assets/ui/emotes/startled.png")
+## Grid sheets: which column faces right.
+const GRID_RIGHT_COLUMN: int = 3
 const EMOTE_HEIGHT: float = 26.0
 const ARRIVE_DISTANCE: float = 2.0
 const STUCK_FRAMES: int = 10
@@ -70,17 +72,20 @@ func _ready() -> void:
 	_go_idle()
 
 
-## "walk" animation from a horizontal strip of frames.
+## "walk" animation from a horizontal strip of frames, or, for "layout": "grid" sheets (the pack's
+## 4 directions × 4 frames: down, up, left, right), the right-facing column.
 static func build_frames(animal_data: Dictionary) -> SpriteFrames:
 	var frames: SpriteFrames = SpriteFrames.new()
 	frames.rename_animation("default", "walk")
 	frames.set_animation_speed("walk", float(animal_data["animation_fps"]))
 	var sheet: Texture2D = load(str(animal_data["sprite"]))
 	var size: Array = animal_data["frame_size"]
+	var grid: bool = str(animal_data.get("layout", "strip")) == "grid"
 	for i: int in int(animal_data["frames"]):
 		var frame: AtlasTexture = AtlasTexture.new()
 		frame.atlas = sheet
-		frame.region = Rect2(i * int(size[0]), 0, int(size[0]), int(size[1]))
+		var cell: Vector2i = Vector2i(GRID_RIGHT_COLUMN, i) if grid else Vector2i(i, 0)
+		frame.region = Rect2(cell.x * int(size[0]), cell.y * int(size[1]), int(size[0]), int(size[1]))
 		frames.add_frame("walk", frame)
 	return frames
 

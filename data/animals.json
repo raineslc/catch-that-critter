@@ -38,6 +38,48 @@
       "hides_under_rocks": true,
       "sprite": "res://assets/sprites/animals/green_vine_snake/sprite_sheet.png",
       "faceset": "res://assets/sprites/animals/green_vine_snake/faceset.png"
+    },
+    {
+      "id": "deer",
+      "name": "Deer",
+      "habitat": "forest",
+      "skill": "add_subtract",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/deer/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/deer/faceset.png"
+    },
+    {
+      "id": "bear",
+      "name": "Bear",
+      "habitat": "forest",
+      "skill": "add_subtract",
+      "rarity": "uncommon",
+      "layout": "grid",
+      "frames": 4,
+      "flee_speed": 80.0,
+      "sprite": "res://assets/sprites/animals/bear/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/bear/faceset.png"
+    },
+    {
+      "id": "owl",
+      "name": "Owl",
+      "habitat": "forest",
+      "skill": "add_subtract",
+      "rarity": "common",
+      "layout": "grid",
+      "frames": 4,
+      "sprite": "res://assets/sprites/animals/owl/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/owl/faceset.png"
+    },
+    {
+      "id": "ball_python",
+      "name": "Ball Python",
+      "habitat": "forest",
+      "skill": "add_subtract",
+      "rarity": "special",
+      "hides_under_rocks": true,
+      "sprite": "res://assets/sprites/animals/ball_python/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/ball_python/faceset.png"
     }
   ]
 }

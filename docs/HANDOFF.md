@@ -1,48 +1,58 @@
-# HANDOFF — Catch That Critter (review branch, 2026-10-23)
+# HANDOFF — Catch That Critter (as of 2026-11-04)
 
 Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTIONS.md` → `PROGRESS.md` → `DECISIONS.md`, then run the tests.
 
-## Review implementation for Claude (2026-10-23)
-
-Chris subsequently authorized implementing the suggestions on a branch for Claude to review and merge. Read [the implementation handoff](CLAUDE_REVIEW_HANDOFF.md) first. `codex/review-fixes` adds chase cancellation/exit, keyboard controls, local saving and session completion, Playtest 2, and food clues. The [original review](CODEX_REVIEW_2026-10-23.md) is retained as historical context. Main is not merged.
-
 ## Where things stand
-- **Repo:** `C:\Users\raine\CatchACritter`, GitHub `raineslc/catch-that-critter` (private). Main includes PR #16 (care). Review checkout: `C:\Users\raine\OneDrive\Documents\ChatGPT\CatchACritter\review-fixes`. **235 GUT tests pass locally** on the review branch; see its PR for current CI.
-- **Done:** Phase 0 (setup), Phase 1 (math core), Phase 2 (Meadow + chase prototype), Playtest 1 setup, Phase 3 steps 1–3 (storm intro, Rescue Center hub, care).
-- **Phase 3, step 3 (care) merged** (PR #16): walk to a pen with animals → "Care for the Raccoon" → spell the food (fish/shrimp) → care note → fact card (one new fact per visit).
-- **Phase 3 complete** (2026-11-04): Playtest 2 fixes (3 misses = it gets away, 12 food words, gate bounce) and step 4 (stars, animal levels, pen shop, Rescue Book).
-- **Next:** Phase 4 step 1 — the other habitats, unlocking, and all animal data (needs art for missing species).
-- **Game flow today:** title → storm intro (7 captioned panels) → Rescue Center hub (Henrito in the plaza, 5 pens with storm-broken fences, 5 gates; only the Meadow gate is open) → Meadow (6 raccoons) → walk close → chase (3 right answers = net toss = rescue) → back at the hub each rescue fixes one fence section of that habitat's pen and the animal lives in the pen → walk up to the pen to care for it (feed by spelling, care note, fact card).
+- **Repo:** GitHub `raineslc/catch-that-critter` (private) is the source of truth. Work in `C:\Users\raine\Projects\catch-that-critter`; start every task by fetching and branching from the latest `origin/main`. (The older checkout `C:\Users\raine\CatchACritter` is out of date — don't use it.)
+- **277 GUT tests pass** locally and in CI. Last merged: Phase 4 step 1 started — the **Forest** (PR after #25).
+- **Done:** Phases 0–3 (setup, math core, Meadow + chases, storm intro, Rescue Center hub, care, stars/levels/shop/Rescue Book), Playtest 2 and 2.1 with their fixes, the hidden snakes (Meadow and Forest), and the Forest habitat.
+- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python). Swamp, Desert, Mountains gates show "opens soon".
+
+## Next steps (in order)
+1. **Phase 4, step 1 continued — one habitat per PR, checked with Chris before the next:** Swamp (turtle, frog, alligator + hidden green anaconda; place value skill), Desert (lizard, tortoise, roadrunner + hidden rattlesnake; time & money skill), Mountains (mountain goat, snow leopard, eagle + hidden king cobra; multiply/divide skill). Follow the Forest's pattern (below). Frog and lizard art exist in `assets/sprites/animals/`; turtle, alligator, tortoise, roadrunner, goat, snow leopard, eagle, and the three snakes must be drawn (`tools/make_animal_art.py`) unless Chris provides art.
+2. **Habitat unlocking** (PLAN 3.4): habitats unlock as skills are mastered; for the 7-year-old, Meadow and Forest start unlocked. Not built yet — today every built habitat's gate is simply open. Do this when the Swamp exists.
+3. Phase 4, step 2: helper animal bonuses, finale. Then Phase 5 (profiles, session timer, parent area).
+
+### How the Forest was added (copy this for each habitat)
+- Map: `data/maps/<id>.txt` (48×28, border `P`, gate digit on the edge, one `S`, convex ponds, ≥4 rocks `r`) + `data/maps/<id>.json` (gate back to the hub, `arrive` = the hub's gate digit) + scene `scenes/world/<id>.tscn` (copy `forest.tscn`, change `map_path`) + entry in `data/maps/world.json`. In `data/maps/rescue_center.json` change that habitat's gate from `"locked": true` to `"arrive": "1"`. Add the map path to `MAPS` in `tests/test_map_data.gd` (checks edges, gates, reachability, ponds). The Forest layout came from a small throwaway generator with a reachability check; hand-editing is fine too.
+- Animals: `data/animals.json` (habitat, skill, rarity; `"layout": "grid", "frames": 4` for the pack's 4×4 sheets like bear/owl) + a legend character in `data/maps/legend.json` (`critters` and `ground`). The snake: `"rarity": "special", "hides_under_rocks": true`.
+- Care: `data/care.json` — 5–6 foods each (word + clue + picture), 4 care notes (≤12 words, `others` + harder `older_others`), 4 facts. Snakes are cared for one grade harder automatically.
+- Art: `tools/make_animal_art.py` (2-frame 16×16 strip + 19×19 portrait drawn at 2×, `mirrored()` for faces) and `tools/make_food_icons.py` (16×16 icons). Rerun them after editing the pixel grids; list new files in `assets/CREDITS.md`.
+- Tests: copy `tests/test_forest.gd`. Load only one map at a time in a test (two maps share the physics world and push each other's ranger).
+- Check visually: a throwaway scene in `.tmp_shots/` (git-ignored) that saves screenshots; `forest_shot.gd` there shows the whole map plus a close-up.
+
+## Key game rules now (details in DECISIONS.md)
+- **Chases:** 3 right = caught; **3 misses in one chase = it gets away** (Explore and Race), "Chase again"/"Back to the map". Race mode **30 s**, sprint boost +3 s. Henrito hints after 2 misses on a problem.
+- **Stars:** catch 3 (+1 if no misses), care 2, level-up +2, snake 5. Spend in the pen shop ("Decorate"): flowers 5, bush 8, rock 8, tree 15. Shown top right. All numbers in `data/rewards.json`.
+- **Animal levels 1–5** per species from care visits (level up at 1, 3, 6, 10).
+- **Care:** spell the food with letter tiles (grade 2: one decoy letter; K: first letter or picture match), a care note, then the fact card (one new fact per visit). Raccoon food words cycle through 12 foods in order.
+- **Hidden snakes** (Chris's idea, replaced the rare-animal list): one per habitat — Meadow green vine snake, Forest ball python, Swamp green anaconda, Desert rattlesnake, Mountains king cobra. Under a random rock each visit until caught; "Look under the rock"; empty rocks show a bug/worm; after 3 empty rocks Henrito gives a direction clue. **One story (word) problem**, one level above his current level, catches it; a miss sends it under another rock. Each snake lives in a **special pen** beside its habitat's pen (gold "Special" label, fixed when caught) and is cared for **one grade harder**.
+- **Rescue Book:** Book button / B at the hub; page per habitat, 3 animals + gold special slot; "???" until rescued.
+- **Saves:** one local profile (`user://profiles/default.json`), Playtest 2 has its own (`playtest_2.json`). New save fields (stars, decorations) are optional so older saves still load — keep doing that.
+- **Voice is OFF** (maybe ElevenLabs recordings later — no network calls in the game). Never interrupt TTS (froze Godot on Windows).
+- Grade is fixed at "2" for the 7-year-old until profiles (Phase 5).
 
 ## How Chris works (follow this)
-- Chris builds this for his sons: 7-year-old (main player, ~2nd grade) and 3-year-old (preschool level later). Sidekick: **Henrito** for the older son's profile, **Loganator** for the younger's.
-- **One PLAN.md checklist step at a time**, on a feature branch: build → run → fix → commit (clear message, **no AI attribution lines**) → PR → CI green → merge → check off PLAN.md → update PROGRESS.md → **confirm with Chris before the next step**.
+- Chris builds this for his sons: 7-year-old (main player, ~2nd grade) and 3-year-old (preschool level later). Sidekick: **Henrito** (older son), **Loganator** (younger).
+- **One step at a time** on a feature branch from the latest `origin/main`: build → run → fix → commit (clear message, **no AI attribution lines**) → PR → CI green → **merge only when Chris says so** → check off PLAN.md → update PROGRESS.md → **confirm with Chris before the next step**.
+- He likes **questions one at a time** (multiple choice with a recommendation) before building something new.
 - **Ask before** changing a confirmed decision, downloading anything, or anything outward-facing. Log decisions in DECISIONS.md.
-- **Verify visually**, not just with tests: render real-window screenshots with a throwaway scene in git-ignored `.tmp_shots/` (bare `godot -s` scripts can't see the `GameState` autoload). This caught many layout bugs.
-- Chris's machine has a **GateGuard hook**: before the first command/edit of certain kinds it asks you to state facts (what changes, rollback, his instruction verbatim, no duplicate file). Answer briefly and retry.
-- Explain in plain language; be honest about trade-offs; keep kid text short, calm, never "wrong".
-
-## Key decisions so far (details in DECISIONS.md)
-- Godot **4.7.2**, GDScript (static typing), GUT **9.7.1**, Compatibility renderer, 1280×720. Data-driven JSON in `data/`.
-- Art: **Ninja Adventure pack (CC0)**; every used file listed in `assets/CREDITS.md`. Original zip in Chris's Downloads. Missing species (fox, rabbit, deer, turtle, tortoise, goat, snow leopard, eagle) — build with pack animals now, fill gaps later. Ranger customization will likely be "pick a kid sprite" (pack has no layers) — needs Chris's OK in Phase 5.
-- Chase = its own screen (scrolling path, critter ahead, ranger behind). Explore (no timer) / Race (45s, sprint boost +3s for answers ≤5s, "Chase again"). Henrito hints after 2 misses (1 with extra help) with hint pictures.
-- **Voice is OFF** (Chris: Windows TTS sounded weird, some lines off). `Speech` code kept, unused. Must solve audio before the preschool level. Open question: which lines were "off" (wording vs pronunciation).
-- **Never stop/interrupt TTS** (`tts_stop()` / interrupting `tts_speak`) — it froze/crashed Godot on Windows (Playtest 1 freeze). Test-enforced.
-- World = **hub with gates**; new games start at the Rescue Center. Maps are text files `data/maps/<id>.txt` + info `data/maps/<id>.json` + `data/maps/world.json`. Ponds convex; gates are digits on the map edge.
-- Adaptive difficulty: last 10 first-try answers per skill; ≥80% and fast → up; <50% (after 6) → down + extra help; mastery = 3 good sessions (credit flows to easier levels).
-- This branch saves one local profile (separate Playtest 2 profile), resumes at the hub, and completes mastery on Save & rest or orderly close. Multiple profiles, timed wrap-up, and parent settings remain Phase 5.
+- **Verify visually** with real-window screenshots, not just tests.
+- Chris's machine has a **GateGuard hook** that sometimes asks you to state facts before the first edit/command of a kind; answer briefly and retry.
+- Explain in plain language; be honest about trade-offs; kid text short, calm, never "wrong".
+- Codex review: `AGENTS.md` has review guidelines; Chris still needs to switch on Codex code review at chatgpt.com/codex → Settings → Code review.
 
 ## Playtest
-- Desktop shortcut **"Catch That Critter (playtest)"** → `tools/playtest_launch.cmd` in frozen worktree `C:\Users\raine\CatchACritter-playtest` at tag **`playtest-1.3`** (pre-intro/hub version: Meadow only, add/subtract ≤12, raccoons come back, voice off). Don't develop in that folder; to update: tag a new version on `main`, `git -C C:\Users\raine\CatchACritter-playtest checkout --detach <tag>`, run `--import` there.
-- Logs: `%APPDATA%\Godot\app_userdata\Catch That Critter\playtest\` (answers, freezes with last steps, Godot verbose log). Summarize: `python tools/summarize_playtest.py`.
-- First session (2026-10-21): froze (fixed); son got 7/7 right at ~1.9s on level 1 → consider starting him higher.
-- Robot players for regression (git-ignored, in `.tmp_shots/`): `bot2.tscn` walks/clicks 30 chases with a hang watchdog.
+- **Playtest 2.1** (`playtest-2.1-snake`): double-click `tools/playtest_2_launch.cmd` in this checkout; separate save; caught raccoons come back after 25 s. Checklist `docs/playtest_2.md`. Summarize: `python tools/summarize_playtest.py` (includes the snake hunt and stars).
+- Results so far: Playtest 2 (level 3 → adapted to 2; subtraction is his weak spot). Playtest 2.1: found the snake after 3 empty rocks and caught it on the one try; loved it; bought a rock; didn't open the book.
+- The old desktop shortcut still runs the frozen Playtest 1 (`C:\Users\raine\CatchACritter-playtest`).
+- Next playtest idea: the Forest (new animals, the ball python), and whether he opens the Rescue Book.
 
 ## Open items / waiting on Chris
-- Which voice lines sounded "off"; listen to the 4 chase sounds; is Race 45s right; species for "special" rare animals.
-- Review more playtest sessions when they happen (checklist `docs/playtest_1.md`).
-- Tuning: "coins with quarters" level can roll piles without a quarter; starting level for the 7-year-old.
-- Export presets/templates (~1.3 GB) not set up — Phase 7.
+- Turn on Codex code review (see above).
+- Try the Forest with his son; are the drawn animals and food pictures clear enough?
+- Subtraction is his weakest area — maybe extra subtraction help later.
+- Export presets/templates (~1.3 GB) not set up — Phase 7. The art pack zip is no longer in Downloads (new art is drawn in code).
 
 ## Handy commands (Windows; Godot isn't on PATH)
 ```powershell

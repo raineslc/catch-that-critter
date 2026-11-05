@@ -119,6 +119,36 @@
       "word": "honey",
       "description": "Bees make this sweet food.",
       "picture": "res://assets/ui/food/honey.png"
+    },
+    "leaves": {
+      "word": "leaves",
+      "description": "They grow on trees and turn colors in fall.",
+      "picture": "res://assets/ui/food/leaves.png"
+    },
+    "clover": {
+      "word": "clover",
+      "description": "It is a small plant with three round leaves.",
+      "picture": "res://assets/ui/food/clover.png"
+    },
+    "acorns": {
+      "word": "acorns",
+      "description": "They are nuts that grow on oak trees.",
+      "picture": "res://assets/ui/food/nuts.png"
+    },
+    "berries": {
+      "word": "berries",
+      "description": "They are small, sweet fruits that grow on bushes.",
+      "picture": "res://assets/ui/food/berries.png"
+    },
+    "rats": {
+      "word": "rats",
+      "description": "They look like big mice with long tails.",
+      "picture": "res://assets/ui/food/rats.png"
+    },
+    "gerbils": {
+      "word": "gerbils",
+      "description": "They are small, sandy brown animals that dig.",
+      "picture": "res://assets/ui/food/gerbils.png"
     }
   },
   "animals": {
@@ -249,6 +279,250 @@
         "Its bright green color helps it hide in the leaves.",
         "It has a long, pointy nose.",
         "It likes to eat lizards and frogs."
+      ]
+    },
+    "deer": {
+      "foods": [
+        "leaves",
+        "clover",
+        "acorns",
+        "apples",
+        "corn",
+        "berries"
+      ],
+      "care_notes": [
+        {
+          "text": "The deer is scared of loud sounds.",
+          "question": "How should we walk by?",
+          "good": "Slowly and quietly",
+          "others": [
+            "Stomping and yelling"
+          ],
+          "older_others": [
+            "Running past fast"
+          ]
+        },
+        {
+          "text": "The deer wants to stretch its legs.",
+          "question": "What does it need?",
+          "good": "Room to run",
+          "others": [
+            "A small box"
+          ],
+          "older_others": [
+            "A big pile of rocks"
+          ]
+        },
+        {
+          "text": "The deer's water bowl is empty.",
+          "question": "What should we do?",
+          "good": "Fill it with fresh water",
+          "others": [
+            "Give it juice"
+          ],
+          "older_others": [
+            "Wait until tomorrow"
+          ]
+        },
+        {
+          "text": "The deer likes to hide in the shade.",
+          "question": "What can we add to its pen?",
+          "good": "A shady tree",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "A sunny bare spot"
+          ]
+        }
+      ],
+      "facts": [
+        "A baby deer is called a fawn.",
+        "Fawns have white spots that help them hide.",
+        "Male deer grow antlers and lose them every year.",
+        "Deer can run fast and jump very high."
+      ]
+    },
+    "bear": {
+      "foods": [
+        "fish",
+        "honey",
+        "berries",
+        "nuts",
+        "apples",
+        "bugs"
+      ],
+      "care_notes": [
+        {
+          "text": "The bear is getting sleepy for winter.",
+          "question": "What does it need?",
+          "good": "A cozy den",
+          "others": [
+            "A loud radio"
+          ],
+          "older_others": [
+            "A cold puddle"
+          ]
+        },
+        {
+          "text": "The bear loves to climb.",
+          "question": "What can we put in its pen?",
+          "good": "A strong tree",
+          "others": [
+            "A paper box"
+          ],
+          "older_others": [
+            "A thin stick"
+          ]
+        },
+        {
+          "text": "The bear has a very good nose.",
+          "question": "How can we hide its snack?",
+          "good": "Under a log to sniff out",
+          "others": [
+            "In a locked car"
+          ],
+          "older_others": [
+            "Up on the roof"
+          ]
+        },
+        {
+          "text": "The bear is hot after a long walk.",
+          "question": "What will help it cool off?",
+          "good": "A pond to splash in",
+          "others": [
+            "A warm blanket"
+          ],
+          "older_others": [
+            "A sunny rock"
+          ]
+        }
+      ],
+      "facts": [
+        "A baby bear is called a cub.",
+        "Bears sleep through much of the winter in a den.",
+        "Black bears are great tree climbers.",
+        "Bears have a super strong sense of smell."
+      ]
+    },
+    "owl": {
+      "foods": [
+        "mice",
+        "crickets",
+        "worms",
+        "bugs",
+        "lizards"
+      ],
+      "care_notes": [
+        {
+          "text": "The owl sleeps all day.",
+          "question": "When should we visit?",
+          "good": "In the evening",
+          "others": [
+            "Early at noon"
+          ],
+          "older_others": [
+            "Right after lunch"
+          ]
+        },
+        {
+          "text": "The owl likes a high place to sit.",
+          "question": "What should we give it?",
+          "good": "A tall perch",
+          "others": [
+            "A low bowl"
+          ],
+          "older_others": [
+            "A flat mat"
+          ]
+        },
+        {
+          "text": "The owl's feathers got wet in the rain.",
+          "question": "What will help?",
+          "good": "A dry, warm place",
+          "others": [
+            "A cold bath"
+          ],
+          "older_others": [
+            "A fan on high"
+          ]
+        },
+        {
+          "text": "The owl is quiet and watchful.",
+          "question": "How should we act near it?",
+          "good": "Calm and gentle",
+          "others": [
+            "Loud and silly"
+          ],
+          "older_others": [
+            "Fast and jumpy"
+          ]
+        }
+      ],
+      "facts": [
+        "Owls can turn their heads very far around.",
+        "Most owls hunt at night.",
+        "Owls fly almost without a sound.",
+        "A baby owl is called an owlet."
+      ]
+    },
+    "ball_python": {
+      "foods": [
+        "mice",
+        "rats",
+        "gerbils"
+      ],
+      "care_notes": [
+        {
+          "text": "Ball pythons come from warm places in Africa.",
+          "question": "What does its pen need?",
+          "good": "A warm spot to rest",
+          "others": [
+            "A pile of snow"
+          ],
+          "older_others": [
+            "A cold, wet floor"
+          ]
+        },
+        {
+          "text": "A scared ball python curls up into a tight ball.",
+          "question": "What should we do?",
+          "good": "Give it quiet time",
+          "others": [
+            "Poke it to play"
+          ],
+          "older_others": [
+            "Shake its box"
+          ]
+        },
+        {
+          "text": "The ball python likes to hide in small, dark spaces.",
+          "question": "What can we add?",
+          "good": "A cozy hiding cave",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "An open, empty floor"
+          ]
+        },
+        {
+          "text": "The python needs water to drink and soak in.",
+          "question": "What should we give it?",
+          "good": "A big water bowl",
+          "others": [
+            "A cup of milk"
+          ],
+          "older_others": [
+            "A wet sponge"
+          ]
+        }
+      ],
+      "facts": [
+        "A scared ball python curls into a tight ball.",
+        "Ball pythons come from Africa.",
+        "They are not venomous. They squeeze their food.",
+        "A ball python can live for more than 30 years."
       ]
     }
   }
