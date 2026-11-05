@@ -123,14 +123,13 @@ func test_walking_into_the_gate_uses_it() -> void:
 	assert_signal_emitted(hub, "gate_used")
 
 
-func test_unbuilt_habitats_are_locked_and_say_so() -> void:
+func test_every_habitat_gate_is_open() -> void:
 	await _open_hub()
+	for gate: String in ["1", "2", "3", "4", "5"]:
+		assert_false(hub.gates[gate] is StaticBody2D, "gate %s is open" % gate)
 	watch_signals(hub)
-	for gate: String in ["5"]:
-		assert_true(hub.gates[gate] is StaticBody2D, "gate %s is fenced off" % gate)
-		hub.use_gate(gate)
-	assert_signal_not_emitted(hub, "gate_used")
-	assert_string_contains(hub.banner.text, "opens soon")
+	hub.use_gate("5")
+	assert_signal_emitted_with_parameters(hub, "gate_used", ["mountains", "res://scenes/world/mountains.tscn"])
 
 
 func test_arriving_from_the_meadow_puts_you_at_the_west_gate() -> void:

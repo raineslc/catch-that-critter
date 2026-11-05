@@ -164,6 +164,16 @@
       "word": "cactus",
       "description": "It is a spiky desert plant that holds water.",
       "picture": "res://assets/ui/food/cactus.png"
+    },
+    "grass": {
+      "word": "grass",
+      "description": "It is the green plant that covers fields.",
+      "picture": "res://assets/ui/food/grass.png"
+    },
+    "meat": {
+      "word": "meat",
+      "description": "It is food that comes from animals.",
+      "picture": "res://assets/ui/food/meat.png"
     }
   },
   "animals": {
@@ -1024,6 +1034,249 @@
         "Rattlesnakes rattle their tails to warn others away.",
         "Rattlesnakes can sense the warmth of animals nearby.",
         "Baby rattlesnakes are born live, not from eggs."
+      ]
+    },
+    "mountain_goat": {
+      "foods": [
+        "grass",
+        "clover",
+        "leaves",
+        "apples",
+        "corn",
+        "berries"
+      ],
+      "care_notes": [
+        {
+          "text": "The goat loves to climb up high.",
+          "question": "What can we put in its pen?",
+          "good": "Big rocks to climb",
+          "others": [
+            "A soft rug"
+          ],
+          "older_others": [
+            "A flat floor"
+          ]
+        },
+        {
+          "text": "The goat has a thick, warm coat.",
+          "question": "Where does it like to be?",
+          "good": "Somewhere cool",
+          "others": [
+            "Next to a heater"
+          ],
+          "older_others": [
+            "In a hot car"
+          ]
+        },
+        {
+          "text": "The goat licks rocks for salt.",
+          "question": "What can we give it?",
+          "good": "A salt lick",
+          "others": [
+            "A candy bar"
+          ],
+          "older_others": [
+            "A cup of soda"
+          ]
+        },
+        {
+          "text": "The goat's hooves need care.",
+          "question": "What should we do?",
+          "good": "Check and clean them",
+          "others": [
+            "Paint them"
+          ],
+          "older_others": [
+            "Ignore them"
+          ]
+        }
+      ],
+      "facts": [
+        "Mountain goats can climb very steep cliffs.",
+        "A baby goat is called a kid.",
+        "Their thick white coat keeps them warm in snow.",
+        "Their hooves have soft pads that grip rocks."
+      ]
+    },
+    "snow_leopard": {
+      "foods": [
+        "meat",
+        "mice",
+        "rats",
+        "eggs",
+        "fish"
+      ],
+      "care_notes": [
+        {
+          "text": "The snow leopard likes cold places.",
+          "question": "What does its pen need?",
+          "good": "A cool, shady den",
+          "others": [
+            "A hot lamp"
+          ],
+          "older_others": [
+            "A sunny desert"
+          ]
+        },
+        {
+          "text": "The snow leopard loves to leap.",
+          "question": "What can we add?",
+          "good": "High rocks to jump on",
+          "others": [
+            "A low box"
+          ],
+          "older_others": [
+            "A small rug"
+          ]
+        },
+        {
+          "text": "The snow leopard is shy.",
+          "question": "How should we act?",
+          "good": "Quiet and calm",
+          "others": [
+            "Loud and fast"
+          ],
+          "older_others": [
+            "Bang on the fence"
+          ]
+        },
+        {
+          "text": "The snow leopard wraps its tail around itself.",
+          "question": "Why?",
+          "good": "To stay warm",
+          "others": [
+            "To look silly"
+          ],
+          "older_others": [
+            "To go fast"
+          ]
+        }
+      ],
+      "facts": [
+        "Snow leopards use their long tails like a blanket.",
+        "Their big furry paws work like snowshoes.",
+        "Snow leopards can leap very far.",
+        "Snow leopards cannot roar like lions."
+      ]
+    },
+    "eagle": {
+      "foods": [
+        "fish",
+        "mice",
+        "rats",
+        "lizards",
+        "meat"
+      ],
+      "care_notes": [
+        {
+          "text": "The eagle likes to sit up high.",
+          "question": "What should we give it?",
+          "good": "A tall perch",
+          "others": [
+            "A low bowl"
+          ],
+          "older_others": [
+            "A flat mat"
+          ]
+        },
+        {
+          "text": "The eagle needs to stretch its big wings.",
+          "question": "What does it need?",
+          "good": "Lots of room to fly",
+          "others": [
+            "A tiny box"
+          ],
+          "older_others": [
+            "A short leash"
+          ]
+        },
+        {
+          "text": "The eagle keeps its feathers clean.",
+          "question": "What can we add?",
+          "good": "A bird bath",
+          "others": [
+            "A mud pile"
+          ],
+          "older_others": [
+            "A dust storm"
+          ]
+        },
+        {
+          "text": "The eagle has sharp talons.",
+          "question": "How should we hold it?",
+          "good": "With a thick glove",
+          "others": [
+            "With bare hands"
+          ],
+          "older_others": [
+            "By its tail"
+          ]
+        }
+      ],
+      "facts": [
+        "Eagles can see a rabbit from very far away.",
+        "Eagles build huge nests called eyries.",
+        "A baby eagle is called an eaglet.",
+        "Eagles use their talons to catch food."
+      ]
+    },
+    "king_cobra": {
+      "foods": [
+        "mice",
+        "lizards",
+        "eggs"
+      ],
+      "care_notes": [
+        {
+          "text": "The king cobra spreads its hood when scared.",
+          "question": "What should we do?",
+          "good": "Step back and give it space",
+          "others": [
+            "Poke it"
+          ],
+          "older_others": [
+            "Grab its hood"
+          ]
+        },
+        {
+          "text": "King cobras are venomous.",
+          "question": "Who should handle it?",
+          "good": "Only trained grown-ups",
+          "others": [
+            "Any kid"
+          ],
+          "older_others": [
+            "Nobody ever feeds it"
+          ]
+        },
+        {
+          "text": "The king cobra likes to hide in leaves.",
+          "question": "What can we add?",
+          "good": "A pile of dry leaves",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "A bare floor"
+          ]
+        },
+        {
+          "text": "The king cobra needs a drink.",
+          "question": "What should we give it?",
+          "good": "A water bowl",
+          "others": [
+            "A cup of milk"
+          ],
+          "older_others": [
+            "A wet sponge"
+          ]
+        }
+      ],
+      "facts": [
+        "The king cobra is the longest venomous snake.",
+        "A king cobra can lift its head up high.",
+        "King cobras build nests for their eggs.",
+        "King cobras live in forests and hills of Asia."
       ]
     }
   }

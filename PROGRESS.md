@@ -79,10 +79,11 @@ Approved review follow-up implemented on `codex/review-fixes`, awaiting Claude's
 - 2026-11-04 — Forest playtest: 9/9 first tries right (all subtraction, avg 1.7 s), moved up to level 3; found the ball python after 2 empty rocks but answered 19 for 18 − 1 (added instead of subtracting), so it slid away; fed the bear; quit the vine snake's "lizards" spelling after 2 misses.
 - 2026-11-04 — The **Swamp** (hub's east gate): turtles, frogs, alligators (place value) and the hidden green anaconda. 282 tests passing.
 - 2026-11-05 — The **Desert** (hub's south gate): lizards, tortoises, roadrunners (time and money) and the hidden rattlesnake; sandy ground tint. 287 tests passing.
+- 2026-11-05 — The **Mountains** (hub's northeast gate): mountain goats, snow leopards, eagles (multiply/divide) and the hidden king cobra. All five habitats are built. 292 tests passing.
 
 ## Next
 - Chris: turn on Codex code review for the repo at chatgpt.com/codex → Settings → Code review (automatic reviews).
-- Phase 4, step 1 continued (one habitat per PR, confirm with Chris first): Mountains; then habitat unlocking. See `docs/HANDOFF.md` for the Forest recipe.
+- Phase 4, step 1 last part (confirm with Chris first): habitat unlocking (PLAN 3.4). See `docs/HANDOFF.md`.
 - Chris: try the Forest with his son.
 - Chris: are the care notes and facts at the right reading level? (Check during Playtest 2.)
 

@@ -16,6 +16,9 @@
     },
     "desert": {
       "scene": "res://scenes/world/desert.tscn"
+    },
+    "mountains": {
+      "scene": "res://scenes/world/mountains.tscn"
     }
   }
 }

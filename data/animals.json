@@ -160,6 +160,44 @@
       "hides_under_rocks": true,
       "sprite": "res://assets/sprites/animals/rattlesnake/sprite_sheet.png",
       "faceset": "res://assets/sprites/animals/rattlesnake/faceset.png"
+    },
+    {
+      "id": "mountain_goat",
+      "name": "Mountain Goat",
+      "habitat": "mountains",
+      "skill": "multiply_divide",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/mountain_goat/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/mountain_goat/faceset.png"
+    },
+    {
+      "id": "snow_leopard",
+      "name": "Snow Leopard",
+      "habitat": "mountains",
+      "skill": "multiply_divide",
+      "rarity": "uncommon",
+      "flee_speed": 100.0,
+      "sprite": "res://assets/sprites/animals/snow_leopard/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/snow_leopard/faceset.png"
+    },
+    {
+      "id": "eagle",
+      "name": "Eagle",
+      "habitat": "mountains",
+      "skill": "multiply_divide",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/eagle/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/eagle/faceset.png"
+    },
+    {
+      "id": "king_cobra",
+      "name": "King Cobra",
+      "habitat": "mountains",
+      "skill": "add_subtract",
+      "rarity": "special",
+      "hides_under_rocks": true,
+      "sprite": "res://assets/sprites/animals/king_cobra/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/king_cobra/faceset.png"
     }
   ]
 }

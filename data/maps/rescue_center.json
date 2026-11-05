@@ -5,7 +5,7 @@
   "gates": {
     "1": {"to": "meadow", "arrive": "1", "label": "Meadow"},
     "2": {"to": "forest", "arrive": "1", "label": "Forest"},
-    "5": {"to": "mountains", "label": "Mountains", "locked": true},
+    "5": {"to": "mountains", "arrive": "1", "label": "Mountains"},
     "3": {"to": "swamp", "arrive": "1", "label": "Swamp"},
     "4": {"to": "desert", "arrive": "1", "label": "Desert"}
   },

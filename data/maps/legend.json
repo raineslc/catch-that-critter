@@ -26,7 +26,10 @@
     "l": "grass",
     "z": "grass",
     "u": "grass",
-    "n": "grass"
+    "n": "grass",
+    "m": "grass",
+    "x": "grass",
+    "y": "grass"
   },
   "objects": {
     ",": {
@@ -136,7 +139,10 @@
     "l": "alligator",
     "z": "lizard",
     "u": "tortoise",
-    "n": "roadrunner"
+    "n": "roadrunner",
+    "m": "mountain_goat",
+    "x": "snow_leopard",
+    "y": "eagle"
   },
   "spawn": "S",
   "sidekick_spot": "H",
