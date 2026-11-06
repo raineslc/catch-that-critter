@@ -113,11 +113,13 @@ func needs_extra_help(skill_id: String) -> bool:
 	return has_skill(skill_id) and _progress(skill_id).extra_help
 
 
-## How many misses on one problem before the sidekick shows a hint.
-func misses_before_hint(skill_id: String) -> int:
-	if needs_extra_help(skill_id):
-		return _int("misses_before_hint_with_extra_help")
-	return _int("misses_before_hint")
+## How many misses on one problem before the sidekick shows a hint. With `choice_count`, the hint
+## comes while at least two answers are left (1 miss on 3 buttons, 2 on 4), but never before 1 miss.
+func misses_before_hint(skill_id: String, choice_count: int = 0) -> int:
+	var misses: int = _int("misses_before_hint_with_extra_help" if needs_extra_help(skill_id) else "misses_before_hint")
+	if choice_count > 0:
+		misses = mini(misses, maxi(choice_count - 2, 1))
+	return misses
 
 
 ## Call once when a play session ends. Returns newly mastered levels: [{"skill": id, "level": n}, ...].

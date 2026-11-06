@@ -105,12 +105,10 @@ func test_henrito_cheers_at_the_start() -> void:
 	assert_not_null(screen.bubble_face.texture)
 
 
-func test_hint_after_two_misses_with_picture() -> void:
-	var wrong: Array[String] = _wrong_choices()
-	screen.answer(wrong[0], 2.0)
-	assert_false(screen.hint_shown, "no hint after one miss")
-	screen.answer(wrong[1], 2.0)
-	assert_true(screen.hint_shown)
+func test_three_buttons_hint_after_one_miss_with_picture() -> void:
+	assert_eq(screen.problem.choices.size(), 3)
+	screen.answer(_wrong_choice(), 2.0)
+	assert_true(screen.hint_shown, "two answers are still left to pick from")
 	assert_true(screen.bubble.visible)
 	assert_eq(screen.bubble_label.text, HintText.for_problem(screen.problem))
 	assert_true(screen.hint_picture.visible)
@@ -119,6 +117,28 @@ func test_hint_after_two_misses_with_picture() -> void:
 	screen.next_problem()
 	assert_false(screen.hint_picture.visible, "hint clears on the next problem")
 	assert_true(screen.picture.visible)
+
+
+func test_problem_without_a_picture_fills_the_middle_until_the_hint() -> void:
+	screen.start(GameState.catalog.get_animal("raccoon"), "add_subtract")
+	assert_eq(ProblemPicture.kind_for(screen.problem), "", "'2 + 4' has no picture of its own")
+	assert_false(screen.picture.visible)
+	assert_eq(screen.prompt_label.get_theme_font_size("font_size"), ChaseScreen.BIG_PROMPT_FONT_SIZE)
+	assert_gt(screen.prompt_label.custom_minimum_size.y, ChaseScreen.PICTURE_HEIGHT, "takes the picture's space")
+	screen.answer(_wrong_choice(), 2.0)
+	assert_true(screen.hint_picture.visible, "dots come with the hint")
+	assert_eq(screen.prompt_label.get_theme_font_size("font_size"), ChaseScreen.PROMPT_FONT_SIZE)
+
+
+func test_four_buttons_hint_after_two_misses() -> void:
+	GameState.engine.set_level("counting", 5)
+	screen.next_problem()
+	assert_eq(screen.problem.choices.size(), 4)
+	var wrong: Array[String] = _wrong_choices()
+	screen.answer(wrong[0], 2.0)
+	assert_false(screen.hint_shown, "no hint after one miss")
+	screen.answer(wrong[1], 2.0)
+	assert_true(screen.hint_shown)
 
 
 func test_extra_help_hints_after_one_miss() -> void:
