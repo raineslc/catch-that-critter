@@ -15,9 +15,12 @@ const STORY_FONT_SIZE: int = 40
 const BUTTON_FONT_SIZE: int = 44
 const FEEDBACK_FONT_SIZE: int = 34
 const PORTRAIT_SIZE: float = 152.0
+## Smaller face when the story has a picture, so everything fits on screen.
+const SMALL_PORTRAIT_SIZE: float = 88.0
 const BUTTON_SIZE: Vector2 = Vector2(190, 110)
 const WIDE_BUTTON_SIZE: Vector2 = Vector2(360, 100)
 const STORY_WIDTH: float = 1100.0
+const PICTURE_HEIGHT: float = 150.0
 
 const FOUND_TEXT: String = "You found a %s!"
 const CAUGHT_TEXT: String = "You caught the %s!"
@@ -32,6 +35,8 @@ var caught: bool = false
 var accepting: bool = false
 var title_label: Label
 var story_label: Label
+## Clocks, coins, groups, or things to count, when the story needs them.
+var picture: ProblemPicture
 var feedback: Label
 var choices_box: HBoxContainer
 var _sfx: AudioStreamPlayer
@@ -49,6 +54,11 @@ func start(snake: Dictionary, story_problem: MathProblem) -> void:
 	title_label.text = FOUND_TEXT % snake_name()
 	(get_node("Column/Portrait") as TextureRect).texture = load(str(snake["faceset"]))
 	story_label.text = problem.prompt
+	var icon_path: String = str(problem.data.get("story_icon", ""))
+	picture.show_problem(problem, load(icon_path) as Texture2D if icon_path != "" else null)
+	picture.visible = ProblemPicture.kind_for(problem) != ""
+	var face: float = SMALL_PORTRAIT_SIZE if picture.visible else PORTRAIT_SIZE
+	(get_node("Column/Portrait") as Control).custom_minimum_size = Vector2(face, face)
 	feedback.text = ONE_TRY_TEXT
 	var buttons: Array[Button] = []
 	for choice: String in problem.choices:
@@ -148,6 +158,11 @@ func _build() -> void:
 	story_label.custom_minimum_size = Vector2(STORY_WIDTH, 0)
 	story_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	column.add_child(story_label)
+	picture = ProblemPicture.new()
+	picture.custom_minimum_size = Vector2(STORY_WIDTH, PICTURE_HEIGHT)
+	picture.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	picture.visible = false
+	column.add_child(picture)
 	choices_box = HBoxContainer.new()
 	choices_box.alignment = BoxContainer.ALIGNMENT_CENTER
 	choices_box.add_theme_constant_override("separation", 28)

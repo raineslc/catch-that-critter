@@ -495,10 +495,8 @@ func open_snake() -> void:
 	var level: int = WordProblem.snake_level(GameState.engine.level(skill), GameState.factory.level_count(skill))
 	var problem: MathProblem = WordProblem.new().make(GameState.factory, skill, level, str(hidden_snake["name"]), GameState.rng)
 	if problem == null:
-		# shortcut: only add/subtract kinds have stories; other skills fall back to plain add/subtract.
-		skill = "add_subtract"
-		level = WordProblem.snake_level(GameState.engine.level(skill), GameState.factory.level_count(skill))
-		problem = WordProblem.new().make(GameState.factory, skill, level, str(hidden_snake["name"]), GameState.rng)
+		push_error("No snake story for %s level %d" % [skill, level])
+		return
 	banner.visible = false
 	snake_screen = SnakeScreen.new()
 	add_child(snake_screen)

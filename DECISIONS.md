@@ -1,5 +1,10 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Snake stories in each habitat's skill (Playthrough fixes step 4)
+- Each snake asks a story in its habitat's skill (its `skill` in `data/animals.json`): Meadow counting, Forest add/subtract, Swamp place value, Desert time/money, Mountains multiply/divide. Still one level above his current level in that skill. Counting levels are all kindergarten, so the Meadow snake stays at K level.
+- `data/word_problems.json` has 1–2 templates for every kind of problem. The numbers, answer, and choices are the generator's own, so the answer is always right. Counted things in a story are 2 or more (otherwise a new problem is drawn).
+- Clock, coin, group, and counting stories show their picture on the snake screen (counting uses the story's crickets/bugs/worms/snails/leaves icons); the snake's face shrinks then so everything fits.
+
 ## 2026-11-05 — Earlier hints; bigger problem when there's no picture (Playthrough fixes step 3)
 - The hint comes while at least two answers are left: after 1 miss on 3-button problems, 2 misses on 4-button ones (never before the first miss; extra help is still after 1). `misses_before_hint` in `data/adaptive.json` is now the most it waits.
 - Problems with no picture of their own ("2 + 4 = ?", place value, multiply) show the problem bigger, in the middle of the screen, until the hint (Chris's pick over showing the dots/blocks from the start, which would let him count to the answer). The buttons stay put when the hint picture appears.
