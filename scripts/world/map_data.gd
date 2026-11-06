@@ -74,6 +74,16 @@ func critter_at(cell: Vector2i) -> String:
 	return str(critters.get(char_at(cell), ""))
 
 
+## Every tile where an animal starts, top row first.
+func critter_spots() -> Array[Vector2i]:
+	var spots: Array[Vector2i] = []
+	for y: int in height:
+		for x: int in width:
+			if critter_at(Vector2i(x, y)) != "":
+				spots.append(Vector2i(x, y))
+	return spots
+
+
 func pixel_to_cell(point: Vector2) -> Vector2i:
 	return Vector2i(floori(point.x / tile_size), floori(point.y / tile_size))
 

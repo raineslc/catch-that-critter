@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Runaways (Playthrough fixes step 5)
+- Once every animal from a habitat's map is home, each later visit has a few rescued animals slip out: 2, about 20 seconds after he arrives (`runaways_per_visit`, `runaway_delay_seconds` in `data/chase.json`). The banner says "Some animals slipped out! Can you bring them home?"
+- Only kinds he has rescued from that habitat slip out (never the snake). Catching one is a normal chase (practice counts) with normal catch stars and "The Deer is back home!", but it is not a new rescue: the Book, fences, and finale counts don't change. Runaways aren't saved; leaving the habitat brings them home quietly.
+- Not in playtests, where caught animals already come back.
+- Fence repair spreading across all of a pen's rescues was already done in step 1 (each kind's fence is fixed in step with how many of that kind are home).
+
 ## 2026-11-05 — Snake stories in each habitat's skill (Playthrough fixes step 4)
 - Each snake asks a story in its habitat's skill (its `skill` in `data/animals.json`): Meadow counting, Forest add/subtract, Swamp place value, Desert time/money, Mountains multiply/divide. Still one level above his current level in that skill. Counting levels are all kindergarten, so the Meadow snake stays at K level.
 - `data/word_problems.json` has 1–2 templates for every kind of problem. The numbers, answer, and choices are the generator's own, so the answer is always right. Counted things in a story are 2 or more (otherwise a new problem is drawn).

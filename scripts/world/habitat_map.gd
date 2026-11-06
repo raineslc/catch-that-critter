@@ -66,6 +66,8 @@ const LOCKED_TEXT: String = "The %s opens soon!"
 const SNAKE_LOCKED_TEXT: String = "Find the %s's hidden snake to open the %s!"
 const SNAKE_LOCKED_SIGN: String = "\n(find the %s snake)"
 const AREA_OPENED_TEXT: String = " The %s is open now!"
+const RUNAWAY_TEXT: String = "Some animals slipped out! Can you bring them home?"
+const RUNAWAY_HOME_TEXT: String = "The %s is back home!"
 
 ## A critter got startled: a chase is about to start.
 signal chase_requested(critter: Critter)
@@ -93,6 +95,7 @@ var stars_label: Label
 ## Explore / Race switch (hidden when a parent locks Explore).
 var mode_button: Button
 var _rng: RandomNumberGenerator
+var _runaways_released: bool = false
 var _chase_started_msec: int = 0
 ## Turn off in tests: the chase screen then opens only when open_chase() is called.
 var auto_open_chase: bool = true
@@ -173,13 +176,41 @@ func _spawn_critters(rng: RandomNumberGenerator) -> void:
 	_rng = rng
 	# In playtests caught critters come back, so every spot is used again.
 	var keep_rescued_away: bool = GameState.respawn_seconds() <= 0.0
-	for y: int in map.height:
-		for x: int in map.width:
-			var cell: Vector2i = Vector2i(x, y)
-			var id: String = map.critter_at(cell)
-			if id == "" or (keep_rescued_away and GameState.is_spot_rescued(map_id, cell)):
-				continue
-			add_critter(id, map.cell_to_feet(cell), cell)
+	for cell: Vector2i in map.critter_spots():
+		if keep_rescued_away and GameState.is_spot_rescued(map_id, cell):
+			continue
+		add_critter(map.critter_at(cell), map.cell_to_feet(cell), cell)
+	if is_cleared():
+		get_tree().create_timer(float(ChaseState.load_config().get("runaway_delay_seconds", 20.0))).timeout.connect(release_runaways)
+
+
+## True when every animal from this habitat's map is home at the Rescue Center.
+func is_cleared() -> bool:
+	var spots: Array[Vector2i] = map.critter_spots()
+	return not spots.is_empty() and spots.all(func(cell: Vector2i) -> bool: return GameState.is_spot_rescued(map_id, cell))
+
+
+## A few rescued animals slip out again, once per visit to a cleared habitat. Catching one is
+## practice and stars, not a new rescue. Not in playtests, where caught animals come back anyway.
+func release_runaways() -> void:
+	if _runaways_released or not is_inside_tree() or not is_cleared() or GameState.respawn_seconds() > 0.0:
+		return
+	var kinds: Array[String] = []
+	for id: String in GameState.rescued_from(habitat):
+		if catalog.has_animal(id) and not catalog.get_animal(id).get("hides_under_rocks", false) and not kinds.has(id):
+			kinds.append(id)
+	var spots: Array[Vector2i] = map.critter_spots().filter(func(cell: Vector2i) -> bool:
+		return ranger.global_position.distance_to(map.cell_to_feet(cell)) >= RESPAWN_CLEARANCE)
+	if kinds.is_empty() or spots.is_empty():
+		return
+	_runaways_released = true
+	var count: int = mini(int(ChaseState.load_config().get("runaways_per_visit", 2)), spots.size())
+	for i: int in count:
+		var cell: Vector2i = spots.pop_at(_rng.randi_range(0, spots.size() - 1))
+		var runaway: Critter = add_critter(kinds[_rng.randi_range(0, kinds.size() - 1)], map.cell_to_feet(cell))
+		runaway.set_meta("runaway", true)
+	GameState.log_event("runaways", {"habitat": habitat, "count": count})
+	show_banner(RUNAWAY_TEXT)
 
 
 ## Puts a critter in the habitat with its feet at `feet`. `cell` is its map spot (to remember
@@ -253,10 +284,12 @@ func _on_chase_finished(caught: bool) -> void:
 	GameState.log_event("chase_end", {"animal": id, "caught": caught,
 		"seconds": snappedf((Time.get_ticks_msec() - _chase_started_msec) / 1000.0, 0.1)})
 	if caught:
-		GameState.record_rescue(id, habitat, map_id, critter.get_meta("spawn_cell", Vector2i(-1, -1)))
+		var runaway: bool = critter.get_meta("runaway", false)
+		if not runaway:
+			GameState.record_rescue(id, habitat, map_id, critter.get_meta("spawn_cell", Vector2i(-1, -1)))
 		var earned: int = GameState.rewards.catch_stars(misses)
-		GameState.add_stars(earned, "catch")
-		show_banner(CAUGHT_TEXT % critter.animal.get("name", "critter") + STARS_EARNED_TEXT % earned)
+		GameState.add_stars(earned, "runaway" if runaway else "catch")
+		show_banner((RUNAWAY_HOME_TEXT if runaway else CAUGHT_TEXT) % critter.animal.get("name", "critter") + STARS_EARNED_TEXT % earned)
 		critters.erase(critter)
 		if GameState.respawn_seconds() > 0.0:
 			_schedule_respawn(id, critter.spawn_point, GameState.respawn_seconds())
