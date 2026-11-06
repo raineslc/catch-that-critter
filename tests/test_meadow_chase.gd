@@ -13,7 +13,7 @@ func before_each() -> void:
 	meadow = SCENE.instantiate()
 	meadow.auto_open_chase = false
 	add_child_autofree(meadow)
-	raccoon = meadow.critters[0]
+	raccoon = meadow.critters.filter(func(c: Critter) -> bool: return c.animal["id"] == "raccoon")[0]
 	await wait_physics_frames(2)
 	meadow.ranger.global_position = raccoon.global_position + Vector2(20, 0)
 	await wait_physics_frames(3)

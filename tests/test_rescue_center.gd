@@ -38,7 +38,7 @@ func test_one_pen_per_kind_grouped_by_habitat_all_broken_at_the_start() -> void:
 			assert_false(RescueCenter.is_fixed(fence), "%s fence starts knocked over" % pen["habitat"])
 		assert_eq(pen["residents"].size(), 0)
 	assert_eq(kinds_by_habitat.keys(), HABITATS as Array)
-	assert_eq(kinds_by_habitat["meadow"], ["raccoon"])
+	assert_eq(kinds_by_habitat["meadow"], ["raccoon", "fox", "rabbit"])
 	assert_eq(kinds_by_habitat["forest"], ["deer", "bear", "owl"])
 	assert_eq(kinds_by_habitat["mountains"], ["mountain_goat", "snow_leopard", "eagle"])
 	assert_eq(hub.newly_repaired, 0)

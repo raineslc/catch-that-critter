@@ -90,3 +90,18 @@ func test_book_has_every_habitat_with_three_animals_and_a_special() -> void:
 		assert_ne(str(page["special"]), "")
 	assert_eq(habitats, ["meadow", "forest", "swamp", "desert", "mountains"] as Array[String])
 	assert_true(pages[0]["animals"].has("raccoon"))
+
+
+func test_every_book_animal_lives_on_its_habitats_map() -> void:
+	# The 2026-11-05 review: fox and rabbit had Book slots but no animals, so they stayed "???".
+	var catalog: AnimalCatalog = AnimalCatalog.new()
+	for page: Dictionary in Rewards.new().book_pages():
+		var habitat: String = str(page["habitat"])
+		var map: MapData = MapData.load_map("res://data/maps/%s.txt" % habitat)
+		var on_map: Array[String] = []
+		for cell: Vector2i in map.critter_spots():
+			on_map.append(map.critter_at(cell))
+		for id: Variant in page["animals"]:
+			assert_true(catalog.has_animal(str(id)), "%s is a real animal" % id)
+			assert_eq(str(catalog.get_animal(str(id)).get("habitat", "")), habitat, "%s lives in the %s" % [id, habitat])
+			assert_true(on_map.has(str(id)), "%s can be found in the %s" % [id, habitat])
