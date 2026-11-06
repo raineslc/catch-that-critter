@@ -55,7 +55,7 @@ func test_feedback_is_kind() -> void:
 
 
 func test_hint_appears_after_enough_misses() -> void:
-	var needed: int = tester.engine.misses_before_hint("counting")
+	var needed: int = tester.engine.misses_before_hint("counting", tester.problem.choices.size())
 	var wrong: Array[String] = []
 	for choice: String in tester.problem.choices:
 		if choice != tester.problem.answer:

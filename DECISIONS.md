@@ -1,5 +1,9 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Earlier hints; bigger problem when there's no picture (Playthrough fixes step 3)
+- The hint comes while at least two answers are left: after 1 miss on 3-button problems, 2 misses on 4-button ones (never before the first miss; extra help is still after 1). `misses_before_hint` in `data/adaptive.json` is now the most it waits.
+- Problems with no picture of their own ("2 + 4 = ?", place value, multiply) show the problem bigger, in the middle of the screen, until the hint (Chris's pick over showing the dots/blocks from the start, which would let him count to the answer). The buttons stay put when the hint picture appears.
+
 ## 2026-11-05 — Starting levels by grade; level up after 5 of 6 (Playthrough fixes step 2)
 - `data/adaptive.json` now looks at the last **6** answers (was 10): 5 of 6 right and fast moves up a level; fewer than 3 of 6 right moves down (as before, after at least 6 answers).
 - `starting_levels` in `data/adaptive.json` picks each skill's first level by the profile's grade. Grade 2: counting 4 (which number is more), add/subtract 3 (within 20), place value 1, time/money 2 (half hour), multiply/divide 1. Grade 1: counting 3. Grade 3: counting 5, add/subtract 4, place value 3, time/money 4, multiply/divide 2. K and anything not listed: level 1. Claude's picks from the Common Core grade of each level; tune after playtests.

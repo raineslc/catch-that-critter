@@ -29,6 +29,9 @@ const SFX_NET: AudioStream = preload("res://assets/audio/sfx/net_toss.wav")
 const SFX_CAUGHT: AudioStream = preload("res://assets/audio/sfx/caught.wav")
 
 const PROMPT_FONT_SIZE: int = 56
+## A problem with no picture ("2 + 4 = ?") shows bigger, in the picture's space.
+const BIG_PROMPT_FONT_SIZE: int = 84
+const COLUMN_GAP: int = 6
 const BUTTON_FONT_SIZE: int = 44
 const FEEDBACK_FONT_SIZE: int = 34
 const BUBBLE_FONT_SIZE: int = 26
@@ -141,8 +144,7 @@ func next_problem() -> void:
 	_shown_at_msec = Time.get_ticks_msec()
 	prompt_label.text = problem.prompt
 	picture.show_problem(problem, critter_sprite.sprite_frames.get_frame_texture("walk", 0))
-	picture.visible = true
-	hint_picture.visible = false
+	_show_picture(false)
 	feedback.text = ""
 	if _bubble_hide_at_msec < 0:
 		bubble.visible = false
@@ -189,7 +191,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 		for button: Button in choice_buttons():
 			if button.text == choice:
 				button.disabled = true
-		if not hint_shown and misses_this_problem >= GameState.engine.misses_before_hint(skill_id):
+		if not hint_shown and misses_this_problem >= GameState.engine.misses_before_hint(skill_id, problem.choices.size()):
 			show_hint()
 		_refresh_focus()
 		return
@@ -217,12 +219,24 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 func show_hint() -> void:
 	hint_shown = true
 	GameState.log_event("hint", {"skill": skill_id, "level": problem.level, "type": problem.type, "prompt": problem.prompt})
-	picture.visible = false
 	hint_picture.show_problem(problem)
-	hint_picture.visible = HintPicture.kind_for(problem) != ""
-	if not hint_picture.visible:
-		picture.visible = true
+	_show_picture(true)
 	say_sidekick(HintText.for_problem(problem), 0.0)
+
+
+## Shows the hint picture (when `hint` and there is one) or the problem's picture. With neither,
+## the problem itself fills the middle, bigger.
+func _show_picture(hint: bool) -> void:
+	hint_picture.visible = hint and HintPicture.kind_for(problem) != ""
+	picture.visible = not hint_picture.visible and ProblemPicture.kind_for(problem) != ""
+	_size_prompt(not (picture.visible or hint_picture.visible))
+
+
+func _size_prompt(big: bool) -> void:
+	prompt_label.add_theme_font_size_override("font_size", BIG_PROMPT_FONT_SIZE if big else PROMPT_FONT_SIZE)
+	# One normal line plus the picture's space, so the buttons don't move when the hint shows.
+	var line: float = prompt_label.get_theme_font("font").get_height(PROMPT_FONT_SIZE) + prompt_label.get_theme_constant("line_spacing")
+	prompt_label.custom_minimum_size.y = line + COLUMN_GAP + PICTURE_HEIGHT if big else 0.0
 
 
 ## Shows the sidekick's speech bubble (and says it aloud). `seconds` 0 = stays until the next problem.
@@ -353,6 +367,7 @@ func _clear_question(headline: String) -> void:
 	picture.show_problem(null)
 	picture.visible = false
 	hint_picture.visible = false
+	_size_prompt(false)
 	_set_buttons([])
 
 
@@ -501,13 +516,15 @@ func _build() -> void:
 	var column: VBoxContainer = VBoxContainer.new()
 	column.position = Vector2(0, TRACK_TOP + TRACK_ROWS * tile_px + 6)
 	column.size = Vector2(1280, 720 - column.position.y)
-	column.add_theme_constant_override("separation", 6)
+	column.add_theme_constant_override("separation", COLUMN_GAP)
 	add_child(column)
 	prompt_label = Label.new()
 	prompt_label.add_theme_font_size_override("font_size", PROMPT_FONT_SIZE)
 	prompt_label.add_theme_color_override("font_outline_color", Color(0.15, 0.25, 0.1))
 	prompt_label.add_theme_constant_override("outline_size", 10)
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	prompt_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	prompt_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(prompt_label)
 	picture = ProblemPicture.new()
 	picture.custom_minimum_size = Vector2(1280, PICTURE_HEIGHT)

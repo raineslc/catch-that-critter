@@ -113,7 +113,7 @@ func answer(choice: String, seconds: float = -1.0) -> void:
 	for button: Button in choice_buttons():
 		if button.text == choice:
 			button.disabled = true
-	if misses >= engine.misses_before_hint(skill_id):
+	if misses >= engine.misses_before_hint(skill_id, problem.choices.size()):
 		_hint.text = "Hint (%s): %s" % [problem.hint, describe_hint(problem)]
 
 

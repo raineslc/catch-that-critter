@@ -84,7 +84,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 - Correct: ranger speeds up. 3 correct = toss the net = capture.
 - Wrong: animal pulls ahead a little; gentle "try again" sound.
 - Fast correct answers give a sprint boost (Race mode only).
-- After 2 misses on the same problem, the sidekick gives a visual hint (dots, number line, clock, coins), read aloud.
+- After 2 misses on the same problem, the sidekick gives a visual hint (dots, number line, clock, coins), read aloud. **Changed (Chris 2026-11-05, Playthrough fixes step 3):** the hint comes while two answers are still left (1 miss on 3 buttons, 2 on 4); a problem with no picture shows bigger in the middle until then.
 
 ### 3.7 Modes
 - **Explore:** no timer. Default for Preschool and K.
@@ -201,7 +201,7 @@ Chris authorized the review suggestions together on a new branch for Claude to r
 A robot played the whole game start to finish; these fix what it found. Chris chose gameplay fixes first, then looks. Do these before the rest of Phase 5. Steps 1–5 change logic/data; steps 6–10 change what screens look like and wait for Chris's merge.
 - [x] **1. Every kind of animal gets its own pen.** (Changed by Chris 2026-11-05 from "pick which animal in a shared pen".) Each habitat has a row of pens, one per kind (deer, bear, owl...), plus its snake pen, under the habitat's name; the Rescue Center grows to fit. Walking up to a pen offers "Care for the Deer" with its face. Each rescue fixes part of its own kind's pen, so a pen is fully fixed when all of that kind are home. Today only the first kind in a shared pen can ever be cared for, so 8 of 15 species stay Level 1 and their facts never unlock. (Done 2026-11-05: hub 56×38 tiles, five rows of pens.)
 - [x] **2. Starting level by grade, quicker level-ups.** The profile's grade picks each skill's starting level (table in `data/adaptive.json`; K = level 1 everywhere). Level up after 5 of the last 6 right and fast (was 8 of 10). Only new saves and skills he hasn't practiced yet use the grade start; his progress is kept. (Done 2026-11-05.)
-- [ ] **3. Hints before only one answer is left.** On 3-button problems the hint shows after 1 miss (2 misses on 4-button problems). Add a hint picture for "7 + 2"-style problems so the middle of the chase screen isn't empty.
+- [x] **3. Hints before only one answer is left.** (Done 2026-11-05; Chris picked a bigger, centered problem instead of a picture before the hint.) On 3-button problems the hint shows after 1 miss (2 misses on 4-button problems). Add a hint picture for "7 + 2"-style problems so the middle of the chase screen isn't empty.
 - [ ] **4. Snake stories for every skill.** Each habitat's snake asks a story in that habitat's skill (counting, add/subtract, place value, time/money, groups/sharing), a few templates each. Stories start at 2 or more ("saw 1 beetle" reads oddly). The Meadow snake stays at K level.
 - [ ] **5. Runaways come back.** After all of a habitat's animals are home, a few rescued animals slip out again after a while. Catching one gives stars and practice but isn't a new rescue (Book, fence, and finale counts don't change). Fence repair spreads across all of a pen's rescues instead of finishing at 4.
 - [ ] **6. Fox and rabbit in the Meadow.** Find (free, CC0, ask Chris before downloading) or make fox and rabbit art; add them to the Meadow map and data so the Book's two "???" slots can be filled.

@@ -92,6 +92,14 @@ func test_struggling_levels_down_and_turns_on_extra_help() -> void:
 	assert_eq(engine.misses_before_hint("counting"), 1)
 
 
+func test_hint_comes_while_two_answers_are_left() -> void:
+	assert_eq(engine.misses_before_hint("counting", 3), 1, "3 buttons: hint after 1 miss")
+	assert_eq(engine.misses_before_hint("counting", 4), 2, "4 buttons: hint after 2 misses")
+	assert_eq(engine.misses_before_hint("counting", 2), 1, "2 buttons: still at least 1 miss")
+	_answer("counting", 0, 6)
+	assert_eq(engine.misses_before_hint("counting", 4), 1, "extra help: after 1 miss")
+
+
 func test_half_right_does_not_level_down() -> void:
 	engine.set_level("counting", 3)
 	assert_eq(_answer("counting", 3, 3), AdaptiveEngine.Change.NONE)
