@@ -11,7 +11,7 @@ func before_each() -> void:
 	meadow = SCENE.instantiate()
 	meadow.auto_open_chase = false
 	add_child_autofree(meadow)
-	raccoon = meadow.critters[0]
+	raccoon = meadow.critters.filter(func(c: Critter) -> bool: return c.animal["id"] == "raccoon")[0]
 	await wait_physics_frames(2)
 
 
@@ -20,11 +20,12 @@ func _put_ranger_near(critter: Critter, offset: Vector2) -> void:
 
 
 func test_meadow_spawns_one_critter_per_map_marker() -> void:
-	var markers: int = 0
-	for row: String in meadow.map.rows:
-		markers += row.count("a")
+	var markers: int = meadow.map.critter_spots().size()
 	assert_eq(meadow.critters.size(), markers)
-	assert_gt(markers, 0)
+	assert_eq(markers, 10, "6 raccoons, 2 foxes, 2 rabbits")
+	var kinds: Array = meadow.critters.map(func(c: Critter) -> String: return str(c.animal["id"]))
+	for kind: String in ["raccoon", "fox", "rabbit"]:
+		assert_true(kinds.has(kind), "the Meadow has a %s" % kind)
 	assert_eq(raccoon.animal["id"], "raccoon")
 	assert_eq(raccoon.get_parent(), meadow.objects, "critters are y-sorted with trees and the ranger")
 

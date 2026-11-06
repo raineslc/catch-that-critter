@@ -245,6 +245,130 @@
         "A baby raccoon is called a kit."
       ]
     },
+    "fox": {
+      "foods": [
+        "mice",
+        "berries",
+        "bugs",
+        "eggs",
+        "apples",
+        "worms"
+      ],
+      "care_notes": [
+        {
+          "text": "The fox likes to dig.",
+          "question": "What can we put in its pen?",
+          "good": "A pile of soft dirt",
+          "others": [
+            "A glass floor"
+          ],
+          "older_others": [
+            "A smooth rock"
+          ]
+        },
+        {
+          "text": "The fox is thirsty after its run.",
+          "question": "What does it need?",
+          "good": "Fresh water",
+          "others": [
+            "A toy drum"
+          ],
+          "older_others": [
+            "A warm blanket"
+          ]
+        },
+        {
+          "text": "The fox wants a cozy place to rest.",
+          "question": "What will help?",
+          "good": "A snug den",
+          "others": [
+            "A bright lamp"
+          ],
+          "older_others": [
+            "An open field"
+          ]
+        },
+        {
+          "text": "The fox's fur got tangled in the storm.",
+          "question": "What will help?",
+          "good": "A gentle brush",
+          "others": [
+            "A loud bell"
+          ],
+          "older_others": [
+            "A cold bath"
+          ]
+        }
+      ],
+      "facts": [
+        "A fox uses its big, fluffy tail like a warm blanket.",
+        "Foxes can hear a mouse moving under the snow.",
+        "A baby fox is called a kit.",
+        "Foxes live in homes under the ground called dens."
+      ]
+    },
+    "rabbit": {
+      "foods": [
+        "clover",
+        "grass",
+        "leaves",
+        "apples",
+        "berries",
+        "corn"
+      ],
+      "care_notes": [
+        {
+          "text": "The rabbit's teeth never stop growing.",
+          "question": "What can it chew on?",
+          "good": "A wooden stick",
+          "others": [
+            "A plastic toy"
+          ],
+          "older_others": [
+            "A soft pillow"
+          ]
+        },
+        {
+          "text": "The rabbit is scared of loud sounds.",
+          "question": "How should we walk by?",
+          "good": "Slowly and quietly",
+          "others": [
+            "Stomping and yelling"
+          ],
+          "older_others": [
+            "Clapping our hands"
+          ]
+        },
+        {
+          "text": "The rabbit likes to hop and play.",
+          "question": "What does it need?",
+          "good": "Room to hop",
+          "others": [
+            "A tiny box"
+          ],
+          "older_others": [
+            "A tall shelf"
+          ]
+        },
+        {
+          "text": "The rabbit wants a safe place to hide.",
+          "question": "What can we add to its pen?",
+          "good": "A little tunnel",
+          "others": [
+            "A big mirror"
+          ],
+          "older_others": [
+            "A bright lamp"
+          ]
+        }
+      ],
+      "facts": [
+        "Rabbits can turn their long ears to hear better.",
+        "A baby rabbit is called a kit, just like a baby fox!",
+        "Rabbits thump their back feet to warn their friends.",
+        "Rabbits live in homes under the ground called burrows."
+      ]
+    },
     "green_vine_snake": {
       "foods": [
         "lizards",

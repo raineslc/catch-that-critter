@@ -30,6 +30,24 @@
       "faceset": "res://assets/sprites/animals/raccoon/faceset.png"
     },
     {
+      "id": "fox",
+      "name": "Fox",
+      "habitat": "meadow",
+      "skill": "counting",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/fox/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/fox/faceset.png"
+    },
+    {
+      "id": "rabbit",
+      "name": "Rabbit",
+      "habitat": "meadow",
+      "skill": "counting",
+      "rarity": "common",
+      "sprite": "res://assets/sprites/animals/rabbit/sprite_sheet.png",
+      "faceset": "res://assets/sprites/animals/rabbit/faceset.png"
+    },
+    {
       "id": "green_vine_snake",
       "name": "Green Vine Snake",
       "habitat": "meadow",

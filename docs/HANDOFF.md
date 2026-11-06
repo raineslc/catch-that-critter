@@ -1,19 +1,19 @@
-# HANDOFF — Catch That Critter (as of 2026-11-04)
+# HANDOFF — Catch That Critter (as of 2026-11-05)
 
 Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTIONS.md` → `PROGRESS.md` → `DECISIONS.md`, then run the tests.
 
 ## Where things stand
 - **Repo:** GitHub `raineslc/catch-that-critter` (private) is the source of truth. Work in `C:\Users\raine\Projects\catch-that-critter`; start every task by fetching and branching from the latest `origin/main`. (The older checkout `C:\Users\raine\CatchACritter` is out of date — don't use it.)
-- **314 GUT tests pass** locally and in CI. Last merged: Phase 4 step 1 started — the **Forest** (PR after #25).
+- **329 GUT tests pass** locally. Last merged: Playthrough fixes step 5, runaways (PR #39).
 - **Done:** Phases 0–3 (setup, math core, Meadow + chases, storm intro, Rescue Center hub, care, stars/levels/shop/Rescue Book), Playtest 2 and 2.1 with their fixes, the hidden snakes (Meadow and Forest), and the Forest habitat.
-- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python), east gate = **Swamp** (turtles, frogs, alligators practicing place value; hidden green anaconda), south gate = **Desert** (lizards, tortoises, roadrunners practicing time and money; hidden rattlesnake), northeast gate = **Mountains** (mountain goats, snow leopards, eagles practicing multiply/divide; hidden king cobra). The Swamp, Desert, and Mountains open one by one as he catches the snake in the habitat before.
+- **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, foxes, rabbits, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python), east gate = **Swamp** (turtles, frogs, alligators practicing place value; hidden green anaconda), south gate = **Desert** (lizards, tortoises, roadrunners practicing time and money; hidden rattlesnake), northeast gate = **Mountains** (mountain goats, snow leopards, eagles practicing multiply/divide; hidden king cobra). The Swamp, Desert, and Mountains open one by one as he catches the snake in the habitat before.
 
 ## Next steps (in order)
 1. All five habitats are built (Meadow, Forest, Swamp, Desert, Mountains). To add or change one, follow the Forest's pattern (below); a map can set `"ground_tint"` in its info file (Desert, Mountains).
 2. **Habitat unlocking is done:** Meadow and Forest start open; each habitat's hidden snake opens the next (`"opens_after"` in `data/maps/world.json`; `GameState.is_area_open`).
 3. **Phase 4 is done:** helper animals were dropped (Chris); the finale (`scripts/story/finale_screen.gd`) plays once at the hub when all five snakes and 6+ animals from each habitat are home.
 4. **Phase 5 step 1 done:** two profiles, ranger looks, Loganator.
-5. **Next:** Playthrough fixes step 6 (fox and rabbit in the Meadow; ask Chris before downloading art) — see PLAN.md section 7 and `docs/playthrough_review_2026-11-05.md`. After those 10 steps: Phase 5 step 2, the 10–15 minute session timer with wrap-up; then step 3, the parent area (lock, Common Core report, settings — including editing a profile's name/look).
+5. **Next:** Playthrough fixes step 7 (HUD and hub layout: banner below the HUD buttons, one repair message at a time, pen labels, gate signs) — see PLAN.md section 7 and `docs/playthrough_review_2026-11-05.md`. After those 10 steps: Phase 5 step 2, the 10–15 minute session timer with wrap-up; then step 3, the parent area (lock, Common Core report, settings — including editing a profile's name/look).
 
 ### How the Forest was added (copy this for each habitat)
 - Map: `data/maps/<id>.txt` (48×28, border `P`, gate digit on the edge, one `S`, convex ponds, ≥4 rocks `r`) + `data/maps/<id>.json` (gate back to the hub, `arrive` = the hub's gate digit) + scene `scenes/world/<id>.tscn` (copy `forest.tscn`, change `map_path`) + entry in `data/maps/world.json`. In `data/maps/rescue_center.json` change that habitat's gate from `"locked": true` to `"arrive": "1"`. Add the map path to `MAPS` in `tests/test_map_data.gd` (checks edges, gates, reachability, ponds). The Forest layout came from a small throwaway generator with a reachability check; hand-editing is fine too.
