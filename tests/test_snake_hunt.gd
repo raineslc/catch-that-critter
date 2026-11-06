@@ -64,34 +64,98 @@ func test_snake_level_is_one_harder_but_not_past_the_end() -> void:
 	assert_eq(WordProblem.snake_level(0, 6), 1)
 
 
-func test_story_problems_keep_the_right_answer() -> void:
+func test_every_snake_asks_its_habitats_skill() -> void:
+	var skills: Dictionary = {}
+	var snakes: Array[Dictionary] = []
+	for id: String in GameState.catalog.ids():
+		var animal: Dictionary = GameState.catalog.get_animal(id)
+		if animal.get("hides_under_rocks", false):
+			snakes.append(animal)
+		else:
+			skills[animal["habitat"]] = animal["skill"]
+	assert_eq(snakes.size(), 5)
+	for snake: Dictionary in snakes:
+		assert_eq(snake["skill"], skills[snake["habitat"]], "%s asks its habitat's skill" % snake["id"])
+
+
+func test_every_skill_and_level_has_a_story_with_the_right_answer() -> void:
 	var factory: ProblemFactory = ProblemFactory.new()
 	var stories: WordProblem = WordProblem.new()
-	for level: int in range(1, factory.level_count("add_subtract") + 1):
-		for seed: int in 40:
-			rng.seed = seed
-			var problem: MathProblem = stories.make(factory, "add_subtract", level, "Green Vine Snake", rng)
-			assert_not_null(problem, "level %d has a story" % level)
-			assert_false(problem.prompt.contains("{"), "all blanks filled: " + problem.prompt)
-			assert_true(problem.choices.has(problem.answer))
-			assert_true(problem.type.begins_with("word_"))
-			var a: int = int(problem.data.get("a", 0))
-			var b: int = int(problem.data.get("b", 0))
-			assert_string_contains(problem.prompt, str(a))
-			match problem.type:
-				"word_add":
-					assert_eq(int(problem.answer), a + b, problem.prompt)
-				"word_subtract":
-					assert_eq(int(problem.answer), a - b, problem.prompt)
-				"word_missing_addend":
-					assert_eq(int(problem.answer), int(problem.data["total"]) - a, problem.prompt)
-			assert_false(problem.prompt.contains(" 1 frogs") or problem.prompt.contains(" 1 bugs"), "1 thing is singular: " + problem.prompt)
-			for word: String in UNKIND_WORDS:
-				assert_false(problem.prompt.to_lower().contains(word))
+	for skill: String in ["counting", "add_subtract", "place_value", "time_money", "multiply_divide"]:
+		for level: int in range(1, factory.level_count(skill) + 1):
+			for seed: int in 30:
+				rng.seed = seed
+				var problem: MathProblem = stories.make(factory, skill, level, "Green Vine Snake", rng)
+				var where: String = "%s level %d seed %d" % [skill, level, seed]
+				assert_not_null(problem, where + " has a story")
+				if problem == null:
+					continue
+				assert_false(problem.prompt.contains("{"), "all blanks filled: " + problem.prompt)
+				assert_eq(problem.spoken, problem.prompt)
+				assert_true(problem.choices.has(problem.answer), where)
+				assert_true(problem.type.begins_with("word_"), where)
+				var expected: Variant = _story_answer(problem)
+				if expected != null:
+					assert_eq(problem.answer, str(expected), problem.prompt)
+				for noun: String in _story_nouns():
+					for small: String in ["0 ", "1 "]:
+						assert_false((" " + problem.prompt + " ").contains(" " + small + noun + " "), "stories count 2 or more: " + problem.prompt)
+				for word: String in UNKIND_WORDS:
+					assert_false(problem.prompt.to_lower().contains(word))
 
 
-func test_skills_without_stories_give_null() -> void:
-	assert_null(WordProblem.new().make(ProblemFactory.new(), "time_money", 1, "snake", rng))
+## The answer worked out from the numbers in the story (null for kinds without arithmetic to redo).
+func _story_answer(problem: MathProblem) -> Variant:
+	var d: Dictionary = problem.data
+	match problem.type:
+		"word_add":
+			return int(d["a"]) + int(d["b"])
+		"word_subtract":
+			return int(d["a"]) - int(d["b"])
+		"word_missing_addend":
+			return int(d["total"]) - int(d["a"])
+		"word_multiply":
+			return int(d["a"]) * int(d["b"])
+		"word_equal_groups":
+			return int(d["groups"]) * int(d["size"])
+		"word_divide":
+			return int(d["dividend"]) / int(d["divisor"])
+		"word_missing_factor":
+			return int(d["product"]) / int(d["a"])
+		"word_next_number":
+			return int(d["n"]) + 1
+	return null
+
+
+func _story_nouns() -> Array[String]:
+	var nouns: Array[String] = []
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(WordProblem.WORD_PROBLEMS_PATH))
+	for thing: Dictionary in data["things"]:
+		nouns.append(str(thing["one"]))
+		nouns.append(str(thing["many"]))
+	return nouns
+
+
+func test_divide_story_reads_right() -> void:
+	# Known answer: 12 shared among 3 is 4 each.
+	var problem: MathProblem = MathProblem.create("divide", "12 ÷ 3 = ?", "", "4", ["4", "3", "5", "6"] as Array[String], {"dividend": 12, "divisor": 3})
+	var story: MathProblem = WordProblem.new().retell(problem, "King Cobra", rng)
+	assert_string_contains(story.prompt, "12 ")
+	assert_string_contains(story.prompt, "3 ")
+	assert_string_contains(story.prompt, "king cobra")
+	assert_eq(story.answer, "4")
+	assert_eq(story.type, "word_divide")
+
+
+func test_snake_screen_shows_a_picture_for_clock_stories() -> void:
+	var screen: SnakeScreen = SnakeScreen.new()
+	add_child_autofree(screen)
+	var snake: Dictionary = GameState.catalog.get_animal("rattlesnake")
+	var stories: WordProblem = WordProblem.new()
+	screen.start(snake, stories.make(GameState.factory, "time_money", 1, "Rattlesnake", rng))
+	assert_true(screen.picture.visible, "the clock is drawn")
+	screen.start(snake, stories.make(GameState.factory, "add_subtract", 1, "Rattlesnake", rng))
+	assert_false(screen.picture.visible, "a plain story needs no picture")
 
 
 func _open_meadow() -> HabitatMap:

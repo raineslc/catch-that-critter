@@ -42,7 +42,7 @@ var count_icon: Texture2D
 static func kind_for(p: MathProblem) -> String:
 	if p == null:
 		return ""
-	match p.type:
+	match p.type.trim_prefix("word_"):  # snake stories keep their picture
 		"count_objects":
 			return "critters"
 		"clock":

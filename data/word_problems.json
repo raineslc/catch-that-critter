@@ -1,27 +1,25 @@
 {
+  "note": "Snake story templates, one list per problem type (PLAN 3.4, Playthrough fixes step 4). Blanks: {snake}, {things} (plural noun), and any number in the problem's data as {key} or {key_things} (\"5 crickets\"). Lists like a skip-count sequence fill {key} as \"5, 10, 15\". Count numbers in a story are always 2 or more. The icon is drawn when a story needs a picture to count.",
   "things": [
-    [
-      "frog",
-      "frogs"
-    ],
-    [
-      "bug",
-      "bugs"
-    ],
-    [
-      "leaf",
-      "leaves"
-    ],
-    [
-      "beetle",
-      "beetles"
-    ],
-    [
-      "cricket",
-      "crickets"
-    ]
+    {"one": "cricket", "many": "crickets", "icon": "res://assets/ui/food/crickets.png"},
+    {"one": "bug", "many": "bugs", "icon": "res://assets/ui/food/bugs.png"},
+    {"one": "worm", "many": "worms", "icon": "res://assets/ui/food/worms.png"},
+    {"one": "snail", "many": "snails", "icon": "res://assets/ui/food/snails.png"},
+    {"one": "leaf", "many": "leaves", "icon": "res://assets/ui/food/leaves.png"}
   ],
   "templates": {
+    "count_objects": [
+      "The {snake} found some {things} under a rock. How many {things} can you count?",
+      "The {snake} is watching these {things}. How many {things} are there?"
+    ],
+    "next_number": [
+      "The {snake} counted {n_things} on a log. Then 1 more came. How many {things} are on the log now?",
+      "There were {n_things} by the {snake}'s rock. Then 1 more came. How many {things} are there now?"
+    ],
+    "compare_more": [
+      "The {snake} saw {a_things} by the pond and {b_things} by a tree. Which number is more, {a} or {b}?",
+      "There were {a_things} on one rock and {b_things} on another. Which number is more, {a} or {b}?"
+    ],
     "add": [
       "The {snake} saw {a_things} by a rock. Then {b} more came. How many {things} did it see in all?",
       "There were {a_things} on a log and {b_things} in the grass. How many {things} were there in all?"
@@ -32,6 +30,38 @@
     ],
     "missing_addend": [
       "The {snake} saw {a_things}. Then some more came. Now there are {total}. How many more {things} came?"
+    ],
+    "tens_ones": [
+      "The {snake} put {n_things} into piles of 10, with some left over. How many {place} are in {n}?",
+      "There are {n_things} near the {snake}'s rock. How many {place} are in {n}?"
+    ],
+    "compare": [
+      "The {snake} saw {a_things} in one pond and {b_things} in another. Which sign goes between {a} and {b}?"
+    ],
+    "skip_count": [
+      "The {snake} counts {things} by {step}s: {sequence}. What number comes next?"
+    ],
+    "digit_value": [
+      "The {snake} counted {n_things} on its long trip. What is the {digit} worth in {n}?"
+    ],
+    "clock": [
+      "The {snake} wakes up from its nap at this time. What time does the clock show?",
+      "The {snake} goes looking for {things} at this time. What time does the clock show?"
+    ],
+    "coins": [
+      "The {snake} found these coins under its rock. How much money did it find?"
+    ],
+    "equal_groups": [
+      "The {snake} saw {groups} logs with {size_things} on each log. How many {things} in all?"
+    ],
+    "multiply": [
+      "The {snake} looked under {a} rocks. Each rock had {b_things}. How many {things} in all?"
+    ],
+    "divide": [
+      "The {snake} shared {dividend_things} equally among {divisor} friends. How many {things} did each friend get?"
+    ],
+    "missing_factor": [
+      "The {snake} looked under {a} rocks. Each rock had the same number of {things}. There were {product} {things} in all. How many {things} were under each rock?"
     ]
   }
 }

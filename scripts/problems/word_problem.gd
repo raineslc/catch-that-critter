@@ -1,10 +1,14 @@
 class_name WordProblem
 extends RefCounted
-## Story ("word") problems for the hidden snakes (1.OA.1 / 2.OA.1): a normal add/subtract problem
-## from ProblemFactory, one level harder than the player's current level, retold as a short story.
+## Story ("word") problems for the hidden snakes (PLAN 3.4): a normal problem from ProblemFactory in
+## the snake's habitat skill, one level harder than the player's current level, retold as a short story.
 ## The numbers, answer, and choices stay exactly the generator's, so the answer is always right.
 
 const WORD_PROBLEMS_PATH: String = "res://data/word_problems.json"
+## Numbers that count things in a story; a story with 0 or 1 of them reads oddly, so it's redrawn.
+const COUNT_KEYS: Array[String] = ["a", "b", "n", "count", "total", "groups", "size", "dividend", "divisor", "product"]
+const MIN_COUNT: int = 2
+const MAX_TRIES: int = 30
 
 var _data: Dictionary = {}
 
@@ -22,33 +26,56 @@ static func snake_level(current: int, level_count: int) -> int:
 	return clampi(current + 1, 1, maxi(level_count, 1))
 
 
-## A story problem from `skill_id` at `level`, starring `snake_name`. Null if the skill's problem
-## at that level has no story template (only add/subtract kinds do).
+## A story problem from `skill_id` at `level`, starring `snake_name`. Null if that kind of problem
+## has no story template.
 func make(factory: ProblemFactory, skill_id: String, level: int, snake_name: String, rng: RandomNumberGenerator) -> MathProblem:
-	var problem: MathProblem = factory.generate(skill_id, level, rng)
+	var problem: MathProblem = null
+	for i: int in MAX_TRIES:
+		problem = factory.generate(skill_id, level, rng)
+		if problem == null or _counts_are_big_enough(problem):
+			break
 	if problem == null:
 		return null
+	return retell(problem, snake_name, rng)
+
+
+## Retells `problem` as a story (changes and returns it). Null if its kind has no template.
+func retell(problem: MathProblem, snake_name: String, rng: RandomNumberGenerator) -> MathProblem:
 	var kind: String = problem.type
 	if kind == "mixed":
 		kind = "add" if str(problem.data.get("op", "+")) == "+" else "subtract"
 	var templates: Array = _data.get("templates", {}).get(kind, [])
 	if templates.is_empty():
 		return null
-	var things: Array = _data.get("things", [["frog", "frogs"]])
-	var noun: Array = things[rng.randi_range(0, things.size() - 1)]
+	var things: Array = _data.get("things", [])
+	var noun: Dictionary = things[rng.randi_range(0, things.size() - 1)] if not things.is_empty() else {"one": "frog", "many": "frogs"}
 	var text: String = str(templates[rng.randi_range(0, templates.size() - 1)])
-	var a: int = int(problem.data.get("a", 0))
-	var b: int = int(problem.data.get("b", 0))
-	text = text.replace("{snake}", snake_name.to_lower())
-	text = text.replace("{a_things}", _count(a, noun)).replace("{b_things}", _count(b, noun))
-	text = text.replace("{a}", str(a)).replace("{b}", str(b)).replace("{total}", str(problem.data.get("total", 0)))
-	text = text.replace("{things}", str(noun[1]))
+	text = text.replace("{snake}", snake_name.to_lower()).replace("{things}", str(noun["many"]))
+	for key: Variant in problem.data:
+		var value: Variant = problem.data[key]
+		if value is Array:
+			var parts: PackedStringArray = []
+			for part: Variant in value:
+				parts.append(str(int(part)))
+			text = text.replace("{%s}" % key, ", ".join(parts))
+		elif value is int or value is float:
+			text = text.replace("{%s_things}" % key, _count(int(value), noun)).replace("{%s}" % key, str(int(value)))
+		else:
+			text = text.replace("{%s}" % key, str(value))
 	problem.prompt = text
 	problem.spoken = text
 	problem.type = "word_" + kind
+	problem.data["story_icon"] = str(noun.get("icon", ""))
 	return problem
 
 
-## "1 frog", "3 frogs".
-static func _count(n: int, noun: Array) -> String:
-	return "%d %s" % [n, noun[0] if n == 1 else noun[1]]
+static func _counts_are_big_enough(problem: MathProblem) -> bool:
+	for key: String in COUNT_KEYS:
+		if problem.data.has(key) and int(problem.data[key]) < MIN_COUNT:
+			return false
+	return true
+
+
+## "1 cricket", "3 crickets".
+static func _count(n: int, noun: Dictionary) -> String:
+	return "%d %s" % [n, noun["one"] if n == 1 else noun["many"]]
