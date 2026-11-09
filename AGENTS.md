@@ -15,7 +15,7 @@ Same standing rules as `CLAUDE.md`. Short version:
 7. No secrets in the repo; no network calls, ads, analytics, or external links in the game. Saves stay local.
 8. Kid-facing text: short, calm, encouraging; never say "wrong," "bad," or "fail."
 9. Speech always goes through `Speech.say()`; never call `DisplayServer.tts_stop()` or interrupting `tts_speak` (froze Godot on Windows).
-10. Random numbers come from a passed-in `RandomNumberGenerator`; art/sound is CC0 and listed in `assets/CREDITS.md`; map rules are in `CONVENTIONS.md`.
+10. Random numbers come from a passed-in `RandomNumberGenerator`; art/sound is the CC0 pack or made for this project (photos: public domain or CC0), listed in `assets/CREDITS.md`; map rules are in `CONVENTIONS.md`.
 
 ## Architecture (big picture)
 - `GameState` (`scripts/game/game_state.gd`) is the only autoload: current profile, rescues, care visits, stars, decorations, area unlocks/travel (`travel_to`/`take_arrival`, via `data/maps/world.json`), playtest logging, and saving (`snapshot`/`_restore`, `finish_session` on F10 or window close).
@@ -34,6 +34,6 @@ Codex reviews every pull request on GitHub. Flag only real problems, most seriou
 - New logic ships with GUT tests; tuning numbers live in `data/*.json` or named constants, not magic numbers.
 - GDScript is statically typed; game logic stays out of scene scripts so it can be unit-tested.
 - Kid-facing text is short, calm, and encouraging; never "wrong," "bad," or "fail."
-- New art or sound is CC0 (or compatible) and listed in `assets/CREDITS.md`.
+- New art or sound is CC0, public domain, or made for this project, and listed in `assets/CREDITS.md`.
 - A change to a confirmed decision (PLAN.md section 2) needs a DECISIONS.md entry with Chris's approval.
 Skip style nitpicks the tests and existing code already settle.
