@@ -28,7 +28,11 @@ const SMALL_BLOCKER: Vector2 = Vector2(12, 8)
 const TREE_BLOCKER: Vector2 = Vector2(16, 10)
 const WALL_THICKNESS: float = 16.0
 const BANNER_FONT_SIZE: int = 48
-const MODE_BUTTON_SIZE: Vector2 = Vector2(300, 64)
+const MODE_BUTTON_SIZE: Vector2 = Vector2(260, 64)
+## The HUD is one row along the top: buttons are HUD_MARGIN from the edges and HUD_GAP apart.
+const HUD_MARGIN: float = 16.0
+const HUD_GAP: float = 8.0
+const STARS_WIDTH: float = 140.0
 const MODE_BUTTON_FONT_SIZE: int = 28
 ## A critter won't reappear while the ranger is this close to its spot (pixels).
 const RESPAWN_CLEARANCE: float = 80.0
@@ -54,7 +58,9 @@ const SIGN_FONT_SIZE: int = 10
 const SIGN_TEXT: String = "To the %s"
 const BANNER_SECONDS: float = 2.5
 ## Room at the top for the Explore/Race button, so banners sit below it.
-const BANNER_TOP: float = 100.0
+## Just under the HUD row, so messages never sit on the buttons.
+const BANNER_TOP: float = HUD_MARGIN + MODE_BUTTON_SIZE.y + 12.0
+const BANNER_SIDE_MARGIN: float = 40.0
 ## The gate you arrive through works again once you are this far (pixels) from it, so holding
 ## the arrow key that brought you here doesn't walk you straight back out.
 const GATE_REARM_DISTANCE: float = TILE * 3.0
@@ -310,6 +316,10 @@ func _make_banner() -> void:
 	banner.name = "Banner"
 	banner.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
 	banner.offset_top = BANNER_TOP
+	banner.offset_left = BANNER_SIDE_MARGIN
+	banner.offset_right = -BANNER_SIDE_MARGIN
+	# Long messages wrap instead of running off both edges.
+	banner.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	banner.add_theme_font_size_override("font_size", BANNER_FONT_SIZE)
 	banner.add_theme_color_override("font_outline_color", Color(0.2, 0.3, 0.1))
@@ -318,11 +328,13 @@ func _make_banner() -> void:
 	layer.add_child(banner)
 	stars_label = Label.new()
 	stars_label.name = "Stars"
-	# Under the mode button, on a dark backing so it reads over any ground.
+	# Left of the mode button, on a dark backing so it reads over any ground.
 	stars_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	stars_label.offset_left = -MODE_BUTTON_SIZE.x - 16
-	stars_label.offset_right = -16
-	stars_label.offset_top = 16 + MODE_BUTTON_SIZE.y + 8
+	stars_label.offset_right = -HUD_MARGIN - MODE_BUTTON_SIZE.x - HUD_GAP
+	stars_label.offset_left = stars_label.offset_right - STARS_WIDTH
+	stars_label.offset_top = HUD_MARGIN
+	stars_label.offset_bottom = HUD_MARGIN + MODE_BUTTON_SIZE.y
+	stars_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	stars_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var backing: StyleBoxFlat = StyleBoxFlat.new()
 	backing.bg_color = Color(0.1, 0.08, 0.05, 0.6)
@@ -339,10 +351,10 @@ func _make_banner() -> void:
 	mode_button = Button.new()
 	mode_button.name = "ModeButton"
 	mode_button.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	mode_button.offset_left = -MODE_BUTTON_SIZE.x - 16
-	mode_button.offset_top = 16
-	mode_button.offset_right = -16
-	mode_button.offset_bottom = 16 + MODE_BUTTON_SIZE.y
+	mode_button.offset_left = -MODE_BUTTON_SIZE.x - HUD_MARGIN
+	mode_button.offset_top = HUD_MARGIN
+	mode_button.offset_right = -HUD_MARGIN
+	mode_button.offset_bottom = HUD_MARGIN + MODE_BUTTON_SIZE.y
 	mode_button.add_theme_font_size_override("font_size", MODE_BUTTON_FONT_SIZE)
 	mode_button.focus_mode = Control.FOCUS_NONE
 	mode_button.pressed.connect(func() -> void:
@@ -365,6 +377,15 @@ func show_banner(text: String, seconds: float = BANNER_SECONDS) -> void:
 	get_tree().create_timer(seconds).timeout.connect(func() -> void:
 		if token == _banner_token and chase_target == null:
 			banner.visible = false)
+
+
+## Shows several messages one after another (each for `seconds`).
+func show_banners(texts: Array[String], seconds: float = BANNER_SECONDS) -> void:
+	for i: int in texts.size():
+		if i == 0:
+			show_banner(texts[i], seconds)
+		else:
+			get_tree().create_timer(i * seconds).timeout.connect(show_banner.bind(texts[i], seconds))
 
 
 ## Open gates become triggers; gates to areas that aren't built (or are marked locked) get a
@@ -589,6 +610,9 @@ func _add_sign(text: String, cell: Vector2i) -> void:
 	var spot: Vector2 = map.cell_to_feet(cell + inward / 2) - Vector2(48, TILE * 2.4)
 	if cell.y == map.height - 1:
 		spot.y -= TILE
+	elif cell.y == 0:
+		# Below the HUD row, which covers the top of the screen.
+		spot.y = TILE * 1.8
 	# Keep signs fully on the map (the camera never shows past its edges).
 	spot.x = clampf(spot.x, 2.0, map.pixel_size().x - label.size.x - 2.0)
 	spot.y = clampf(spot.y, 2.0, map.pixel_size().y - label.size.y - 2.0)

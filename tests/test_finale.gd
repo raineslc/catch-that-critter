@@ -74,3 +74,11 @@ func test_finale_seen_is_saved_and_optional() -> void:
 	assert_true(ProfileStore.valid(data), "older saves without it still load")
 	data["finale_seen"] = "yes"
 	assert_false(ProfileStore.valid(data))
+
+
+func test_finale_thanks_the_ranger_by_name() -> void:
+	GameState.player_name = "Sam"
+	var finale: FinaleScreen = FinaleScreen.new()
+	add_child_autofree(finale)
+	var texts: Array = finale.find_children("*", "Label", true, false).map(func(l: Label) -> String: return l.text)
+	assert_true(texts.any(func(t: String) -> bool: return t.contains("Thank you, Sam!")))

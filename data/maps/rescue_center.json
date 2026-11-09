@@ -9,6 +9,7 @@
     "3": {"to": "swamp", "arrive": "1", "label": "Swamp"},
     "4": {"to": "desert", "arrive": "1", "label": "Desert"}
   },
+  "max_residents_per_pen": 4,
   "pens_note": "One row of pens per habitat, starting at \"cell\": up to \"slots\" pens, one per kind of animal (each \"pieces\" fence pieces wide, 3 tiles per piece), then the snake's special pen.",
   "pens": [
     {"habitat": "meadow", "label": "Meadow", "cell": [3, 18], "slots": 3, "pieces": 2, "depth": 5, "special_pieces": 1},

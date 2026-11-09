@@ -26,7 +26,9 @@ const SFX_CHEER: AudioStream = preload("res://assets/audio/sfx/caught.wav")
 
 const TITLE: String = "You did it!"
 const MESSAGE: String = "Every habitat is safe, and all the snakes are home.\nThe storm is over!"
-const THANKS: String = "%s: Thank you, Ranger! You saved them all!"
+const THANKS: String = "%s: Thank you, %s! You saved them all!"
+## Used until the player has typed a name.
+const DEFAULT_NAME: String = "Ranger"
 const BUTTON_TEXT: String = "Hooray!"
 
 var faces: Array[TextureRect] = []
@@ -97,7 +99,7 @@ func _build() -> void:
 		row.add_child(face)
 		faces.append(face)
 	var helper: String = Sidekick.load_by_id(GameState.sidekick_id, GameState.rng).display_name()
-	column.add_child(_label(THANKS % helper, TEXT_FONT_SIZE))
+	column.add_child(_label(THANKS % [helper, GameState.player_name if GameState.player_name != "" else DEFAULT_NAME], TEXT_FONT_SIZE))
 	close_button = Button.new()
 	close_button.text = BUTTON_TEXT
 	close_button.custom_minimum_size = BUTTON_SIZE

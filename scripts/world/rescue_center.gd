@@ -11,7 +11,9 @@ extends HabitatMap
 ## - Walk up to a pen with animals in it and a "Care for the ..." button appears (Space/Enter
 ##   works too): it opens the CareScreen (feed, care note, fact card) while the world waits.
 
-const MAX_RESIDENTS_PER_PEN: int = 8
+## Animals shown walking in a pen unless rescue_center.json sets "max_residents_per_pen".
+## The pen sign shows how many are really home.
+const MAX_RESIDENTS_PER_PEN: int = 4
 ## How close (pixels) to a pen's fence the ranger must be to care for its animals.
 const CARE_DISTANCE: float = 24.0
 const CARE_BUTTON_SIZE: Vector2 = Vector2(420, 84)
@@ -25,8 +27,8 @@ const LEVEL_UP_TEXT: String = " Level %d!"
 const DECORATE_TEXT: String = "Decorate"
 const DECORATE_BUTTON_WIDTH: float = 240.0
 const BOOK_TEXT: String = "Book (B)"
-const HUD_BUTTON_SIZE: Vector2 = Vector2(280, 64)
-const HUD_GAP: float = 8.0
+const REST_BUTTON_SIZE: Vector2 = Vector2(250, 64)
+const BOOK_BUTTON_SIZE: Vector2 = Vector2(170, 64)
 ## Same decoration variety every visit.
 const DECORATION_SEED: int = 7
 const HAPPY_EMOTE: Texture2D = preload("res://assets/ui/emotes/happy.png")
@@ -44,6 +46,8 @@ const PEN_LABEL_FONT_SIZE: int = 10
 const GROUP_LABEL_FONT_SIZE: int = 13
 const SPECIAL_LABEL: String = "Special"
 const PEN_LEVEL_TEXT: String = "Level %d"
+## Regular pens also say how many are home (a pen only shows a few of them).
+const PEN_HOME_TEXT: String = "Level %d · %d home"
 const SPECIAL_LABEL_COLOR: Color = Color(1, 0.85, 0.3)
 const TALK_FONT_SIZE: int = 30
 const TALK_FACE_SIZE: float = 96.0
@@ -402,8 +406,8 @@ func _build_book_button() -> void:
 	book_button = Button.new()
 	book_button.name = "BookButton"
 	book_button.text = BOOK_TEXT
-	book_button.position = Vector2(16, 16 + HUD_BUTTON_SIZE.y + HUD_GAP)
-	book_button.custom_minimum_size = HUD_BUTTON_SIZE
+	book_button.position = Vector2(HUD_MARGIN + REST_BUTTON_SIZE.x + HUD_GAP, HUD_MARGIN)
+	book_button.custom_minimum_size = BOOK_BUTTON_SIZE
 	book_button.add_theme_font_size_override("font_size", 28)
 	# World arrows move the ranger; B is the keyboard shortcut.
 	book_button.focus_mode = Control.FOCUS_NONE
@@ -439,7 +443,8 @@ func _refresh_pen_levels() -> void:
 		var ids: Array[String] = pen_rescues(pen)
 		label.visible = not ids.is_empty()
 		if label.visible:
-			label.text = PEN_LEVEL_TEXT % GameState.animal_level(ids[0])
+			var level: int = GameState.animal_level(ids[0])
+			label.text = PEN_LEVEL_TEXT % level if bool(pen.get("special", false)) else PEN_HOME_TEXT % [level, ids.size()]
 
 
 ## What the sidekick says when you walk up: where to go at first, then how it's going.
@@ -558,15 +563,16 @@ func _show_repairs() -> void:
 	for row_label: Variant in fixed_by_row:
 		var count: int = fixed_by_row[row_label]
 		messages.append(REPAIRED_TEXT % [count, "" if count == 1 else "s", row_label])
-	if not messages.is_empty():
-		show_banner(" ".join(messages), BANNER_SECONDS + newly_repaired * REPAIR_STAGGER)
+	# One row's message at a time.
+	# Pens repair side by side, so the longest wait is one pen's sections, not the total.
+	show_banners(messages, BANNER_SECONDS + mini(newly_repaired, pen_sections(pens[0])) * REPAIR_STAGGER)
 
 
 func _build_rest_button() -> void:
 	rest_button = Button.new()
 	rest_button.text = "Save & rest (F10)"
-	rest_button.position = Vector2(16, 16)
-	rest_button.custom_minimum_size = Vector2(280, 64)
+	rest_button.position = Vector2(HUD_MARGIN, HUD_MARGIN)
+	rest_button.custom_minimum_size = REST_BUTTON_SIZE
 	rest_button.add_theme_font_size_override("font_size", 28)
 	# World arrows move the ranger; F10 supplies the keyboard shortcut here.
 	rest_button.focus_mode = Control.FOCUS_NONE
@@ -588,7 +594,7 @@ func _add_residents(pen: Dictionary, cell: Vector2i, pieces: int, depth: int) ->
 		Vector2(pieces * 3 * TILE - 12, (depth - 1) * TILE - 18))
 	var is_open: Callable = func(point: Vector2) -> bool: return inside.has_point(point)
 	var ids: Array[String] = pen_rescues(pen)
-	for i: int in mini(ids.size(), MAX_RESIDENTS_PER_PEN):
+	for i: int in mini(ids.size(), int(map.meta.get("max_residents_per_pen", MAX_RESIDENTS_PER_PEN))):
 		if not catalog.has_animal(ids[i]):
 			continue
 		var resident: Critter = Critter.new()

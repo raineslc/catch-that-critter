@@ -232,7 +232,7 @@ func test_finishing_care_counts_a_visit_and_makes_the_animal_happy() -> void:
 func test_care_earns_stars_and_shows_the_level_on_the_pen() -> void:
 	_rescue(1)
 	await _open_hub()
-	assert_eq(hub.pen_for("meadow")["level_label"].text, "Level 1")
+	assert_eq(hub.pen_for("meadow")["level_label"].text, "Level 1 · 1 home")
 	assert_false(hub.pen_for("forest")["level_label"].visible, "empty pens show no level")
 	await _stand_by_pen("meadow")
 	hub.open_care(hub.care_target)
@@ -240,7 +240,7 @@ func test_care_earns_stars_and_shows_the_level_on_the_pen() -> void:
 	assert_eq(GameState.stars, 4)
 	assert_string_contains(hub.banner.text, "Level 2!")
 	assert_string_contains(hub.banner.text, "+4 stars")
-	assert_eq(hub.pen_for("meadow")["level_label"].text, "Level 2")
+	assert_eq(hub.pen_for("meadow")["level_label"].text, "Level 2 · 1 home")
 	assert_string_contains(hub.stars_label.text, "4")
 
 
@@ -363,3 +363,26 @@ func test_meadow_has_a_gate_back_and_remembers_rescues() -> void:
 	add_child_autofree(again)
 	await wait_physics_frames(2)
 	assert_eq(again.critters.size(), count - 1, "the rescued raccoon doesn't come back")
+
+
+## Phase 9 step 1: a pen shows a few animals; its sign says how many are home.
+func test_a_full_pen_shows_four_animals_and_counts_them_all() -> void:
+	_rescue(6)
+	await _open_hub()
+	assert_eq(hub.pen_for("meadow")["residents"].size(), 4)
+	assert_eq(hub.pen_for("meadow")["level_label"].text, "Level 1 · 6 home")
+
+
+func test_fence_messages_show_one_row_at_a_time() -> void:
+	_rescue(2)
+	GameState.record_rescue("deer", "forest", "forest")
+	await _open_hub()
+	assert_eq(hub.banner.text.count("You fixed"), 1, "two rows were fixed, one message shows")
+
+
+func test_messages_sit_below_the_row_of_hud_buttons() -> void:
+	await _open_hub()
+	assert_gte(hub.banner.offset_top, hub.mode_button.offset_bottom)
+	assert_gte(hub.banner.offset_top, hub.book_button.position.y + hub.book_button.custom_minimum_size.y)
+	assert_eq(hub.book_button.position.y, hub.rest_button.position.y, "one row of buttons")
+	assert_lt(hub.book_button.position.x + hub.book_button.custom_minimum_size.x, 1280 + hub.stars_label.offset_left, "left and right buttons don't meet")

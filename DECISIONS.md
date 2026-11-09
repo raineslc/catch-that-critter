@@ -1,5 +1,12 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-09 — HUD row and pen counts (Phase 9 step 1)
+- The HUD is one row along the top: Save & rest and Book on the left, stars and the Explore/Race button on the right. Messages show just below it and wrap to two lines instead of running off the screen.
+- When several rows of pens were fixed, the "You fixed..." messages show one row at a time.
+- A pen shows at most 4 animals walking around (`"max_residents_per_pen"` in `data/maps/rescue_center.json`). Its sign says "Level 1 · 6 home", so the count is never hidden. Snake pens keep "Level 1".
+- The rock decoration moved up one tile so it no longer sits on the bottom fence.
+- The finale thanks him by his ranger's name ("Ranger" if he has none).
+
 ## 2026-11-09 — The bigger game plan (Chris; PLAN section 7 Phase 9, details in 3.14–3.16)
 - **Predators (his son's idea).** Misses fill a danger meter; a predator chases; an escape chase gets him away; too many misses is a cartoon chomp and he wakes at the Rescue Center. Chris picked the cartoon chomp over "chased off, not eaten" and a real game-over screen, and picked **losing the animals rescued on that trip** over losing nothing or losing stars. This changes two earlier decisions: "nothing is lost" when an animal gets away (2026-11-04), and the calm-text rule gets this one exception (still never wrong, bad, or fail). No predators in the Meadow, none for the K profile.
 - **Art.** Redraw as better pixel art and try an AI art tool, decided by a small bake-off, instead of re-downloading the pack. Changes "CC0 pack only": art made for this project (in code or with an AI tool) is allowed and credited in `assets/CREDITS.md`.
