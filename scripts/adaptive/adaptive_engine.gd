@@ -3,7 +3,7 @@ extends RefCounted
 ## Keeps each skill at the right level for one player (PLAN.md 3.11).
 ##
 ## - Looks at the last `window_size` answers per skill.
-## - Level up: enough answers, >= level_up_accuracy correct, and correct answers are fast on average.
+## - Level up: enough answers and >= level_up_accuracy correct. Speed does not count (Chris 2026-11-09).
 ## - Level down: enough answers and < level_down_accuracy correct; also turns on extra help (earlier hints).
 ## - Mastery: `mastery_sessions` good sessions in a row. A good session at a harder level
 ##   also counts for the easier levels; a poor one resets that level and harder ones.
@@ -209,8 +209,7 @@ func _evaluate(skill_id: String, progress: SkillProgress) -> Change:
 		return Change.NONE
 	if progress.extra_help and count >= _int("min_answers_to_level_down"):
 		progress.extra_help = false
-	if count >= _int("min_answers_to_level_up") and accuracy >= _float("level_up_accuracy") \
-			and _average_correct_seconds(progress.window) <= _fast_seconds(skill_id):
+	if count >= _int("min_answers_to_level_up") and accuracy >= _float("level_up_accuracy"):
 		if progress.level < int(_level_counts[skill_id]):
 			progress.level += 1
 			progress.window.clear()
@@ -226,11 +225,6 @@ func _count_session_answer(progress: SkillProgress, correct: bool) -> void:
 	progress.session[progress.level] = result
 
 
-func _fast_seconds(skill_id: String) -> float:
-	var table: Dictionary = _config.get("fast_seconds", {})
-	return float(table.get(skill_id, table.get("default", 8.0)))
-
-
 static func _accuracy(window: Array[Dictionary]) -> float:
 	if window.is_empty():
 		return 0.0
@@ -239,16 +233,6 @@ static func _accuracy(window: Array[Dictionary]) -> float:
 		if answer["correct"]:
 			correct += 1
 	return float(correct) / window.size()
-
-
-static func _average_correct_seconds(window: Array[Dictionary]) -> float:
-	var total: float = 0.0
-	var count: int = 0
-	for answer: Dictionary in window:
-		if answer["correct"]:
-			total += float(answer["seconds"])
-			count += 1
-	return total / count if count > 0 else INF
 
 
 func _progress(skill_id: String) -> SkillProgress:

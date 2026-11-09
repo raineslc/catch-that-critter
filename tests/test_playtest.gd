@@ -138,3 +138,15 @@ func test_meadow_has_enough_raccoons_for_a_playtest() -> void:
 	for row: String in map.rows:
 		count += row.count("a")
 	assert_gte(count, 6)
+
+
+## tools/play.cmd: the normal game writes the same log without becoming a playtest.
+func test_log_works_in_the_normal_game() -> void:
+	GameState.start_log(LOG_DIR)
+	assert_false(GameState.is_playtest())
+	GameState.log_event("answer", {"skill": "counting"})
+	GameState.end_playtest_log()
+	var lines: PackedStringArray = FileAccess.get_file_as_string(LOG_DIR.path_join(DirAccess.get_files_at(LOG_DIR)[0])).split("\n", false)
+	assert_eq(JSON.parse_string(lines[0])["version"], "normal")
+	assert_eq(JSON.parse_string(lines[1])["skill"], "counting")
+	assert_eq(JSON.parse_string(lines[lines.size() - 1])["event"], "session_end")

@@ -1,4 +1,4 @@
-# HANDOFF — Catch That Critter (as of 2026-11-05)
+# HANDOFF — Catch That Critter (as of 2026-11-09)
 
 Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTIONS.md` → `PROGRESS.md` → `DECISIONS.md`, then run the tests.
 
@@ -9,6 +9,9 @@ Read this first in a new session, then `CLAUDE.md` → `PLAN.md` → `CONVENTION
 - **Game flow today:** title → storm intro → Rescue Center hub → west gate = **Meadow** (raccoons, foxes, rabbits, hidden green vine snake), top gate = **Forest** (deer, bears, owls, hidden ball python), east gate = **Swamp** (turtles, frogs, alligators practicing place value; hidden green anaconda), south gate = **Desert** (lizards, tortoises, roadrunners practicing time and money; hidden rattlesnake), northeast gate = **Mountains** (mountain goats, snow leopards, eagles practicing multiply/divide; hidden king cobra). The Swamp, Desert, and Mountains open one by one as he catches the snake in the habitat before.
 
 ## Next steps (in order)
+0. **Read `docs/review_2026-11-09.md` first.** Chris approved a bigger plan on 2026-11-09 (in order): write it into PLAN.md and DECISIONS.md → HUD and hub layout (Playthrough fixes step 7) with a 4-animal limit shown per pen → more math levels (in-between add/subtract levels, harder Meadow counting) → art (bake-off of redrawn/AI pixel art, all animals, **each habitat looking like the real place**, screens) → more facts per animal with a real public-domain photo on the fact card → predators (his son's idea: misses fill a danger meter, a predator chases, cartoon chomp sends him back to the Rescue Center and the trip's animals run off; none in the Meadow, off for the K profile) → session timer → daily missions and ranks → babies and golden animals → new habitats with new math. Ask Chris before any download (photos, art packs).
+   - **He now plays the real game** from `tools/play.cmd` (fresh start; answer log on). The desktop shortcut may still point at a playtest launcher: Chris changes it.
+   - Leveling up is right answers only now (no speed rule).
 1. All five habitats are built (Meadow, Forest, Swamp, Desert, Mountains). To add or change one, follow the Forest's pattern (below); a map can set `"ground_tint"` in its info file (Desert, Mountains).
 2. **Habitat unlocking is done:** Meadow and Forest start open; each habitat's hidden snake opens the next (`"opens_after"` in `data/maps/world.json`; `GameState.is_area_open`).
 3. **Phase 4 is done:** helper animals were dropped (Chris); the finale (`scripts/story/finale_screen.gd`) plays once at the hub when all five snakes and 6+ animals from each habitat are home.

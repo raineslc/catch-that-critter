@@ -6,6 +6,8 @@ setlocal
 set "PROJECT=%~dp0.."
 set "PLAYTEST_FLAG=--playtest"
 if "%~1"=="--playtest-full" set "PLAYTEST_FLAG=--playtest-full"
+rem tools\play.cmd: the normal game, with the local answer log on.
+if "%~1"=="--log" set "PLAYTEST_FLAG=--log"
 set "GODOT="
 for /d %%D in ("%LOCALAPPDATA%\Microsoft\WinGet\Packages\GodotEngine.GodotEngine*") do (
   if exist "%%D\Godot_v4.7.2-stable_win64.exe" set "GODOT=%%D\Godot_v4.7.2-stable_win64.exe"

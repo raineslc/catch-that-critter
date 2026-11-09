@@ -55,6 +55,8 @@ func test_three_saved_sessions_master_a_level_without_double_counting() -> void:
 	for session: int in 3:
 		GameState.reset()
 		GameState.start_profile(path)
+		# The top level, so right answers can't move it between sessions.
+		GameState.engine.set_level("counting", 5)
 		for answer: int in 5:
 			GameState.engine.record_answer("counting", true, 20.0)
 		assert_true(GameState.finish_session())

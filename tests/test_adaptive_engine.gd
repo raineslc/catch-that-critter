@@ -23,7 +23,7 @@ func _answer(skill: String, correct: int, wrong: int = 0, seconds: float = FAST)
 
 func test_config_file_loads() -> void:
 	var config: Dictionary = AdaptiveEngine.load_config()
-	for key: String in ["window_size", "level_up_accuracy", "level_down_accuracy", "fast_seconds", "mastery_sessions"]:
+	for key: String in ["window_size", "level_up_accuracy", "level_down_accuracy", "mastery_sessions"]:
 		assert_true(config.has(key), "adaptive.json missing " + key)
 
 
@@ -65,16 +65,11 @@ func test_four_of_six_is_not_enough() -> void:
 	assert_eq(engine.level("counting"), 1)
 
 
-func test_accurate_but_slow_stays() -> void:
-	_answer("counting", 6, 0, SLOW)
-	assert_eq(engine.level("counting"), 1)
-
-
-func test_fast_threshold_can_differ_per_skill() -> void:
-	_answer("time_money", 6, 0, 11.0)
-	assert_eq(engine.level("time_money"), 2, "11s is fast enough for clocks")
-	_answer("counting", 6, 0, 11.0)
-	assert_eq(engine.level("counting"), 1, "11s is slow for counting")
+## Chris 2026-11-09: right answers only. He sat at one level for 62 problems at 83% right
+## because he took about 17 seconds each.
+func test_accurate_but_slow_still_levels_up() -> void:
+	assert_eq(_answer("counting", 6, 0, SLOW), AdaptiveEngine.Change.LEVEL_UP)
+	assert_eq(engine.level("counting"), 2)
 
 
 func test_no_level_up_past_the_top() -> void:
@@ -140,8 +135,15 @@ func test_three_good_sessions_master_a_level() -> void:
 	assert_true(engine.is_skill_mastered("counting"), "top level mastered = skill mastered")
 
 
-# Session tests answer slowly so the level stays put between sessions.
+## An engine that never levels up, so session tests can hold one level across sessions.
+func _steady_engine() -> AdaptiveEngine:
+	var config: Dictionary = AdaptiveEngine.load_config()
+	config["min_answers_to_level_up"] = 999
+	return AdaptiveEngine.new(LEVELS, config)
+
+
 func test_good_session_at_harder_level_counts_for_easier_levels() -> void:
+	engine = _steady_engine()
 	engine.set_level("counting", 4)
 	for session: int in 3:
 		_answer("counting", 5, 0, SLOW)
@@ -153,6 +155,7 @@ func test_good_session_at_harder_level_counts_for_easier_levels() -> void:
 
 
 func test_poor_session_resets_the_streak() -> void:
+	engine = _steady_engine()
 	engine.set_level("counting", 2)
 	_answer("counting", 5, 0, SLOW)
 	engine.end_session()

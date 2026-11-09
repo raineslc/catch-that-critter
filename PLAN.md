@@ -112,7 +112,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 - Per-skill accuracy and response time.
 - Rolling last 10 problems: ≥ 80% correct and fast → step up; < 50% → step down, more hints. **Changed (Chris 2026-11-05, Playthrough fixes step 2):** the window is the last 6 problems (step up after 5 of 6; step down below 3 of 6), and each skill a profile has never practiced starts at its grade's level (`starting_levels` in `data/adaptive.json`).
 - Mastery = 3 consecutive sessions above 80% at a level. A good session at a harder level also counts for the easier levels in that skill (otherwise fast learners level up before ever "mastering" anything); a poor session resets that level and harder ones. Sessions with fewer than 5 answers at a level don't count either way.
-- Only the first try at each problem counts; "fast" is the average time of correct answers (per-skill limits in `data/adaptive.json`, e.g. clocks get longer).
+- Only the first try at each problem counts. **Changed (Chris 2026-11-09):** speed no longer counts for leveling up, only right answers (5 of the last 6). He stayed on one level for 62 problems at 83% right because he took about 17 seconds each. Speed still matters in Race mode.
 
 ### 3.12 Parent Area
 - Parent lock (e.g., "What is 7 × 8?" or hold-to-unlock).
@@ -209,6 +209,11 @@ A robot played the whole game start to finish; these fix what it found. Chris ch
 - [ ] **8. Habitats look different.** A ground look per habitat: swamp mud and reeds, desert sand and cacti, mountain rock and snow (from the Ninja Adventure pack where possible).
 - [ ] **9. Clearer animal art.** Gray raccoon with a black mask, snow leopard, bear, five snake faces that look different, and a default ranger that doesn't look like Henrito.
 - [ ] **10. More to buy.** More decorations, some unlocked as a pen's animals level up, so stars keep their value. Then re-run the robot playthrough and compare with the 2026-11-05 review.
+
+### After the 2026-11-09 review (`docs/review_2026-11-09.md`)
+The full "bigger game" plan (art per habitat, real photos and more facts, predators, missions, new habitats) gets its own checklist in the next step. Done so far:
+- [x] **Review.** Design, gameplay, and code review with a fresh robot playthrough and his real playtest logs. (2026-11-09)
+- [x] **Real game, right speed.** He starts the real game fresh (`tools/play.cmd`; the Playtest 2 save is kept). Level up on right answers only. The chase shows the ranger look he picked. The normal game can write the answer log (`-- --log`), and the summary tool no longer stops on a cut-off log. (2026-11-09)
 
 ### Phase 6 — Verify & Polish
 - [ ] Full test pass; code review for bugs and edge cases.

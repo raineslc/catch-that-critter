@@ -1,5 +1,11 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-09 — Real game, right speed (Chris, after the 2026-11-09 review)
+- **He moves from Playtest 2 to the real game with a fresh start.** All his play so far was in the Playtest 2 save, where every chase is add/subtract; his real profile had never been used. The Playtest 2 save is kept as it is and still opens from `tools/playtest_2_launch.cmd`. Nothing is copied across (Chris's pick over copying everything or keeping the stars).
+- **Level up on right answers only** (5 of the last 6). The "and fast" rule and `fast_seconds` in `data/adaptive.json` are gone. Changes PLAN 3.11. Chris's pick over a fairer speed rule (typical time, longer limits). Answer times are still logged, and Race mode still rewards fast answers.
+- **The normal game can keep the answer log:** start it with `-- --log` (what `tools/play.cmd` does). Same local file as the playtests, nothing leaves the PC. Without the flag there is no log, as before.
+- The chase screen draws the ranger look the profile picked (it always drew the default).
+
 ## 2026-11-05 — Fox and rabbit (Playthrough fixes step 6)
 - Chris chose to draw the fox and rabbit with `tools/make_animal_art.py` (same style as the deer, turtle, eagle) instead of downloading art.
 - The Meadow now has 6 raccoons, 2 foxes, and 2 rabbits (map letters `v` fox, `j` rabbit). The raccoon squares didn't move, so existing saves keep their rescues; a Meadow that was cleared before has 4 new animals to find, and runaways start there again once they're home.

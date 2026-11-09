@@ -308,3 +308,12 @@ func _key(code: Key) -> void:
 	event.pressed = false
 	Input.parse_input_event(event)
 	await wait_process_frames(2)
+
+
+## The chase used to draw the default red-haired ranger whatever look the profile picked.
+func test_ranger_wears_the_profiles_look() -> void:
+	GameState.look = {"hair": "brown", "skin": "light", "outfit": "green"}
+	var dressed: ChaseScreen = ChaseScreen.new()
+	add_child_autofree(dressed)
+	var frame: AtlasTexture = dressed.ranger_sprite.sprite_frames.get_frame_texture("walk_right", 0)
+	assert_ne(frame.atlas.get_image().get_data(), Ranger.DEFAULT_SHEET.get_image().get_data())

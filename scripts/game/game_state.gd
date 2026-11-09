@@ -92,6 +92,8 @@ func _ready() -> void:
 			start_profile(PLAYTEST_PROFILE_PATH, "playtest-2")
 	elif user_args.has(PLAYTEST_FLAG):
 		enable_playtest()
+	elif user_args.has("--log"):
+		start_log()
 	# Normal play: the title screen picks a profile slot (start_slot).
 	get_tree().auto_accept_quit = false
 	add_child(SaveNotice.new())
@@ -151,17 +153,23 @@ func enable_playtest(config: Dictionary = {}, log_dir: String = "") -> void:
 		engine = AdaptiveEngine.new(AdaptiveEngine.level_counts_from(factory))
 		engine.set_level(playtest_skill(), int(playtest.get("starting_level", 1)))
 	if bool(playtest.get("log", false)):
-		playtest_log = PlaytestLog.new()
-		if playtest_log.open(log_dir if log_dir != "" else PlaytestLog.DIR):
-			log_event("session_start", {"skill": playtest_skill(), "date": Time.get_datetime_string_from_system(),
-				"version": str(playtest.get("version", "")), "tts": Speech.is_available()})
-			print("Playtest log: ", playtest_log.global_path())
-			freeze_watch = FreezeWatch.new()
-			freeze_watch.name = "FreezeWatch"
-			add_child(freeze_watch)
-			freeze_watch.start(playtest_log, int(playtest.get("freeze_after_ms", FreezeWatch.DEFAULT_STALL_MS)))
-		else:
-			playtest_log = null
+		start_log(log_dir)
+
+
+## Starts the local answer log (and freeze detector). Playtests turn it on; the normal game
+## does with `-- --log` (tools/play.cmd), so real play can be reviewed too. Local file only.
+func start_log(log_dir: String = "") -> void:
+	playtest_log = PlaytestLog.new()
+	if not playtest_log.open(log_dir if log_dir != "" else PlaytestLog.DIR):
+		playtest_log = null
+		return
+	log_event("session_start", {"skill": playtest_skill(), "date": Time.get_datetime_string_from_system(),
+		"version": str(playtest.get("version", "normal")), "tts": Speech.is_available()})
+	print("Playtest log: ", playtest_log.global_path())
+	freeze_watch = FreezeWatch.new()
+	freeze_watch.name = "FreezeWatch"
+	add_child(freeze_watch)
+	freeze_watch.start(playtest_log, int(playtest.get("freeze_after_ms", FreezeWatch.DEFAULT_STALL_MS)))
 
 
 static func load_playtest_config(path: String = PLAYTEST_PATH) -> Dictionary:
