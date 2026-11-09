@@ -26,7 +26,11 @@ def load(path: Path) -> list[dict]:
     events = []
     for line in path.read_text(encoding="utf-8-sig").splitlines():
         if line.strip():
-            events.append(json.loads(line))
+            try:
+                events.append(json.loads(line))
+            except json.JSONDecodeError:
+                # A force-quit can cut the last line off mid-write.
+                print("Skipped 1 unreadable line.")
     return events
 
 
@@ -68,12 +72,13 @@ def summarize(events: list[dict]) -> str:
     out.append("By level (first tries):")
     by_level = defaultdict(list)
     for e in first:
-        by_level[e["level"]].append(e)
-    for level in sorted(by_level):
-        rows = by_level[level]
+        # The real game mixes skills, and level 3 means something different in each.
+        by_level[(e.get("skill", ""), e["level"])].append(e)
+    for skill, level in sorted(by_level):
+        rows = by_level[(skill, level)]
         right = sum(1 for e in rows if e["correct"])
         avg = sum(e["seconds"] for e in rows) / len(rows)
-        out.append(f"  Level {level}: {right}/{len(rows)} right, avg {avg:.1f}s")
+        out.append(f"  {skill} level {level}: {right}/{len(rows)} right, avg {avg:.1f}s")
 
     changes = [e for e in events if e["event"] == "level_change"]
     if changes:

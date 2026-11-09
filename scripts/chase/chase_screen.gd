@@ -476,7 +476,7 @@ func _build() -> void:
 		track.add_child(row)
 		_track_rows.append(row)
 	var run_y: float = RUN_ROW * tile_px + tile_px * 0.75
-	ranger_sprite = _actor_sprite(Ranger.build_frames(Ranger.DEFAULT_SHEET), Vector2(RANGER_X, run_y))
+	ranger_sprite = _actor_sprite(Ranger.build_frames(RangerLook.sheet(GameState.look)), Vector2(RANGER_X, run_y))
 	ranger_sprite.name = "Ranger"
 	critter_sprite = _actor_sprite(null, Vector2(RANGER_X + 400, run_y))
 	critter_sprite.name = "Critter"
