@@ -530,9 +530,121 @@ ANIMALS["eagle"] = {
         "kBBbBBBbBB",
     ]),
 }
+FOX = dict(DEER, **{"O": (232, 124, 44)})
+ANIMALS["fox"] = {
+    "palette": FOX,
+    "frames": [
+        [
+            "................",
+            "................",
+            ".........k..k...",
+            "........kOkkOk..",
+            "........kOOOOOk.",
+            "........kObOOOOk",
+            ".kWk....kOOOWWbk",
+            ".kWWk.kkkOOWWkk.",
+            ".kOOkkOOOOOWWk..",
+            "..kOOOOOOOOOOk..",
+            "...kkOOOOOOOOk..",
+            "....kbkkkkkbk...",
+            "....kbk...kbk...",
+            "....kk....kk....",
+            "................",
+            "................",
+        ],
+        [
+            "................",
+            "................",
+            ".........k..k...",
+            "........kOkkOk..",
+            "........kOOOOOk.",
+            "........kObOOOOk",
+            ".kWk....kOOOWWbk",
+            ".kWWk.kkkOOWWkk.",
+            ".kOOkkOOOOOWWk..",
+            "..kOOOOOOOOOOk..",
+            "...kkOOOOOOOOk..",
+            "....kbkkkkkbk...",
+            ".....kbk.kbk....",
+            ".....kk...kk....",
+            "................",
+            "................",
+        ],
+    ],
+    "face": mirrored([
+        "DDDDDDDDDD",
+        "DkkDDDDDDD",
+        "kOOkDDDDDD",
+        "kObOkDDDDD",
+        "kObbOkkkkk",
+        "kOObOOOOOO",
+        "DkOOOOOOOO",
+        "DkOOOOOOOO",
+        "kOOObbOOOO",
+        "kOOObHOOOO",
+        "kWOOOOOOOO",
+        "kWWWOOOOOO",
+        "DkWWWWWOOW",
+        "DDkWWWWWWW",
+        "DDDkWWWWbb",
+        "DDDDkWWWWW",
+        "DDDDDkkkkk",
+        "DDDDDDDDDD",
+        "DDDDDDDDDD",
+    ]),
+}
+RABBIT = dict(DEER, **{"A": (182, 166, 150)})
+_RABBIT_SIT = [
+    "................",
+    ".........k..k...",
+    "........kAkkAk..",
+    "........kKkkKk..",
+    "........kKkkKk..",
+    "........kAAAAAk.",
+    "........kAbAAAAk",
+    "........kAAAAKk.",
+    "....kkkkkAAAkk..",
+    "..kkAAAAAAAAAk..",
+    ".kWkAAAAAAAAWk..",
+    ".kWkAAAAAAAWWk..",
+    "..kkAAAAAAAAk...",
+    "...kAAkkkkAAk...",
+    "...kkk....kkk...",
+    "................",
+]
+ANIMALS["rabbit"] = {
+    "palette": RABBIT,
+    # The second frame is a little hop: one row up, back feet stretched out.
+    "frames": [_RABBIT_SIT, _RABBIT_SIT[1:13] + ["..kkAAkkkkAAk...", ".kkk.......kkk..", "................", "................"]],
+    "face": mirrored([
+        "DDDkkDDDDD",
+        "DDkAAkDDDD",
+        "DDkAKkDDDD",
+        "DDkAKkDDDD",
+        "DDkAKkDDDD",
+        "DDkAKkDDDD",
+        "DDkAAkkkkk",
+        "DkAAAAAAAA",
+        "kAAAAAAAAA",
+        "kAAAbbAAAA",
+        "kAAAbHAAAA",
+        "kAAAAAAAAA",
+        "kAAAAAWWWW",
+        "DkAAAWWWWK",
+        "DkAAAWWWkW",
+        "DDkAAWWWWW",
+        "DDDkkWWWWW",
+        "DDDDDkkkkk",
+        "DDDDDDDDDD",
+    ]),
+}
 
 
 if __name__ == "__main__":
+    for name, art in ANIMALS.items():
+        rows = [r for f in art["frames"] for r in f]
+        assert len(art["frames"]) == 2 and all(len(f) == 16 for f in art["frames"]), name
+        assert all(len(r) == 16 for r in rows) and all(len(r) == 19 for r in art["face"]) and len(art["face"]) == 19, name
     root = Path(sys.argv[1] if len(sys.argv) > 1 else "assets/sprites/animals")
     for name, art in ANIMALS.items():
         out = root / name

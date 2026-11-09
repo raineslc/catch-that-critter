@@ -11,6 +11,8 @@
     "S": "grass",
     "H": "grass",
     "a": "grass",
+    "v": "grass",
+    "j": "grass",
     "p": "path",
     "w": "water",
     "1": "path",
@@ -131,6 +133,8 @@
   },
   "critters": {
     "a": "raccoon",
+    "v": "fox",
+    "j": "rabbit",
     "d": "deer",
     "e": "bear",
     "o": "owl",

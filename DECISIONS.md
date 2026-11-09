@@ -1,5 +1,10 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-05 — Fox and rabbit (Playthrough fixes step 6)
+- Chris chose to draw the fox and rabbit with `tools/make_animal_art.py` (same style as the deer, turtle, eagle) instead of downloading art.
+- The Meadow now has 6 raccoons, 2 foxes, and 2 rabbits (map letters `v` fox, `j` rabbit). The raccoon squares didn't move, so existing saves keep their rescues; a Meadow that was cleared before has 4 new animals to find, and runaways start there again once they're home.
+- Fox and rabbit practice counting like the raccoon. Their pens appear automatically in the Meadow row of the Rescue Center.
+
 ## 2026-11-05 — Runaways (Playthrough fixes step 5)
 - Once every animal from a habitat's map is home, each later visit has a few rescued animals slip out: 2, about 20 seconds after he arrives (`runaways_per_visit`, `runaway_delay_seconds` in `data/chase.json`). The banner says "Some animals slipped out! Can you bring them home?"
 - Only kinds he has rescued from that habitat slip out (never the snake). Catching one is a normal chase (practice counts) with normal catch stars and "The Deer is back home!", but it is not a new rescue: the Book, fences, and finale counts don't change. Runaways aren't saved; leaving the habitat brings them home quietly.
