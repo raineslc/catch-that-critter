@@ -10,7 +10,7 @@
   "decorations": [
     {"id": "flowers", "name": "Flowers", "price": 5, "object": "f", "spot": [1, 2]},
     {"id": "bush", "name": "Bush", "price": 8, "object": "b", "spot": [5, 2]},
-    {"id": "rock", "name": "Rock", "price": 8, "object": "r", "spot": [1, 4]},
+    {"id": "rock", "name": "Rock", "price": 8, "object": "r", "spot": [1, 3]},
     {"id": "tree", "name": "Tree", "price": 15, "object": "P", "spot": [3, 3]}
   ],
   "book": [

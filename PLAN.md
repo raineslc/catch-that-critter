@@ -2,7 +2,7 @@
 
 > Handoff plan for AI coding assistants (Claude Code, ChatGPT/Codex, Gemini). Design reference: Google Doc "Kids Math Game – Design Doc (Pet Shelter Chase)" (note: the doc still describes 3D; this plan supersedes it).
 > Workflow (Chris's new-coding-project process): approve plan → set up git → build one small, tested step at a time with a commit per step → verify with tests and review → README, secrets in env vars, deployment.
-> **Status:** Approved by Chris on 2026-10-20. Bigger game plan approved 2026-11-09 (section 7, Phase 9). Next: Phase 9 step 1.
+> **Status:** Approved by Chris on 2026-10-20. Bigger game plan approved 2026-11-09 (section 7, Phase 9). Next: Phase 9 step 2.
 
 ## 1. Goal & Success Criteria
 **Catch That Critter** is a personal **2D top-down** educational game Chris is building for his sons. Kids play as a customizable kid ranger, walk around one big map (classic Pokémon-style view), chase runaway wild animals by answering Common Core–aligned math problems, and bring them back to a Wildlife Rescue Center where they care for them through spelling/reading tasks and unlock kid-friendly animal fact cards.
@@ -235,7 +235,7 @@ A robot played the whole game start to finish; these fix what it found. Chris ch
 - [x] **4. Snake stories for every skill.** (Done 2026-11-05.) Each habitat's snake asks a story in that habitat's skill (counting, add/subtract, place value, time/money, groups/sharing), a few templates each. Stories start at 2 or more ("saw 1 beetle" reads oddly). The Meadow snake stays at K level.
 - [x] **5. Runaways come back.** (Done 2026-11-05: 2 slip out 20 seconds into each visit to a cleared habitat, set in `data/chase.json`; fence repair already spread across a kind's rescues since step 1.) After all of a habitat's animals are home, a few rescued animals slip out again after a while. Catching one gives stars and practice but isn't a new rescue (Book, fence, and finale counts don't change). Fence repair spreads across all of a pen's rescues instead of finishing at 4.
 - [x] **6. Fox and rabbit in the Meadow.** Find (free, CC0, ask Chris before downloading) or make fox and rabbit art; add them to the Meadow map and data so the Book's two "???" slots can be filled. *(Done 2026-11-05: Chris chose to draw them with `tools/make_animal_art.py`; 2 foxes and 2 rabbits added to the Meadow.)*
-- [ ] **7. HUD and hub layout.** Banner below the HUD buttons; repair messages one at a time; pen labels clear of the HUD; Care and Decorate buttons apart; gate signs on screen; widen the walk to the Mountains gate; decorations off the fence line; finale uses the ranger's name. (This is Phase 9 step 1.)
+- [x] **7. HUD and hub layout.** Banner below the HUD buttons; repair messages one at a time; pen labels clear of the HUD; Care and Decorate buttons apart; gate signs on screen; widen the walk to the Mountains gate; decorations off the fence line; finale uses the ranger's name. (This is Phase 9 step 1.) *(Done 2026-11-09.)*
 - [ ] ~~**8. Habitats look different.** A ground look per habitat: swamp mud and reeds, desert sand and cacti, mountain rock and snow (from the Ninja Adventure pack where possible).~~ Moved to Phase 9 step 5 (every habitat looks like the real place).
 - [ ] ~~**9. Clearer animal art.** Gray raccoon with a black mask, snow leopard, bear, five snake faces that look different, and a default ranger that doesn't look like Henrito.~~ Moved to Phase 9 steps 3–4 (art bake-off, then all animals).
 - [ ] ~~**10. More to buy.** More decorations, some unlocked as a pen's animals level up, so stars keep their value. Then re-run the robot playthrough and compare with the 2026-11-05 review.~~ Moved to Phase 9 step 11 (missions, ranks, and gear).
@@ -247,7 +247,7 @@ Review and first fixes; the rest of the approved plan is Phase 9 below.
 
 ### Phase 9 — Bigger game (approved by Chris 2026-11-09; details in 3.14–3.16)
 In this order. Steps marked (logic) may merge on green CI; the rest change what a screen looks like and wait for Chris's merge. Ask before any download.
-- [ ] **1. HUD and hub layout** (Playthrough fixes step 7), plus pens show at most 4 animals with the full count on the sign.
+- [x] **1. HUD and hub layout** (Playthrough fixes step 7), plus pens show at most 4 animals with the full count on the sign. *(Done 2026-11-09: one row of HUD buttons along the top, messages below it and wrapped, fence messages one row at a time, top gate signs below the HUD, the rock decoration off the fence line, the finale uses his name. The walk to the Mountains gate needed no change: the bigger hub from fixes step 1 already cleared it, 15 s in the 11-09 robot run with no snags.)*
 - [ ] **2. More math levels** (logic). In-between add/subtract levels between "within 20" and "within 100"; harder Meadow counting (skip counting, counting on, comparing to 100). Check the other skills' top levels against the robot run.
 - [ ] **3. Art bake-off.** Raccoon, bear, and snow leopard three ways: redrawn in `tools/make_animal_art.py`, a ChatGPT image shrunk and cleaned, and a pixel-art AI tool. One side-by-side screenshot at game zoom; Chris and his son pick. Adds `tools/import_ai_art.py`.
 - [ ] **4. Animals and people.** All 20 animals with the winning method (map sprite and portrait), five snake faces that differ, a default ranger that doesn't look like Henrito.
