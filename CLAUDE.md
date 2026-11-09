@@ -20,10 +20,10 @@ Catch That Critter: a 2D top-down math and reading game for kids. Standing rules
 - snake_case for files, functions, variables; PascalCase for class_name and nodes.
 - One responsibility per script; keep math/adaptive/save logic free of scene code so it's unit-testable.
 - No magic numbers for game tuning; put them in JSON or constants.
-- Kid-facing text: short, calm, encouraging; never say "wrong," "bad," or "fail." Every instruction is also spoken.
+- Kid-facing text: short, calm, encouraging; never say "wrong," "bad," or "fail." Every instruction is also spoken. One planned exception: the predator "chomp" (PLAN 3.15).
 - Random numbers come from a passed-in `RandomNumberGenerator` so tests can seed them.
 - Speech: always `Speech.say()` (`scripts/tts/speech.gd`). **Never** call `DisplayServer.tts_stop()` or interrupting `tts_speak` — it froze Godot on Windows; a test enforces this.
-- Art/sound: CC0 only (Ninja Adventure pack family), each file listed in `assets/CREDITS.md`. Character/nature node origins sit at their feet for y-sorting.
+- Art/sound: one pixel-art style. The Ninja Adventure pack (CC0) plus art made for this project (drawn in code or with an AI art tool); real animal photos on fact cards must be public domain or CC0. Every file and tool is listed in `assets/CREDITS.md`. Ask Chris before downloading anything. Character/nature node origins sit at their feet for y-sorting.
 - Maps: rules for `data/maps/*.txt`/`*.json` and `world.json` gates are in `CONVENTIONS.md` and checked by tests.
 - Branch names: `phase<N>/<short-name>` (later fix work uses `fixes/<name>`).
 
@@ -59,6 +59,7 @@ Catch That Critter: a 2D top-down math and reading game for kids. Standing rules
 - Playtest mode: add `-- --playtest` after the Godot args (settings in `data/playtest.json`). Logs go to `%APPDATA%\Godot\app_userdata\Catch That Critter\playtest\`; summarize with `python tools/summarize_playtest.py [log.jsonl]`. The desktop shortcut runs `tools/playtest_launch.cmd` inside the frozen playtest worktree at `C:\Users\raine\CatchACritter-playtest` (current tag in `docs/playtest_1.md`) — don't develop there. The launcher also saves Godot's verbose log as `godot_<timestamp>.log` in the same playtest folder. Freezes show up as `freeze` events (with the last steps) in the playtest log.
 - Debug math screen (grown-ups only): open `scenes/debug/problem_tester.tscn` in Godot and press F6, or run `godot --path . res://scenes/debug/problem_tester.tscn`.
 - Full-loop Playtest 2: run `tools/playtest_2_launch.cmd` from this checkout, or add `-- --playtest-full`. Follow `docs/playtest_2.md`; it starts with mixed addition/subtraction within 20 and saves separately from normal play.
+- Normal game with the local answer log on (how the 7-year-old plays now): run `tools/play.cmd`, or add `-- --log`. Summarize with `python tools/summarize_playtest.py`.
 - Local saves: `user://profiles/default.json` (first profile, Henrito) and `user://profiles/ranger_2.json` (second profile, Loganator) for normal play, set in `data/profiles.json`; `user://profiles/playtest_2.json` for Playtest 2. Save & rest (F10 in the hub) or closing the window completes session mastery. Failed saves keep the session open. Use `-- --no-save` for disposable scene helpers; GUT script mode and `--no-save` disable profile access (the title shows no profile buttons). Never delete a player's save as part of tests.
 - `GameState` is an autoload: scripts that use it don't compile under `godot -s some_script.gd` (bare script mode). For throwaway screenshot helpers, run them as a scene from a git-ignored `.tmp_shots/` folder instead.
 - CI: `.github/workflows/tests.yml` runs the same command on every push to `main` and every pull request.

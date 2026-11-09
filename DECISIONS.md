@@ -1,5 +1,16 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-09 — The bigger game plan (Chris; PLAN section 7 Phase 9, details in 3.14–3.16)
+- **Predators (his son's idea).** Misses fill a danger meter; a predator chases; an escape chase gets him away; too many misses is a cartoon chomp and he wakes at the Rescue Center. Chris picked the cartoon chomp over "chased off, not eaten" and a real game-over screen, and picked **losing the animals rescued on that trip** over losing nothing or losing stars. This changes two earlier decisions: "nothing is lost" when an animal gets away (2026-11-04), and the calm-text rule gets this one exception (still never wrong, bad, or fail). No predators in the Meadow, none for the K profile.
+- **Art.** Redraw as better pixel art and try an AI art tool, decided by a small bake-off, instead of re-downloading the pack. Changes "CC0 pack only": art made for this project (in code or with an AI tool) is allowed and credited in `assets/CREDITS.md`.
+- **Habitats match the natural world** (sand and cacti, rock and snow, mud and reeds), not a tint on the Meadow.
+- **Better facts and real photos.** More facts per animal, and a real photo on fact cards and Book pages. Changes the art decision: pixel art for the game world, public-domain or CC0 photos on fact cards. Still no network calls: photos ship with the game. Ask before downloading.
+- **Pens** show a limited number of animals with the full count on the sign.
+- **Keeping it fresh:** daily missions and ranks, babies and golden animals, new habitats with new math (Chris picked these three; the bug collection idea was not picked).
+- **Order** (Claude's proposal after the review, in PLAN Phase 9): layout, more math levels, art, facts and photos, predators, session timer, missions, babies and golden animals, new habitats. More levels come before predators so the math fits him before misses cost something.
+- **Open:** how predators treat fast guessing (PLAN 3.15), to settle with Chris before step 8.
+
+
 ## 2026-11-09 — Real game, right speed (Chris, after the 2026-11-09 review)
 - **He moves from Playtest 2 to the real game with a fresh start.** All his play so far was in the Playtest 2 save, where every chase is add/subtract; his real profile had never been used. The Playtest 2 save is kept as it is and still opens from `tools/playtest_2_launch.cmd`. Nothing is copied across (Chris's pick over copying everything or keeping the stars).
 - **Level up on right answers only** (5 of the last 6). The "and fast" rule and `fast_seconds` in `data/adaptive.json` are gone. Changes PLAN 3.11. Chris's pick over a fairer speed rule (typical time, longer limits). Answer times are still logged, and Race mode still rewards fast answers.
