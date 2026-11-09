@@ -1,6 +1,7 @@
 class_name CountingGenerator
 extends RefCounted
-## Meadow problems (Kindergarten, K.CC): count critters, compare numbers, what comes next.
+## Meadow problems (K.CC, then 1.NBT and 2.NBT for older players): count critters, compare
+## numbers, what comes next. The harder levels are the same kinds of problem with bigger numbers.
 
 
 static func generate(type: String, params: Dictionary, choice_count: int, rng: RandomNumberGenerator) -> MathProblem:

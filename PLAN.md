@@ -2,7 +2,7 @@
 
 > Handoff plan for AI coding assistants (Claude Code, ChatGPT/Codex, Gemini). Design reference: Google Doc "Kids Math Game – Design Doc (Pet Shelter Chase)" (note: the doc still describes 3D; this plan supersedes it).
 > Workflow (Chris's new-coding-project process): approve plan → set up git → build one small, tested step at a time with a commit per step → verify with tests and review → README, secrets in env vars, deployment.
-> **Status:** Approved by Chris on 2026-10-20. Bigger game plan approved 2026-11-09 (section 7, Phase 9). Next: Phase 9 step 2.
+> **Status:** Approved by Chris on 2026-10-20. Bigger game plan approved 2026-11-09 (section 7, Phase 9). Next: Phase 9 step 3.
 
 ## 1. Goal & Success Criteria
 **Catch That Critter** is a personal **2D top-down** educational game Chris is building for his sons. Kids play as a customizable kid ranger, walk around one big map (classic Pokémon-style view), chase runaway wild animals by answering Common Core–aligned math problems, and bring them back to a Wildlife Rescue Center where they care for them through spelling/reading tasks and unlock kid-friendly animal fact cards.
@@ -60,7 +60,7 @@ Rescue Center hub in the middle with a gate to each habitat; each habitat is its
 
 | Habitat | Skill focus | Grade | Example standards | Animals |
 |---|---|---|---|---|
-| Meadow | Counting, number recognition, comparing to 20 | K | K.CC | Fox, raccoon, rabbit |
+| Meadow | Counting, number recognition, comparing to 20, then to 100 and counting to 1000 | K–2 | K.CC, 1.NBT.1, 1.NBT.3, 2.NBT.2 | Fox, raccoon, rabbit |
 | Forest | Add & subtract within 20, then 100 | 1–2 | 1.OA, 2.OA, 2.NBT.5 | Deer, bear, owl |
 | Swamp | Place value, comparing (<, >, =) | 2 | 1.NBT, 2.NBT.1–4 | Turtle, frog, alligator |
 | Desert | Telling time, counting money | 2–3 | 1.MD.3, 2.MD.7–8, 3.MD.1 | Lizard, tortoise, roadrunner |
@@ -248,7 +248,7 @@ Review and first fixes; the rest of the approved plan is Phase 9 below.
 ### Phase 9 — Bigger game (approved by Chris 2026-11-09; details in 3.14–3.16)
 In this order. Steps marked (logic) may merge on green CI; the rest change what a screen looks like and wait for Chris's merge. Ask before any download.
 - [x] **1. HUD and hub layout** (Playthrough fixes step 7), plus pens show at most 4 animals with the full count on the sign. *(Done 2026-11-09: one row of HUD buttons along the top, messages below it and wrapped, fence messages one row at a time, top gate signs below the HUD, the rock decoration off the fence line, the finale uses his name. The walk to the Mountains gate needed no change: the bigger hub from fixes step 1 already cleared it, 15 s in the 11-09 robot run with no snags.)*
-- [ ] **2. More math levels** (logic). In-between add/subtract levels between "within 20" and "within 100"; harder Meadow counting (skip counting, counting on, comparing to 100). Check the other skills' top levels against the robot run.
+- [x] **2. More math levels** (logic). In-between add/subtract levels between "within 20" and "within 100"; harder Meadow counting (skip counting, counting on, comparing to 100). Check the other skills' top levels against the robot run. *(Done 2026-11-09: add/subtract has 11 levels, was 6; Meadow counting has 8, was 5. Place value, time and money, and multiply/divide keep 6: the robot topped out at 4, 5, and 4 of them.)*
 - [ ] **3. Art bake-off.** Raccoon, bear, and snow leopard three ways: redrawn in `tools/make_animal_art.py`, a ChatGPT image shrunk and cleaned, and a pixel-art AI tool. One side-by-side screenshot at game zoom; Chris and his son pick. Adds `tools/import_ai_art.py`.
 - [ ] **4. Animals and people.** All 20 animals with the winning method (map sprite and portrait), five snake faces that differ, a default ranger that doesn't look like Henrito.
 - [ ] **5. Every habitat looks like the real place.** A `"look"` entry per map in `data/maps/<id>.json` replaces the hard-coded tiles and `"ground_tint"`. One PR per habitat, Desert first, then Mountains, Swamp, Forest, Meadow; the hub's pens and the chase track follow.

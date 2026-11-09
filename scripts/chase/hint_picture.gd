@@ -170,14 +170,19 @@ func _draw_number_line(plan: Dictionary) -> void:
 		draw_circle(Vector2(end_x, y - 2), 4.0, HOP)
 
 
-func _draw_blocks_for(p: MathProblem) -> void:
+## The numbers a block hint draws: both numbers of a two-number problem, else the one number.
+static func block_numbers(p: MathProblem) -> Array[int]:
 	var d: Dictionary = p.data
-	var numbers: Array[int] = []
 	match p.type:
-		"compare", "add", "subtract":
-			numbers = [int(d["a"]), int(d["b"])]
-		_:
-			numbers = [int(d["n"])]
+		"compare", "compare_more", "add", "subtract":
+			return [int(d["a"]), int(d["b"])]
+		"missing_addend":
+			return [int(d["a"]), int(d["total"])]
+	return [int(d["n"])]
+
+
+func _draw_blocks_for(p: MathProblem) -> void:
+	var numbers: Array[int] = block_numbers(p)
 	var gap: float = 60.0
 	var total: float = (numbers.size() - 1) * gap
 	for n: int in numbers:

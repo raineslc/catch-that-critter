@@ -12,6 +12,8 @@ static func for_problem(p: MathProblem) -> String:
 		"next_number":
 			return "Find %d on the number line and hop one step forward." % int(d["n"])
 		"compare_more":
+			if p.hint == "base_ten_blocks":
+				return "Look at the tens first. If they match, look at the ones."
 			return "The number further along the number line is more."
 		"add":
 			if p.hint == "base_ten_blocks":
@@ -22,6 +24,8 @@ static func for_problem(p: MathProblem) -> String:
 				return "Take away the tens first, then the ones."
 			return "Start at %d and count back %d." % [int(d["a"]), int(d["b"])]
 		"missing_addend":
+			if p.hint == "base_ten_blocks":
+				return "How many more tens and ones get you from %d to %d?" % [int(d["a"]), int(d["total"])]
 			return "Start at %d and count up until you reach %d." % [int(d["a"]), int(d["total"])]
 		"tens_ones":
 			return "The long rods are tens and the little cubes are ones."

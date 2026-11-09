@@ -84,3 +84,11 @@ func test_blocks_shrink_to_fit_two_big_numbers() -> void:
 	add_child_autofree(picture)
 	await wait_frames(1)
 	assert_true(true, "drew without errors")
+
+
+## Blocks show both numbers of a two-number problem, including the new bigger levels.
+func test_block_hints_show_the_problems_numbers() -> void:
+	var none: Array[String] = []
+	assert_eq(HintPicture.block_numbers(MathProblem.create("compare_more", "", "", "87", none, {"a": 45, "b": 87})), [45, 87])
+	assert_eq(HintPicture.block_numbers(MathProblem.create("missing_addend", "", "", "30", none, {"a": 40, "b": 30, "total": 70})), [40, 70])
+	assert_eq(HintPicture.block_numbers(MathProblem.create("tens_ones", "", "", "4", none, {"n": 47})), [47])

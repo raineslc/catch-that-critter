@@ -107,3 +107,26 @@ func _check_problem(problem: MathProblem, id: String, level: int, expected_choic
 		return true
 	gut.p(detail + " — " + ", ".join(problems))
 	return false
+
+
+## Phase 9 step 2: in-between add/subtract levels and harder Meadow counting.
+func test_add_subtract_climbs_in_small_steps() -> void:
+	var factory: ProblemFactory = ProblemFactory.new()
+	var types: Array = []
+	for level: int in range(1, factory.level_count("add_subtract") + 1):
+		types.append(factory.level_info("add_subtract", level)["type"])
+	assert_eq(types, ["add", "subtract", "mixed", "subtract", "missing_addend", "mixed", "mixed", "add", "subtract", "mixed", "missing_addend"])
+	assert_eq(int(factory.level_info("add_subtract", 6)["params"]["step"]), 10, "level 6: whole tens")
+	assert_eq(int(factory.level_info("add_subtract", 7)["params"]["max_part"]), 9, "level 7: two digits and one digit")
+
+
+func test_counting_goes_past_kindergarten() -> void:
+	var factory: ProblemFactory = ProblemFactory.new()
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.seed = 4
+	assert_eq(factory.level_count("counting"), 8)
+	for i: int in 100:
+		assert_between(int(factory.generate("counting", 6, rng).data["n"]), 20, 99, "next number, up to 100")
+		var more: MathProblem = factory.generate("counting", 7, rng)
+		assert_between(maxi(int(more.data["a"]), int(more.data["b"])), 11, 100, "which is more, up to 100")
+		assert_between(int(factory.generate("counting", 8, rng).data["n"]), 100, 999, "next number, up to 1000")
