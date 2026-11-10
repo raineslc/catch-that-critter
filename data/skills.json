@@ -4,14 +4,17 @@
       "id": "counting",
       "name": "Counting",
       "habitat": "meadow",
-      "grades": "K",
+      "grades": "K-2",
       "generator": "counting",
       "levels": [
         {"description": "Count up to 5 critters", "type": "count_objects", "standards": ["K.CC.4"], "hint": "dots", "choices": 3, "params": {"min": 1, "max": 5}},
         {"description": "Count up to 10 critters", "type": "count_objects", "standards": ["K.CC.4", "K.CC.5"], "hint": "dots", "choices": 3, "params": {"min": 1, "max": 10}},
         {"description": "What number comes next, up to 20", "type": "next_number", "standards": ["K.CC.2"], "hint": "number_line", "choices": 3, "params": {"min": 1, "max": 20}},
         {"description": "Which number is more, up to 10", "type": "compare_more", "standards": ["K.CC.7"], "hint": "number_line", "choices": 2, "params": {"min": 1, "max": 10}},
-        {"description": "Count up to 20 critters", "type": "count_objects", "standards": ["K.CC.5"], "hint": "dots", "choices": 4, "params": {"min": 11, "max": 20}}
+        {"description": "Count up to 20 critters", "type": "count_objects", "standards": ["K.CC.5"], "hint": "dots", "choices": 4, "params": {"min": 11, "max": 20}},
+        {"description": "What number comes next, up to 100", "type": "next_number", "standards": ["1.NBT.1"], "hint": "number_line", "choices": 4, "params": {"min": 20, "max": 100}},
+        {"description": "Which number is more, up to 100", "type": "compare_more", "standards": ["1.NBT.3"], "hint": "base_ten_blocks", "choices": 2, "params": {"min": 10, "max": 100}},
+        {"description": "What number comes next, up to 1000", "type": "next_number", "standards": ["2.NBT.2"], "hint": "number_line", "choices": 4, "params": {"min": 100, "max": 1000}}
       ]
     },
     {
@@ -24,9 +27,14 @@
         {"description": "Add within 10", "type": "add", "standards": ["1.OA.6"], "hint": "dots", "choices": 3, "params": {"min": 2, "max": 10, "min_part": 1, "spread": 2}},
         {"description": "Subtract within 10", "type": "subtract", "standards": ["1.OA.6"], "hint": "dots", "choices": 3, "params": {"min": 2, "max": 10, "min_part": 1, "spread": 2}},
         {"description": "Add and subtract within 20", "type": "mixed", "standards": ["1.OA.6", "2.OA.2"], "hint": "number_line", "choices": 4, "params": {"min": 6, "max": 20, "min_part": 1, "spread": 3}},
+        {"description": "Subtract within 20", "type": "subtract", "standards": ["1.OA.6", "2.OA.2"], "hint": "number_line", "choices": 4, "params": {"min": 11, "max": 20, "min_part": 2, "spread": 3}},
         {"description": "Find the missing number within 20", "type": "missing_addend", "standards": ["1.OA.8"], "hint": "number_line", "choices": 4, "params": {"min": 6, "max": 20, "min_part": 1, "spread": 3}},
+        {"description": "Add and subtract tens", "type": "mixed", "standards": ["1.NBT.4", "1.NBT.6"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 20, "max": 90, "min_part": 10, "step": 10, "spread": 20}},
+        {"description": "Two-digit and one-digit numbers", "type": "mixed", "standards": ["1.NBT.4", "2.NBT.5"], "hint": "number_line", "choices": 4, "params": {"min": 21, "max": 99, "min_part": 2, "max_part": 9, "spread": 4}},
         {"description": "Add within 100", "type": "add", "standards": ["2.NBT.5"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}},
-        {"description": "Subtract within 100", "type": "subtract", "standards": ["2.NBT.5"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}}
+        {"description": "Subtract within 100", "type": "subtract", "standards": ["2.NBT.5"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}},
+        {"description": "Add and subtract within 100", "type": "mixed", "standards": ["2.NBT.5"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}},
+        {"description": "Find the missing number within 100", "type": "missing_addend", "standards": ["2.OA.1"], "hint": "base_ten_blocks", "choices": 4, "params": {"min": 30, "max": 100, "min_part": 10, "spread": 5}}
       ]
     },
     {

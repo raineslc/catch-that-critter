@@ -213,7 +213,7 @@ func test_load_ignores_unknown_skills_and_clamps_levels() -> void:
 
 func test_grade_picks_starting_levels() -> void:
 	var grade_2: Dictionary = AdaptiveEngine.starting_levels("2")
-	assert_eq(int(grade_2["counting"]), 4, "which number is more")
+	assert_eq(int(grade_2["counting"]), 6, "what number comes next, up to 100")
 	assert_eq(int(grade_2["add_subtract"]), 3, "add and subtract within 20")
 	assert_eq(int(grade_2["place_value"]), 1)
 	assert_eq(int(grade_2["time_money"]), 2, "time to the half hour")

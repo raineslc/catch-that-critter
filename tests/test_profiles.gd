@@ -57,7 +57,7 @@ func test_new_slot_uses_its_sidekick_grade_and_explore_lock() -> void:
 func test_new_slot_starts_skills_at_its_grade() -> void:
 	assert_true(GameState.start_slot(slots[0]))
 	assert_eq(GameState.engine.level("add_subtract"), 3, "grade 2: add and subtract within 20")
-	assert_eq(GameState.engine.level("counting"), 4)
+	assert_eq(GameState.engine.level("counting"), 6, "grade 2: next number up to 100")
 	GameState.start_slot(slots[1])
 	assert_eq(GameState.engine.level("add_subtract"), 1, "grade K: level 1")
 

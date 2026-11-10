@@ -1,5 +1,13 @@
 # DECISIONS.md — Catch That Critter
 
+## 2026-11-09 — More math levels (Phase 9 step 2; Claude's picks from the review, tune after playtests)
+- **Add/subtract: 11 levels (was 6).** New: 4 "Subtract within 20" (his weak spot, on its own), 6 "Add and subtract tens" (30 + 40), 7 "Two-digit and one-digit" (45 + 3, 62 - 5), 10 "Add and subtract within 100" (mixed), 11 "Find the missing number within 100". The old jump from "within 20" straight to "within 100" now has three steps in between.
+- **Meadow counting: 8 levels (was 5).** New: 6 "What number comes next, up to 100", 7 "Which number is more, up to 100", 8 "What number comes next, up to 1000". The Meadow is no longer kindergarten-only; this changes PLAN 3.4's Meadow row, and the Meadow snake's story now follows his level like the other snakes.
+- **Starting levels:** grade 2 starts counting at 6 (was 4: "which is more, 2 or 8?"); grade 3 at counting 8 and add/subtract 5. Grade K and 1 are unchanged.
+- **Level numbers above 3 moved** in add/subtract (old 4 is now 5; old 5 and 6 are now 8 and 9). His real save is new, the K save is at level 2, and Playtest 2 uses its own skill, so no save needed changing.
+- New levels reuse the existing kinds of problem, so snake stories, hint pictures, and hints all work. Two generator options were added: `"step"` (whole tens) and `"max_part"` (a one-digit second number).
+- Still true: "which number is more" has two buttons, so a guess is right half the time.
+
 ## 2026-11-09 — HUD row and pen counts (Phase 9 step 1)
 - The HUD is one row along the top: Save & rest and Book on the left, stars and the Explore/Race button on the right. Messages show just below it and wrap to two lines instead of running off the screen.
 - When several rows of pens were fixed, the "You fixed..." messages show one row at a time.
